@@ -1,0 +1,166 @@
+{
+  "units": [
+    {
+      "id": "unit-1",
+      "title": "Arrays & Strings",
+      "description": "Master the fundamentals of arrays and string manipulation",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "arrays-basics",
+          "title": "Array Basics",
+          "description": "Understanding arrays and basic operations",
+          "xpReward": 50,
+          "questions": [
+            {
+              "id": "q1",
+              "type": "mcq",
+              "question": "What is the time complexity of accessing an element in an array by index?",
+              "options": ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+              "correctAnswer": "O(1)",
+              "explanation": "Array access by index is constant time O(1) because arrays store elements in contiguous memory locations.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q2", 
+              "type": "fillInBlank",
+              "question": "To find the length of an array in most programming languages, you use: array._____",
+              "correctAnswer": "length",
+              "explanation": "The 'length' property returns the number of elements in an array.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q3",
+              "type": "mcq", 
+              "question": "Which operation has O(n) time complexity for arrays?",
+              "options": ["Access by index", "Insert at beginning", "Get array length", "Access last element"],
+              "correctAnswer": "Insert at beginning",
+              "explanation": "Inserting at the beginning requires shifting all existing elements, making it O(n).",
+              "difficulty": "medium",
+              "topic": "arrays"
+            }
+          ]
+        },
+        {
+          "id": "array-algorithms",
+          "title": "Array Algorithms", 
+          "description": "Common algorithms using arrays",
+          "xpReward": 75,
+          "questions": [
+            {
+              "id": "q4",
+              "type": "mcq",
+              "question": "What is the optimal time complexity for finding two numbers in a sorted array that sum to a target?",
+              "options": ["O(n²)", "O(n log n)", "O(n)", "O(log n)"],
+              "correctAnswer": "O(n)",
+              "explanation": "Using two pointers (one at start, one at end) on a sorted array gives O(n) time complexity.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q5",
+              "type": "fillInBlank", 
+              "question": "The technique that uses two pointers moving towards each other is called the _____ pointer technique.",
+              "correctAnswer": "two",
+              "explanation": "Two pointer technique is commonly used for array problems where you need to find pairs or subarrays.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-2", 
+      "title": "Linked Lists",
+      "description": "Learn about linked data structures and pointers",
+      "isUnlocked": false,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "linked-list-basics",
+          "title": "Linked List Fundamentals",
+          "description": "Understanding nodes and pointers", 
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q6",
+              "type": "mcq",
+              "question": "What is the main advantage of linked lists over arrays?",
+              "options": ["Better cache performance", "Dynamic size", "Faster access", "Less memory usage"],
+              "correctAnswer": "Dynamic size",
+              "explanation": "Linked lists can grow and shrink during runtime, unlike arrays with fixed size.",
+              "difficulty": "easy",
+              "topic": "linked-lists"
+            },
+            {
+              "id": "q7",
+              "type": "fillInBlank",
+              "question": "In a singly linked list, each node contains data and a _____ to the next node.",
+              "correctAnswer": "pointer",
+              "explanation": "A pointer (or reference) stores the memory address of the next node in the list.",
+              "difficulty": "easy", 
+              "topic": "linked-lists"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-3",
+      "title": "Stack & Queue", 
+      "description": "LIFO and FIFO data structures",
+      "isUnlocked": false,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "stack-basics",
+          "title": "Stack Operations",
+          "description": "Push, pop, and peek operations",
+          "xpReward": 55,
+          "questions": [
+            {
+              "id": "q8",
+              "type": "mcq",
+              "question": "What does LIFO stand for in the context of stacks?",
+              "options": ["Last In First Out", "Last In Final Out", "Late In Fast Out", "Large In Full Out"],
+              "correctAnswer": "Last In First Out",
+              "explanation": "LIFO means the last element added to the stack is the first one to be removed.",
+              "difficulty": "easy",
+              "topic": "stack"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-4",
+      "title": "Trees & Graphs",
+      "description": "Hierarchical and network data structures", 
+      "isUnlocked": false,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "tree-basics",
+          "title": "Binary Trees",
+          "description": "Understanding tree structure and terminology",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q9",
+              "type": "fillInBlank",
+              "question": "In a binary tree, each node can have at most _____ children.",
+              "correctAnswer": "two",
+              "explanation": "Binary trees are restricted to having at most two children per node: left and right.",
+              "difficulty": "easy",
+              "topic": "trees"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
