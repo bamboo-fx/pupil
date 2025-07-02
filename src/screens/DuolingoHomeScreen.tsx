@@ -23,7 +23,7 @@ interface DuolingoHomeScreenProps {
 const { width, height } = Dimensions.get('window');
 
 export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigation }) => {
-  const { completedLessons, getLessonProgress } = useProgressStore();
+  const { completedLessons, getLessonProgress, totalXp } = useProgressStore();
   const units = questionsData.units as Unit[];
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -233,10 +233,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      <LinearGradient
-        colors={['#87CEEB', '#E0F6FF']}
-        style={styles.container}
-      >
+      <View style={[styles.container, { backgroundColor: '#F8F9FA' }]}>
         <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
                                 {/* Unit Info at Top */}
            <View style={styles.topUnitInfo}>
@@ -255,9 +252,9 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                    <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
                    <Text style={styles.streakText}>0</Text>
                  </View>
-                 <View style={styles.gemsContainer}>
-                   <MaterialIcons name="diamond" size={20} color="#1CB0F6" />
-                   <Text style={styles.gemsText}>500</Text>
+                 <View style={styles.xpContainer}>
+                   <MaterialIcons name="star" size={20} color="#FFD700" />
+                   <Text style={styles.xpText}>{totalXp}</Text>
                  </View>
                </View>
              </View>
@@ -327,7 +324,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
              </View>
            </ScrollView>
         </SafeAreaView>
-      </LinearGradient>
+      </View>
     </>
   );
 };
@@ -342,12 +339,14 @@ const styles = StyleSheet.create({
   topUnitInfo: {
     paddingHorizontal: 20,
     paddingVertical: 8,
+    paddingBottom: 0,
     backgroundColor: 'transparent',
   },
   topUnitHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    paddingBottom: 0
   },
   hamburgerMenu: {
     padding: 4,
@@ -445,7 +444,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  gemsContainer: {
+  xpContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -458,7 +457,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  gemsText: {
+  xpText: {
     marginLeft: 4,
     fontSize: 16,
     fontWeight: 'bold',
