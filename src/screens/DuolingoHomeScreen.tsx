@@ -117,8 +117,8 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
 
     const progress = getProgress();
     const nodeSize = getNodeSize();
-    const strokeWidth = 4;
-    const ringSpacing = 20; // Increased spacing between ring and node
+    const strokeWidth = 7;
+    const ringSpacing = 28;
     const radius = (nodeSize + ringSpacing) / 2;
     const circumference = 2 * Math.PI * radius;
     const strokeDasharray = circumference;
@@ -212,7 +212,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
         )}
         {/* Lesson Title Label */}
         <View style={[styles.lessonLabel, { 
-          top: nodeSize + ringSpacing / 2 + 10,
+          top: nodeSize + ringSpacing / 2 + (progress > 0 ? 18 : 10),
           width: 100,
           left: ((nodeSize + ringSpacing) - 100) / 2,
         }]}>
@@ -249,16 +249,32 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                </Pressable>
                <View style={styles.unitTitleContainer}>
                  <Text style={styles.topUnitTitle}>{currentUnit.title}</Text>
-                 <Text style={styles.topUnitDescription}>{currentUnit.description}</Text>
+               </View>
+               <View style={styles.topRightContent}>
+                 <View style={styles.streakContainer}>
+                   <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
+                   <Text style={styles.streakText}>0</Text>
+                 </View>
+                 <View style={styles.gemsContainer}>
+                   <MaterialIcons name="diamond" size={20} color="#1CB0F6" />
+                   <Text style={styles.gemsText}>500</Text>
+                 </View>
                </View>
              </View>
            </View>
 
-           {/* Unit Selection Menu */}
+           {/* Unit Selection Full-Screen Menu */}
            {isMenuOpen && (
-             <View style={styles.menuOverlay}>
-               <View style={styles.menuContainer}>
-                 <Text style={styles.menuTitle}>Select Unit</Text>
+             <View style={styles.fullScreenMenu}>
+               <Pressable style={styles.menuCloseButton} onPress={() => setIsMenuOpen(false)}>
+                 <MaterialIcons name="close" size={28} color="#333" />
+               </Pressable>
+               <Text style={styles.menuTitle}>Select Unit</Text>
+               <ScrollView
+                 style={{ flex: 1 }}
+                 contentContainerStyle={styles.drawerScrollContent}
+                 showsVerticalScrollIndicator={false}
+               >
                  {units.map((unit, index) => (
                    <Pressable
                      key={unit.id}
@@ -287,46 +303,13 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                      )}
                    </Pressable>
                  ))}
-               </View>
+               </ScrollView>
              </View>
            )}
 
            {/* Header with Unit Navigation */}
            <View style={styles.header}>
-             <Pressable 
-               style={styles.unitNavButton}
-               onPress={() => currentUnitIndex > 0 && setCurrentUnitIndex(currentUnitIndex - 1)}
-               disabled={currentUnitIndex === 0}
-             >
-               <MaterialIcons 
-                 name="chevron-left" 
-                 size={24} 
-                 color={currentUnitIndex > 0 ? "#1CB0F6" : "#CCCCCC"} 
-               />
-             </Pressable>
-             
-             <View style={styles.centerContent}>
-               <View style={styles.streakContainer}>
-                 <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
-                 <Text style={styles.streakText}>0</Text>
-               </View>
-               <View style={styles.gemsContainer}>
-                 <MaterialIcons name="diamond" size={20} color="#1CB0F6" />
-                 <Text style={styles.gemsText}>500</Text>
-               </View>
-             </View>
-             
-             <Pressable 
-               style={styles.unitNavButton}
-               onPress={() => currentUnitIndex < units.length - 1 && setCurrentUnitIndex(currentUnitIndex + 1)}
-               disabled={currentUnitIndex === units.length - 1}
-             >
-               <MaterialIcons 
-                 name="chevron-right" 
-                 size={24} 
-                 color={currentUnitIndex < units.length - 1 ? "#1CB0F6" : "#CCCCCC"} 
-               />
-             </Pressable>
+             <View style={styles.centerSpace} />
            </View>
 
           {/* Path */}
@@ -428,6 +411,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
   },
+  topRightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -435,13 +423,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
-  unitNavButton: {
-    padding: 8,
-  },
-  centerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15,
+  centerSpace: {
+    flex: 1,
   },
   streakContainer: {
     flexDirection: 'row',
@@ -608,5 +591,55 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     color: '#AFAFAF',
+  },
+  drawerBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    zIndex: 1000,
+  },
+  drawerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 280,
+    height: '100%',
+    backgroundColor: 'white',
+    zIndex: 1100,
+    paddingTop: 40,
+    paddingHorizontal: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 12,
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
+    display: 'flex',
+  },
+  drawerScrollContent: {
+    paddingBottom: 40,
+    paddingLeft: 12,
+  },
+  fullScreenMenu: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'white',
+    zIndex: 2000,
+    paddingTop: 52,
+    paddingHorizontal: 12,
+  },
+  menuCloseButton: {
+    position: 'absolute',
+    top: 38,
+    right: 24,
+    zIndex: 2100,
+    padding: 8,
   },
 });

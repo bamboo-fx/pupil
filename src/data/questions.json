@@ -2,7 +2,7 @@
   "units": [
     {
       "id": "unit-1",
-      "title": "Arrays & Strings",
+      "title": "Arrays",
       "description": "Master the fundamentals of arrays and string manipulation",
       "isUnlocked": true,
       "completedLessons": 0,
@@ -284,7 +284,7 @@
     },
     {
       "id": "unit-2", 
-      "title": "Hash Maps & Dictionaries",
+      "title": "Hash Maps",
       "description": "Master key-value data structures and hashing techniques",
       "isUnlocked": true,
       "completedLessons": 0,
@@ -574,8 +574,8 @@
     },
     {
       "id": "unit-3",
-      "title": "Stacks & Queues", 
-      "description": "LIFO and FIFO data structures for efficient operations",
+      "title": "Stacks",
+      "description": "LIFO data structure for efficient operations",
       "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
@@ -613,9 +613,367 @@
               "explanation": "Attempting to pop from an empty stack results in a stack underflow error.",
               "difficulty": "medium",
               "topic": "stack"
+            },
+            {
+              "id": "q52a",
+              "type": "fillInBlank",
+              "question": "The operation to remove and return the top element from a stack is called _____.",
+              "correctAnswer": "pop",
+              "explanation": "Pop operation removes and returns the element at the top of the stack.",
+              "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q52b",
+              "type": "mcq",
+              "question": "What operation allows you to view the top element without removing it?",
+              "options": ["push", "pop", "peek", "size"],
+              "correctAnswer": "peek",
+              "explanation": "Peek (or top) operation returns the top element without removing it from the stack.",
+              "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q52c",
+              "type": "mcq",
+              "question": "What is the time complexity of push and pop operations on a stack?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(1)",
+              "explanation": "Both push and pop operations on a stack are O(1) constant time as they only modify the top element.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q52d",
+              "type": "fillInBlank",
+              "question": "When a stack exceeds its maximum capacity, it results in a stack _____ error.",
+              "correctAnswer": "overflow",
+              "explanation": "Stack overflow occurs when trying to push elements beyond the stack's capacity limit.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q52e",
+              "type": "mcq",
+              "question": "Which of these is NOT a typical stack operation?",
+              "options": ["push", "pop", "peek", "sort"],
+              "correctAnswer": "sort",
+              "explanation": "Stacks don't have a built-in sort operation. Basic operations are push, pop, peek, isEmpty, and size.",
+              "difficulty": "easy",
+              "topic": "stack"
             }
           ]
         },
+        {
+          "id": "stack-applications",
+          "title": "Stack Applications",
+          "description": "Real-world uses of stacks",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q55",
+              "type": "mcq",
+              "question": "Which data structure is best for implementing function call management?",
+              "options": ["Queue", "Stack", "Array", "Hash Map"],
+              "correctAnswer": "Stack",
+              "explanation": "Stacks are perfect for function calls due to LIFO - last called function returns first.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55a",
+              "type": "mcq",
+              "question": "What is a call stack used for in programming?",
+              "options": ["Storing variables", "Managing function calls and returns", "Sorting data", "Memory allocation"],
+              "correctAnswer": "Managing function calls and returns",
+              "explanation": "The call stack tracks function calls, local variables, and return addresses using LIFO principle.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55b",
+              "type": "fillInBlank",
+              "question": "Stacks are commonly used to check for balanced _____ in expressions.",
+              "correctAnswer": "parentheses",
+              "explanation": "Stacks are ideal for checking balanced parentheses, brackets, and braces in mathematical expressions.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55c",
+              "type": "mcq",
+              "question": "How would you use a stack to evaluate a postfix expression?",
+              "options": ["Push operators, pop operands", "Push operands, pop when seeing operators", "Push everything in order", "Use two stacks"],
+              "correctAnswer": "Push operands, pop when seeing operators",
+              "explanation": "In postfix evaluation, push operands onto stack and when you see an operator, pop required operands, compute, and push result back.",
+              "difficulty": "hard",
+              "topic": "stack"
+            },
+            {
+              "id": "q55d",
+              "type": "mcq",
+              "question": "Which application uses stack for tracking history?",
+              "options": ["Database indexing", "Web browser back button", "File compression", "Network routing"],
+              "correctAnswer": "Web browser back button",
+              "explanation": "Browser back button uses a stack to track page history - last visited page is first to return to.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55e",
+              "type": "fillInBlank",
+              "question": "Undo operations in text editors are typically implemented using a _____.",
+              "correctAnswer": "stack",
+              "explanation": "Undo functionality uses a stack to store actions in reverse order - last action is first to be undone.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55f",
+              "type": "mcq",
+              "question": "In converting infix to postfix notation, what do you do when encountering an opening parenthesis?",
+              "options": ["Ignore it", "Push it onto the stack", "Pop from stack", "Add to output"],
+              "correctAnswer": "Push it onto the stack",
+              "explanation": "Opening parentheses are pushed onto the stack to mark the beginning of a subexpression.",
+              "difficulty": "hard",
+              "topic": "stack"
+            },
+            {
+              "id": "q55g",
+              "type": "mcq",
+              "question": "Which sorting algorithm uses a stack internally?",
+              "options": ["Bubble sort", "Merge sort", "Quick sort (recursive)", "Selection sort"],
+              "correctAnswer": "Quick sort (recursive)",
+              "explanation": "Recursive quick sort uses the call stack to manage recursive calls for partitioning subarrays.",
+              "difficulty": "hard",
+              "topic": "stack"
+            },
+            {
+              "id": "q55h",
+              "type": "fillInBlank",
+              "question": "Depth-First Search (DFS) traversal can be implemented using a _____ or recursion.",
+              "correctAnswer": "stack",
+              "explanation": "DFS uses a stack (explicit or implicit via recursion) to explore as deep as possible before backtracking.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "stack-problems",
+              "title": "Stack Problems",
+              "description": "Classic coding and interview problems involving stacks",
+              "xpReward": 75,
+              "questions": [
+                {
+                  "id": "q55n",
+                  "type": "mcq",
+                  "question": "Which stack-based approach is used to solve the Next Greater Element problem?",
+                  "options": ["Use two stacks", "Use a monotonic stack", "Sort the array", "Use recursion"],
+                  "correctAnswer": "Use a monotonic stack",
+                  "explanation": "A monotonic stack helps efficiently find the next greater element for each item in a single pass.",
+                  "difficulty": "hard",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55o",
+                  "type": "mcq",
+                  "question": "What is the main idea behind the Min Stack problem?",
+                  "options": ["Track only the top element", "Track the minimum value at each push", "Sort the stack after each operation", "Use a queue"],
+                  "correctAnswer": "Track the minimum value at each push",
+                  "explanation": "A Min Stack keeps track of the minimum value at each push to allow O(1) retrieval of the minimum.",
+                  "difficulty": "hard",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55p",
+                  "type": "mcq",
+                  "question": "Which stack-based algorithm is used to find the largest rectangle in a histogram?",
+                  "options": ["Monotonic stack", "DFS", "BFS", "Heap"],
+                  "correctAnswer": "Monotonic stack",
+                  "explanation": "A monotonic stack is used to efficiently compute the largest rectangle in a histogram in O(n) time.",
+                  "difficulty": "hard",
+                  "topic": "stack"
+                }
+              ]
+            },
+            {
+              "id": "stack-parsing",
+              "title": "Stack in Parsing and Evaluation",
+              "description": "Using stacks for parsing and evaluating expressions",
+              "xpReward": 70,
+              "questions": [
+                {
+                  "id": "q55q",
+                  "type": "mcq",
+                  "question": "Which notation is easiest to evaluate using a stack?",
+                  "options": ["Infix", "Prefix", "Postfix (Reverse Polish Notation)", "All are equally easy"],
+                  "correctAnswer": "Postfix (Reverse Polish Notation)",
+                  "explanation": "Postfix expressions can be evaluated in a single left-to-right pass using a stack.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55r",
+                  "type": "fillInBlank",
+                  "question": "Stacks are used to check for balanced _____ in code and expressions.",
+                  "correctAnswer": "parentheses",
+                  "explanation": "Stacks are ideal for checking balanced parentheses, brackets, and braces in code and mathematical expressions.",
+                  "difficulty": "easy",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55s",
+                  "type": "mcq",
+                  "question": "What is the main advantage of using a stack for parsing nested structures?",
+                  "options": ["It sorts the input", "It allows tracking of open/close pairs", "It speeds up multiplication", "It reduces memory usage"],
+                  "correctAnswer": "It allows tracking of open/close pairs",
+                  "explanation": "Stacks help track open and close pairs (like parentheses) in nested structures, ensuring correct matching.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                }
+              ]
+            },
+            {
+              "id": "stack-recursion",
+              "title": "Stack and Recursion",
+              "description": "Understanding the relationship between recursion and the call stack",
+              "xpReward": 65,
+              "questions": [
+                {
+                  "id": "q55t",
+                  "type": "mcq",
+                  "question": "What does each recursive function call create on the call stack?",
+                  "options": ["A new thread", "A new stack frame", "A new variable", "A new process"],
+                  "correctAnswer": "A new stack frame",
+                  "explanation": "Each recursive call creates a new stack frame to store local variables and return address.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55u",
+                  "type": "mcq",
+                  "question": "What happens if recursion goes too deep without a base case?",
+                  "options": ["Stack overflow", "Infinite loop", "Program runs faster", "Memory leak"],
+                  "correctAnswer": "Stack overflow",
+                  "explanation": "Without a base case, recursive calls keep adding stack frames until the stack limit is exceeded, causing a stack overflow.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55v",
+                  "type": "fillInBlank",
+                  "question": "The call stack stores local variables and the _____ address for each function call.",
+                  "correctAnswer": "return",
+                  "explanation": "The return address tells the program where to continue after a function call completes.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                }
+              ]
+            },
+            {
+              "id": "stack-backtracking",
+              "title": "Stack in Backtracking",
+              "description": "How stacks are used in backtracking algorithms",
+              "xpReward": 70,
+              "questions": [
+                {
+                  "id": "q55w",
+                  "type": "mcq",
+                  "question": "Which data structure is most commonly used to implement backtracking?",
+                  "options": ["Queue", "Stack", "Heap", "Array"],
+                  "correctAnswer": "Stack",
+                  "explanation": "Backtracking algorithms use a stack to keep track of choices and revert to previous states.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55x",
+                  "type": "mcq",
+                  "question": "In maze solving with backtracking, what does the stack store?",
+                  "options": ["All possible paths", "Visited cells", "Current path positions", "Maze size"],
+                  "correctAnswer": "Current path positions",
+                  "explanation": "The stack stores the current path positions so you can backtrack when hitting a dead end.",
+                  "difficulty": "medium",
+                  "topic": "stack"
+                },
+                {
+                  "id": "q55y",
+                  "type": "fillInBlank",
+                  "question": "In the N-Queens problem, the stack is used to keep track of the _____ of queens placed so far.",
+                  "correctAnswer": "positions",
+                  "explanation": "The stack tracks the positions of queens placed so you can backtrack and try new configurations.",
+                  "difficulty": "hard",
+                  "topic": "stack"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "stack-implementation",
+          "title": "Implementation",
+          "description": "Different ways to implement stacks and their trade-offs",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q55i",
+              "type": "mcq",
+              "question": "What is the most common way to implement a stack?",
+              "options": ["Using arrays", "Using linked lists", "Using hash tables", "Using trees"],
+              "correctAnswer": "Using arrays",
+              "explanation": "Arrays are the most common implementation due to their simplicity and O(1) access to the top element.",
+              "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q55j",
+              "type": "mcq",
+              "question": "What is an advantage of implementing a stack using a linked list?",
+              "options": ["Faster access", "Dynamic size", "Less memory usage", "Better cache performance"],
+              "correctAnswer": "Dynamic size",
+              "explanation": "Linked list implementation allows the stack to grow and shrink dynamically without size limitations.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55k",
+              "type": "fillInBlank",
+              "question": "In array-based stack implementation, the _____ variable keeps track of the top element's index.",
+              "correctAnswer": "top",
+              "explanation": "A 'top' pointer/index variable maintains the position of the current top element in the array.",
+              "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q55l",
+              "type": "mcq",
+              "question": "What happens to the space complexity when implementing a stack with a linked list vs array?",
+              "options": ["Linked list uses less space", "Array uses less space", "Both use same space", "Depends on implementation"],
+              "correctAnswer": "Array uses less space",
+              "explanation": "Arrays have less overhead per element, while linked lists need extra memory for storing pointers.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "q55m",
+              "type": "mcq",
+              "question": "In a linked list implementation of stack, where should new elements be added?",
+              "options": ["At the end", "At the beginning", "In the middle", "Anywhere"],
+              "correctAnswer": "At the beginning",
+              "explanation": "Adding at the beginning (head) of linked list gives O(1) push and pop operations for stack behavior.",
+              "difficulty": "medium",
+              "topic": "stack"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-4",
+      "title": "Queues",
+      "description": "FIFO data structure for efficient operations",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
         {
           "id": "queue-basics",
           "title": "Queue Basics",
@@ -640,33 +998,52 @@
               "explanation": "Enqueue operation adds an element to the rear/back of the queue.",
               "difficulty": "easy",
               "topic": "queue"
+            },
+            {
+              "id": "q54a",
+              "type": "fillInBlank",
+              "question": "Removing an element from the front of a queue is called _____ operation.",
+              "correctAnswer": "dequeue",
+              "explanation": "Dequeue operation removes an element from the front of the queue.",
+              "difficulty": "easy",
+              "topic": "queue"
             }
           ]
         },
         {
-          "id": "stack-queue-applications",
-          "title": "Applications",
-          "description": "Real-world uses of stacks and queues",
-          "xpReward": 65,
+          "id": "queue-applications",
+          "title": "Queue Applications",
+          "description": "Real-world uses of queues",
+          "xpReward": 55,
           "questions": [
             {
-              "id": "q55",
+              "id": "q54b",
               "type": "mcq",
-              "question": "Which data structure is best for implementing function call management?",
-              "options": ["Queue", "Stack", "Array", "Hash Map"],
-              "correctAnswer": "Stack",
-              "explanation": "Stacks are perfect for function calls due to LIFO - last called function returns first.",
+              "question": "Which scenario best demonstrates queue usage?",
+              "options": ["Function call management", "Print job scheduling", "Undo operations", "Expression evaluation"],
+              "correctAnswer": "Print job scheduling",
+              "explanation": "Print queues process jobs in FIFO order - first submitted, first printed.",
               "difficulty": "medium",
-              "topic": "stack"
+              "topic": "queue"
+            },
+            {
+              "id": "q54c",
+              "type": "mcq",
+              "question": "What type of queue is used in breadth-first search?",
+              "options": ["Priority queue", "Simple queue", "Circular queue", "Double-ended queue"],
+              "correctAnswer": "Simple queue",
+              "explanation": "BFS uses a simple FIFO queue to visit nodes level by level.",
+              "difficulty": "medium",
+              "topic": "queue"
             }
           ]
         }
       ]
     },
     {
-      "id": "unit-4",
-      "title": "Trees & Graphs",
-      "description": "Hierarchical and network data structures", 
+      "id": "unit-5",
+      "title": "Trees",
+      "description": "Hierarchical data structures and tree algorithms",
       "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
@@ -694,6 +1071,15 @@
               "explanation": "The root is the topmost node in a tree that has no parent node.",
               "difficulty": "easy",
               "topic": "trees"
+            },
+            {
+              "id": "q57a",
+              "type": "fillInBlank",
+              "question": "Nodes with no children are called _____ nodes.",
+              "correctAnswer": "leaf",
+              "explanation": "Leaf nodes are terminal nodes that have no children.",
+              "difficulty": "easy",
+              "topic": "trees"
             }
           ]
         },
@@ -712,9 +1098,65 @@
               "explanation": "Preorder traversal visits root first, then left subtree, then right subtree.",
               "difficulty": "medium",
               "topic": "trees"
+            },
+            {
+              "id": "q58a",
+              "type": "mcq",
+              "question": "Which traversal visits nodes level by level from top to bottom?",
+              "options": ["Inorder", "Preorder", "Postorder", "Level order"],
+              "correctAnswer": "Level order",
+              "explanation": "Level order traversal uses a queue to visit all nodes at each level before moving to the next level.",
+              "difficulty": "medium",
+              "topic": "trees"
+            },
+            {
+              "id": "q58b",
+              "type": "fillInBlank",
+              "question": "Inorder traversal of a binary search tree visits nodes in _____ order.",
+              "correctAnswer": "sorted",
+              "explanation": "Inorder traversal of a BST visits nodes in ascending sorted order.",
+              "difficulty": "medium",
+              "topic": "trees"
             }
           ]
         },
+        {
+          "id": "binary-search-trees",
+          "title": "Binary Search Trees",
+          "description": "Efficient searching and insertion in trees",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q58c",
+              "type": "mcq",
+              "question": "What is the key property of a binary search tree?",
+              "options": ["All nodes have two children", "Left child < parent < right child", "Tree is always balanced", "Maximum height is log n"],
+              "correctAnswer": "Left child < parent < right child",
+              "explanation": "In a BST, all values in the left subtree are less than the parent, and all values in the right subtree are greater.",
+              "difficulty": "medium",
+              "topic": "trees"
+            },
+            {
+              "id": "q58d",
+              "type": "mcq",
+              "question": "What is the average time complexity for search in a balanced BST?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(log n)",
+              "explanation": "Balanced BSTs allow elimination of half the search space at each step, resulting in O(log n) search time.",
+              "difficulty": "medium",
+              "topic": "trees"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-6",
+      "title": "Graphs",
+      "description": "Network data structures and graph algorithms",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
         {
           "id": "graph-basics",
           "title": "Graph Basics",
@@ -729,15 +1171,71 @@
               "explanation": "Graphs are made up of vertices (nodes) connected by edges.",
               "difficulty": "easy",
               "topic": "graphs"
+            },
+            {
+              "id": "q59a",
+              "type": "mcq",
+              "question": "What is the difference between directed and undirected graphs?",
+              "options": ["Directed graphs are faster", "Directed edges have direction, undirected don't", "Undirected graphs use more memory", "No difference"],
+              "correctAnswer": "Directed edges have direction, undirected don't",
+              "explanation": "Directed graphs have edges with direction (A→B), while undirected graphs have bidirectional connections (A—B).",
+              "difficulty": "medium",
+              "topic": "graphs"
+            },
+            {
+              "id": "q59b",
+              "type": "fillInBlank",
+              "question": "The number of edges connected to a vertex is called its _____.",
+              "correctAnswer": "degree",
+              "explanation": "The degree of a vertex is the number of edges incident to it.",
+              "difficulty": "easy",
+              "topic": "graphs"
+            }
+          ]
+        },
+        {
+          "id": "graph-traversal",
+          "title": "Graph Traversal",
+          "description": "DFS and BFS algorithms for exploring graphs",
+          "xpReward": 85,
+          "questions": [
+            {
+              "id": "q59c",
+              "type": "mcq",
+              "question": "Which data structure is typically used for DFS (Depth-First Search)?",
+              "options": ["Queue", "Stack", "Heap", "Hash Map"],
+              "correctAnswer": "Stack",
+              "explanation": "DFS uses a stack (or recursion which uses the call stack) to explore as deep as possible before backtracking.",
+              "difficulty": "medium",
+              "topic": "graphs"
+            },
+            {
+              "id": "q59d",
+              "type": "mcq",
+              "question": "Which data structure is typically used for BFS (Breadth-First Search)?",
+              "options": ["Queue", "Stack", "Heap", "Hash Map"],
+              "correctAnswer": "Queue",
+              "explanation": "BFS uses a queue to explore all neighbors at the current depth before moving to the next depth level.",
+              "difficulty": "medium",
+              "topic": "graphs"
+            },
+            {
+              "id": "q59e",
+              "type": "fillInBlank",
+              "question": "BFS finds the _____ path between two vertices in an unweighted graph.",
+              "correctAnswer": "shortest",
+              "explanation": "BFS naturally finds the shortest path in unweighted graphs by exploring vertices level by level.",
+              "difficulty": "medium",
+              "topic": "graphs"
             }
           ]
         }
       ]
     },
     {
-      "id": "unit-5",
-      "title": "Sorting Algorithms",
-      "description": "Efficient methods for arranging data in order",
+      "id": "unit-7", 
+      "title": "Sorting I",
+      "description": "Simple O(n²) sorting algorithms",
       "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
@@ -756,9 +1254,82 @@
               "explanation": "Bubble sort has O(n²) time complexity due to nested loops comparing adjacent elements.",
               "difficulty": "medium",
               "topic": "sorting"
+            },
+            {
+              "id": "q60a",
+              "type": "fillInBlank",
+              "question": "Bubble sort repeatedly compares _____ elements and swaps them if needed.",
+              "correctAnswer": "adjacent",
+              "explanation": "Bubble sort compares each pair of adjacent elements and swaps them if they are in wrong order.",
+              "difficulty": "easy",
+              "topic": "sorting"
             }
           ]
         },
+        {
+          "id": "selection-sort",
+          "title": "Selection Sort",
+          "description": "Sorting by repeatedly finding the minimum element",
+          "xpReward": 55,
+          "questions": [
+            {
+              "id": "q60b",
+              "type": "mcq",
+              "question": "How does selection sort work?",
+              "options": ["Swaps adjacent elements", "Finds minimum and places it at beginning", "Divides array in half", "Uses a pivot element"],
+              "correctAnswer": "Finds minimum and places it at beginning",
+              "explanation": "Selection sort repeatedly finds the minimum element from unsorted portion and places it at the beginning.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            },
+            {
+              "id": "q60c",
+              "type": "mcq",
+              "question": "What is the time complexity of selection sort?",
+              "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+              "correctAnswer": "O(n²)",
+              "explanation": "Selection sort has O(n²) time complexity as it performs nested loops to find minimum elements.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            }
+          ]
+        },
+        {
+          "id": "insertion-sort",
+          "title": "Insertion Sort", 
+          "description": "Building sorted array one element at a time",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q60d",
+              "type": "mcq",
+              "question": "How does insertion sort build the final sorted array?",
+              "options": ["By finding minimum elements", "By inserting each element in its correct position", "By swapping adjacent elements", "By dividing the array"],
+              "correctAnswer": "By inserting each element in its correct position",
+              "explanation": "Insertion sort builds the sorted array by taking each element and inserting it in the correct position among previously sorted elements.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            },
+            {
+              "id": "q60e",
+              "type": "fillInBlank",
+              "question": "Insertion sort is efficient for _____ datasets.",
+              "correctAnswer": "small",
+              "explanation": "Insertion sort performs well on small datasets due to its simple implementation and low overhead.",
+              "difficulty": "easy",
+              "topic": "sorting"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-8",
+      "title": "Sorting II",
+      "description": "Efficient O(n log n) sorting algorithms",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
         {
           "id": "merge-sort",
           "title": "Merge Sort",
@@ -772,6 +1343,16 @@
               "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
               "correctAnswer": "O(n log n)",
               "explanation": "Merge sort consistently runs in O(n log n) time using divide and conquer.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            },
+            {
+              "id": "q61a",
+              "type": "mcq",
+              "question": "What is the key principle behind merge sort?",
+              "options": ["Bubble elements up", "Divide and conquer", "Find pivot element", "Select minimum"],
+              "correctAnswer": "Divide and conquer",
+              "explanation": "Merge sort divides the array into smaller subarrays, sorts them, then merges them back together.",
               "difficulty": "medium",
               "topic": "sorting"
             }
@@ -791,13 +1372,151 @@
               "explanation": "Quick sort selects a pivot element and partitions the array around it.",
               "difficulty": "medium",
               "topic": "sorting"
+            },
+            {
+              "id": "q62a",
+              "type": "mcq",
+              "question": "What is the average time complexity of quick sort?",
+              "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+              "correctAnswer": "O(n log n)",
+              "explanation": "Quick sort has average case O(n log n) time complexity with good pivot selection.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            }
+          ]
+        },
+        {
+          "id": "heap-sort",
+          "title": "Heap Sort",
+          "description": "Sorting using heap data structure",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q62b",
+              "type": "mcq",
+              "question": "What data structure does heap sort use?",
+              "options": ["Stack", "Queue", "Binary heap", "Hash table"],
+              "correctAnswer": "Binary heap",
+              "explanation": "Heap sort uses a binary heap to efficiently find and remove the maximum/minimum element.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            },
+            {
+              "id": "q62c",
+              "type": "mcq",
+              "question": "What is the time complexity of heap sort?",
+              "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+              "correctAnswer": "O(n log n)",
+              "explanation": "Heap sort consistently runs in O(n log n) time for building heap and extracting elements.",
+              "difficulty": "medium",
+              "topic": "sorting"
             }
           ]
         }
       ]
     },
     {
-      "id": "unit-6",
+      "id": "unit-9",
+      "title": "Greedy",
+      "description": "Making locally optimal choices for global solutions",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "greedy-basics",
+          "title": "Basics",
+          "description": "Understanding the greedy approach and when to use it",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q65",
+              "type": "mcq",
+              "question": "What is the key principle of greedy algorithms?",
+              "options": ["Try all possible solutions", "Make locally optimal choices", "Use dynamic programming", "Divide and conquer"],
+              "correctAnswer": "Make locally optimal choices",
+              "explanation": "Greedy algorithms make the best local choice at each step, hoping to find a global optimum.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            },
+            {
+              "id": "q66",
+              "type": "fillInBlank",
+              "question": "Greedy algorithms don't always guarantee the _____ solution.",
+              "correctAnswer": "optimal",
+              "explanation": "Greedy algorithms may not always find the globally optimal solution, only locally optimal ones.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            },
+            {
+              "id": "q67",
+              "type": "mcq",
+              "question": "What is a key advantage of greedy algorithms?",
+              "options": ["Always find optimal solution", "Simple and efficient", "Work for all problems", "Use minimal memory"],
+              "correctAnswer": "Simple and efficient",
+              "explanation": "Greedy algorithms are typically simple to implement and have good time complexity.",
+              "difficulty": "easy",
+              "topic": "greedy"
+            }
+          ]
+        },
+        {
+          "id": "activity-selection",
+          "title": "Activity Selection",
+          "description": "Classic greedy problem of selecting maximum activities",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q68",
+              "type": "mcq",
+              "question": "In the activity selection problem, what is the greedy choice?",
+              "options": ["Select longest activity", "Select activity that starts earliest", "Select activity that finishes earliest", "Select most profitable activity"],
+              "correctAnswer": "Select activity that finishes earliest",
+              "explanation": "Selecting the activity that finishes earliest leaves maximum room for subsequent activities.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            },
+            {
+              "id": "q69",
+              "type": "fillInBlank",
+              "question": "Activity selection problem aims to select maximum number of _____ activities.",
+              "correctAnswer": "non-overlapping",
+              "explanation": "The goal is to select the maximum number of activities that don't overlap in time.",
+              "difficulty": "easy",
+              "topic": "greedy"
+            }
+          ]
+        },
+        {
+          "id": "huffman-coding",
+          "title": "Huffman Coding",
+          "description": "Optimal prefix-free codes using greedy approach",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q70",
+              "type": "mcq",
+              "question": "What does Huffman coding optimize?",
+              "options": ["Memory usage", "Code length based on frequency", "Processing speed", "Security"],
+              "correctAnswer": "Code length based on frequency",
+              "explanation": "Huffman coding assigns shorter codes to more frequent characters, minimizing total code length.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            },
+            {
+              "id": "q71",
+              "type": "fillInBlank",
+              "question": "Huffman coding uses a _____ tree to assign codes to characters.",
+              "correctAnswer": "binary",
+              "explanation": "Huffman coding builds a binary tree where paths from root to leaves represent character codes.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-10",
       "title": "Dynamic Programming",
       "description": "Optimizing recursive problems with memoization",
       "isUnlocked": true,
@@ -805,7 +1524,7 @@
       "lessons": [
         {
           "id": "dp-basics",
-          "title": "DP Fundamentals",
+          "title": "Basics",
           "description": "Understanding overlapping subproblems and optimal substructure",
           "xpReward": 80,
           "questions": [
@@ -835,6 +1554,371 @@
               "explanation": "Memoization eliminates redundant calculations, reducing time complexity to linear O(n).",
               "difficulty": "medium",
               "topic": "dp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-11",
+      "title": "Linked Lists",
+      "description": "Dynamic linear data structures with pointer-based connections",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "linked-list-basics",
+          "title": "Basics",
+          "description": "Understanding nodes, pointers, and basic operations",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q72",
+              "type": "mcq",
+              "question": "What are the two main components of a linked list node?",
+              "options": ["Data and index", "Data and next pointer", "Value and size", "Key and value"],
+              "correctAnswer": "Data and next pointer",
+              "explanation": "Each node contains data (the actual value) and a next pointer (reference to the next node).",
+              "difficulty": "easy",
+              "topic": "linked-lists"
+            },
+            {
+              "id": "q73",
+              "type": "fillInBlank",
+              "question": "The first node in a linked list is called the _____ node.",
+              "correctAnswer": "head",
+              "explanation": "The head node is the starting point of the linked list and is referenced by the head pointer.",
+              "difficulty": "easy",
+              "topic": "linked-lists"
+            },
+            {
+              "id": "q74",
+              "type": "mcq",
+              "question": "What is the time complexity of inserting at the beginning of a linked list?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(1)",
+              "explanation": "Inserting at the beginning only requires updating the head pointer and the new node's next pointer.",
+              "difficulty": "medium",
+              "topic": "linked-lists"
+            }
+          ]
+        },
+        {
+          "id": "linked-list-types",
+          "title": "Types",
+          "description": "Singly, doubly, and circular linked lists",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q75",
+              "type": "mcq",
+              "question": "What additional pointer does a doubly linked list node have?",
+              "options": ["Parent pointer", "Previous pointer", "Child pointer", "Root pointer"],
+              "correctAnswer": "Previous pointer",
+              "explanation": "Doubly linked lists have both next and previous pointers, allowing bidirectional traversal.",
+              "difficulty": "medium",
+              "topic": "linked-lists"
+            },
+            {
+              "id": "q76",
+              "type": "fillInBlank",
+              "question": "In a circular linked list, the last node's next pointer points to the _____ node.",
+              "correctAnswer": "head",
+              "explanation": "Circular linked lists form a loop where the last node points back to the first node.",
+              "difficulty": "medium",
+              "topic": "linked-lists"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-12",
+      "title": "Heaps",
+      "description": "Complete binary trees with heap property for priority operations",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "heap-basics",
+          "title": "Basics",
+          "description": "Understanding heap property and binary heap structure",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q77",
+              "type": "mcq",
+              "question": "What is the heap property for a max heap?",
+              "options": ["Parent ≤ children", "Parent ≥ children", "Left child ≤ right child", "All nodes are equal"],
+              "correctAnswer": "Parent ≥ children",
+              "explanation": "In a max heap, every parent node is greater than or equal to its children.",
+              "difficulty": "medium",
+              "topic": "heaps"
+            },
+            {
+              "id": "q78",
+              "type": "fillInBlank",
+              "question": "The time complexity of inserting an element into a binary heap is O(_____)",
+              "correctAnswer": "log n",
+              "explanation": "Insertion requires bubbling up the element, which takes O(log n) time in the worst case.",
+              "difficulty": "medium",
+              "topic": "heaps"
+            },
+            {
+              "id": "q79",
+              "type": "mcq",
+              "question": "What operation extracts the maximum element from a max heap?",
+              "options": ["peek", "extract-max", "heapify", "build-heap"],
+              "correctAnswer": "extract-max",
+              "explanation": "Extract-max removes and returns the maximum element (root) from a max heap.",
+              "difficulty": "easy",
+              "topic": "heaps"
+            }
+          ]
+        },
+        {
+          "id": "priority-queues",
+          "title": "Priority Queues",
+          "description": "Using heaps to implement priority queues",
+          "xpReward": 75,
+          "questions": [
+            {
+              "id": "q80",
+              "type": "mcq",
+              "question": "What data structure is commonly used to implement a priority queue?",
+              "options": ["Array", "Stack", "Binary heap", "Hash table"],
+              "correctAnswer": "Binary heap",
+              "explanation": "Binary heaps provide efficient O(log n) insertion and O(log n) extraction of highest priority elements.",
+              "difficulty": "medium",
+              "topic": "heaps"
+            },
+            {
+              "id": "q81",
+              "type": "fillInBlank",
+              "question": "In a priority queue, elements are served based on their _____, not insertion order.",
+              "correctAnswer": "priority",
+              "explanation": "Priority queues serve elements based on priority level rather than FIFO or LIFO order.",
+              "difficulty": "easy",
+              "topic": "heaps"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-13",
+      "title": "Recursion",
+      "description": "Functions that call themselves to solve problems",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "recursion-basics",
+          "title": "Basics",
+          "description": "Understanding base cases and recursive calls",
+          "xpReward": 55,
+          "questions": [
+            {
+              "id": "q82",
+              "type": "mcq",
+              "question": "What are the two essential components of a recursive function?",
+              "options": ["Loop and condition", "Base case and recursive case", "Input and output", "Start and end"],
+              "correctAnswer": "Base case and recursive case",
+              "explanation": "Every recursive function needs a base case (stopping condition) and a recursive case (calling itself).",
+              "difficulty": "medium",
+              "topic": "recursion"
+            },
+            {
+              "id": "q83",
+              "type": "fillInBlank",
+              "question": "The _____ case prevents infinite recursion by providing a stopping condition.",
+              "correctAnswer": "base",
+              "explanation": "The base case defines when the recursion should stop and return a value without making further recursive calls.",
+              "difficulty": "easy",
+              "topic": "recursion"
+            },
+            {
+              "id": "q84",
+              "type": "mcq",
+              "question": "What happens if a recursive function lacks a proper base case?",
+              "options": ["It runs faster", "It causes infinite recursion", "It returns null", "It becomes iterative"],
+              "correctAnswer": "It causes infinite recursion",
+              "explanation": "Without a base case, the function will call itself indefinitely, leading to stack overflow.",
+              "difficulty": "medium",
+              "topic": "recursion"
+            }
+          ]
+        },
+        {
+          "id": "recursion-examples",
+          "title": "Classic Examples",
+          "description": "Factorial, Fibonacci, and tree traversal",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q85",
+              "type": "mcq",
+              "question": "What is the base case for calculating factorial recursively?",
+              "options": ["n = 0 or n = 1", "n = 2", "n < 0", "n > 10"],
+              "correctAnswer": "n = 0 or n = 1",
+              "explanation": "Factorial of 0 and 1 is 1, which serves as the base case for recursive factorial calculation.",
+              "difficulty": "easy",
+              "topic": "recursion"
+            },
+            {
+              "id": "q86",
+              "type": "fillInBlank",
+              "question": "Tree traversal algorithms like preorder and inorder are naturally implemented using _____.",
+              "correctAnswer": "recursion",
+              "explanation": "Tree traversals naturally use recursion to visit nodes in a systematic order.",
+              "difficulty": "medium",
+              "topic": "recursion"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-14",
+      "title": "Searching",
+      "description": "Algorithms for finding elements in data structures",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "linear-search",
+          "title": "Linear Search",
+          "description": "Sequential searching through elements",
+          "xpReward": 45,
+          "questions": [
+            {
+              "id": "q87",
+              "type": "mcq",
+              "question": "What is the time complexity of linear search?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(n)",
+              "explanation": "Linear search checks each element sequentially, taking O(n) time in the worst case.",
+              "difficulty": "easy",
+              "topic": "searching"
+            },
+            {
+              "id": "q88",
+              "type": "fillInBlank",
+              "question": "Linear search works on both _____ and unsorted arrays.",
+              "correctAnswer": "sorted",
+              "explanation": "Linear search doesn't require any ordering and works on both sorted and unsorted data.",
+              "difficulty": "easy",
+              "topic": "searching"
+            }
+          ]
+        },
+        {
+          "id": "binary-search",
+          "title": "Binary Search",
+          "description": "Efficient searching in sorted arrays",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q89",
+              "type": "mcq",
+              "question": "What is the prerequisite for binary search?",
+              "options": ["Array must be large", "Array must be sorted", "Array must have unique elements", "Array must be numeric"],
+              "correctAnswer": "Array must be sorted",
+              "explanation": "Binary search requires the array to be sorted to eliminate half the search space at each step.",
+              "difficulty": "medium",
+              "topic": "searching"
+            },
+            {
+              "id": "q90",
+              "type": "mcq",
+              "question": "What is the time complexity of binary search?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+              "correctAnswer": "O(log n)",
+              "explanation": "Binary search halves the search space at each step, resulting in O(log n) time complexity.",
+              "difficulty": "medium",
+              "topic": "searching"
+            },
+            {
+              "id": "q91",
+              "type": "fillInBlank",
+              "question": "Binary search compares the target with the _____ element to decide which half to search.",
+              "correctAnswer": "middle",
+              "explanation": "Binary search finds the middle element and compares it with the target to eliminate half the array.",
+              "difficulty": "easy",
+              "topic": "searching"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-15",
+      "title": "Big O Notation",
+      "description": "Analyzing algorithm efficiency and complexity",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "time-complexity",
+          "title": "Time Complexity",
+          "description": "Understanding how algorithms scale with input size",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q92",
+              "type": "mcq",
+              "question": "What does Big O notation describe?",
+              "options": ["Best case performance", "Average case performance", "Worst case performance", "Space usage only"],
+              "correctAnswer": "Worst case performance",
+              "explanation": "Big O notation describes the upper bound or worst-case time complexity of an algorithm.",
+              "difficulty": "medium",
+              "topic": "complexity"
+            },
+            {
+              "id": "q93",
+              "type": "fillInBlank",
+              "question": "An algorithm that accesses a single array element has _____ time complexity.",
+              "correctAnswer": "O(1)",
+              "explanation": "Constant time O(1) means the operation takes the same time regardless of input size.",
+              "difficulty": "easy",
+              "topic": "complexity"
+            },
+            {
+              "id": "q94",
+              "type": "mcq",
+              "question": "Which time complexity is better: O(n) or O(log n)?",
+              "options": ["O(n)", "O(log n)", "They're the same", "Depends on input"],
+              "correctAnswer": "O(log n)",
+              "explanation": "O(log n) grows much slower than O(n), making it more efficient for large inputs.",
+              "difficulty": "medium",
+              "topic": "complexity"
+            }
+          ]
+        },
+        {
+          "id": "space-complexity",
+          "title": "Space Complexity",
+          "description": "Analyzing memory usage of algorithms",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q95",
+              "type": "mcq",
+              "question": "What does space complexity measure?",
+              "options": ["Execution time", "Memory usage", "Code length", "CPU cycles"],
+              "correctAnswer": "Memory usage",
+              "explanation": "Space complexity measures how much additional memory an algorithm uses relative to input size.",
+              "difficulty": "easy",
+              "topic": "complexity"
+            },
+            {
+              "id": "q96",
+              "type": "fillInBlank",
+              "question": "An algorithm that uses a fixed amount of extra memory has _____ space complexity.",
+              "correctAnswer": "O(1)",
+              "explanation": "Constant space O(1) means the algorithm uses the same amount of extra memory regardless of input size.",
+              "difficulty": "medium",
+              "topic": "complexity"
             }
           ]
         }
