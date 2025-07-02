@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useProgressStore } from '../state/progressStore';
 import { Question, Lesson } from '../types';
+import { checkAnswerFlexible, testAnswerChecking } from '../utils/cn';
 
 interface SimpleLessonScreenProps {
   navigation: any;
@@ -30,9 +31,23 @@ export const SimpleLessonScreen: React.FC<SimpleLessonScreenProps> = ({ navigati
   const currentQuestion = lesson.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === lesson.questions.length - 1;
 
+  // Test answer checking logic on component mount
+  useEffect(() => {
+    testAnswerChecking();
+  }, []);
+
   const handleAnswerSubmit = () => {
-    const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer.toLowerCase().trim();
-    const correct = userAnswer === currentQuestion.correctAnswer.toLowerCase();
+    const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
+    
+    // Debug logging
+    console.log('Submitting answer:', {
+      questionType: currentQuestion.type,
+      userAnswer,
+      correctAnswer: currentQuestion.correctAnswer,
+      question: currentQuestion.question
+    });
+    
+    const correct = checkAnswerFlexible(userAnswer, currentQuestion.correctAnswer, currentQuestion.type);
     
     setIsCorrect(correct);
     setShowExplanation(true);
@@ -201,7 +216,7 @@ export const SimpleLessonScreen: React.FC<SimpleLessonScreenProps> = ({ navigati
           <Text className="text-center text-white text-lg font-bold">
             {showExplanation 
               ? (isLastQuestion ? '🏆 Finish Lesson' : '➤ Continue')
-              : '⚡ Check Answer'
+              : 'Check Answer'
             }
           </Text>
         </Pressable>

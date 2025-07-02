@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { GameStatsHeader } from '../components/GameStatsHeader';
 import { useProgressStore } from '../state/progressStore';
 import { Question, Lesson } from '../types';
+import { checkAnswerFlexible } from '../utils/cn';
 
 interface LessonScreenProps {
   navigation: any;
@@ -56,8 +57,17 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
       return;
     }
 
-    const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer.toLowerCase().trim();
-    const correct = userAnswer === currentQuestion.correctAnswer.toLowerCase();
+    const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
+    
+    // Debug logging
+    console.log('Submitting answer:', {
+      questionType: currentQuestion.type,
+      userAnswer,
+      correctAnswer: currentQuestion.correctAnswer,
+      question: currentQuestion.question
+    });
+    
+    const correct = checkAnswerFlexible(userAnswer, currentQuestion.correctAnswer, currentQuestion.type);
     
     setIsCorrect(correct);
     setShowExplanation(true);
@@ -330,7 +340,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
               <Text className="text-center text-white text-xl font-bold">
                 {showExplanation 
                   ? (isLastQuestion ? '🏆 Finish Quest' : '➤ Continue')
-                  : '⚡ Check Answer'
+                  : 'Check Answer'
                 }
               </Text>
             </LinearGradient>

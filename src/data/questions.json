@@ -9,49 +9,258 @@
       "lessons": [
         {
           "id": "arrays-basics",
-          "title": "Array Basics",
-          "description": "Understanding arrays and basic operations",
+          "title": "Basics",
+          "description": "Understanding what arrays are and basic concepts",
           "xpReward": 50,
           "questions": [
             {
               "id": "q1",
               "type": "mcq",
-              "question": "What is the time complexity of accessing an element in an array by index?",
-              "options": ["O(1)", "O(n)", "O(log n)", "O(n²)"],
-              "correctAnswer": "O(1)",
-              "explanation": "Array access by index is constant time O(1) because arrays store elements in contiguous memory locations.",
+              "question": "What is the key characteristic of how arrays store elements in memory?",
+              "options": ["Elements are stored in random locations", "Elements are stored in contiguous memory locations", "Elements are stored in separate memory blocks", "Elements are stored in linked memory nodes"],
+              "correctAnswer": "Elements are stored in contiguous memory locations",
+              "explanation": "Arrays store elements in contiguous (adjacent) memory locations, which enables constant-time access by index and better cache performance.",
               "difficulty": "easy",
               "topic": "arrays"
             },
             {
-              "id": "q2", 
-              "type": "fillInBlank",
-              "question": "To find the length of an array in most programming languages, you use: array._____",
-              "correctAnswer": "length",
-              "explanation": "The 'length' property returns the number of elements in an array.",
+              "id": "q2",
+              "type": "mcq",
+              "question": "What is the main advantage of arrays over linked lists?",
+              "options": ["Dynamic size", "Faster insertion at beginning", "Random access in O(1) time", "Lower memory usage per element"],
+              "correctAnswer": "Random access in O(1) time",
+              "explanation": "Arrays provide O(1) random access to elements by index, while linked lists require O(n) traversal to reach a specific element.",
               "difficulty": "easy",
               "topic": "arrays"
             },
             {
               "id": "q3",
-              "type": "mcq", 
-              "question": "Which operation has O(n) time complexity for arrays?",
-              "options": ["Access by index", "Insert at beginning", "Get array length", "Access last element"],
-              "correctAnswer": "Insert at beginning",
-              "explanation": "Inserting at the beginning requires shifting all existing elements, making it O(n).",
+              "type": "mcq",
+              "question": "What is the difference between static and dynamic arrays?",
+              "options": ["Static arrays can change size, dynamic cannot", "Static arrays have fixed size, dynamic can grow/shrink", "Static arrays are faster", "There is no difference"],
+              "correctAnswer": "Static arrays have fixed size, dynamic can grow/shrink",
+              "explanation": "Static arrays have a fixed size determined at compile time, while dynamic arrays can resize during runtime as needed.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q4",
+              "type": "fillInBlank",
+              "question": "In most programming languages, array indexing starts from _____.",
+              "correctAnswer": "0",
+              "explanation": "Most programming languages use 0-based indexing, where the first element is at index 0, second at index 1, and so on.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q5",
+              "type": "mcq",
+              "question": "Why do arrays have better cache performance compared to linked lists?",
+              "options": ["Arrays use less memory", "Arrays have contiguous memory layout", "Arrays are smaller", "Arrays use pointers"],
+              "correctAnswer": "Arrays have contiguous memory layout",
+              "explanation": "Arrays store elements in contiguous memory, which means accessing nearby elements benefits from CPU cache locality, making sequential access faster.",
               "difficulty": "medium",
               "topic": "arrays"
             }
           ]
         },
         {
+          "id": "array-operations",
+          "title": "Operations",
+          "description": "Understanding time complexity of basic array operations",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q6",
+              "type": "mcq",
+              "question": "What is the time complexity of accessing an element in an array by index?",
+              "options": ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+              "correctAnswer": "O(1)",
+              "explanation": "Array access by index is constant time O(1) because arrays store elements in contiguous memory locations with direct address calculation.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q7",
+              "type": "mcq",
+              "question": "What is the time complexity of inserting an element at the end of a dynamic array?",
+              "options": ["O(1)", "O(n)", "O(log n)", "O(1) amortized"],
+              "correctAnswer": "O(1) amortized",
+              "explanation": "Insertion at the end is O(1) amortized because occasional resizing operations (O(n)) are spread across many insertions.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q8",
+              "type": "mcq",
+              "question": "Why is inserting at the beginning of an array O(n)?",
+              "options": ["Need to allocate new memory", "Need to shift all existing elements", "Need to search for position", "Need to check bounds"],
+              "correctAnswer": "Need to shift all existing elements",
+              "explanation": "Inserting at the beginning requires shifting all existing elements one position to the right, making it O(n) operation.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q9",
+              "type": "fillInBlank",
+              "question": "The time complexity of deleting an element from the end of an array is _____.",
+              "correctAnswer": "O(1)",
+              "explanation": "Deleting from the end only requires removing the last element without shifting others, making it O(1).",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q10",
+              "type": "mcq",
+              "question": "What is the time complexity of linear search in an unsorted array?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(n)",
+              "explanation": "Linear search may need to check every element in the worst case, making it O(n).",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q11",
+              "type": "mcq",
+              "question": "What is the time complexity of binary search in a sorted array?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+              "correctAnswer": "O(log n)",
+              "explanation": "Binary search repeatedly divides the search space in half, resulting in O(log n) time complexity.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            }
+          ]
+        },
+        {
+          "id": "array-properties",
+          "title": "Properties",
+          "description": "Essential array properties and common operations",
+          "xpReward": 55,
+          "questions": [
+            {
+              "id": "q12",
+              "type": "fillInBlank",
+              "question": "To find the number of elements in an array, you typically use the _____ property.",
+              "correctAnswer": "length",
+              "explanation": "The 'length' property returns the number of elements in an array and is available in most programming languages.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q13",
+              "type": "mcq",
+              "question": "What happens when you try to access an array element beyond its bounds?",
+              "options": ["Returns null", "Throws an exception or undefined behavior", "Returns 0", "Automatically extends the array"],
+              "correctAnswer": "Throws an exception or undefined behavior",
+              "explanation": "Accessing out-of-bounds indices typically results in an exception (Java), undefined behavior (C/C++), or undefined (JavaScript).",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q14",
+              "type": "mcq",
+              "question": "When initializing an array with zeros, what is typically the most efficient approach?",
+              "options": ["Loop through and set each element", "Use built-in initialization methods", "Copy from another zero array", "Use recursion"],
+              "correctAnswer": "Use built-in initialization methods",
+              "explanation": "Most languages provide efficient built-in methods for array initialization (like Arrays.fill() or calloc()) that are optimized at the system level.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q15",
+              "type": "mcq",
+              "question": "What is the difference between shallow and deep copying of arrays?",
+              "options": ["Shallow copies references, deep copies values", "Shallow is faster, deep is slower", "Shallow copies first half, deep copies all", "No difference"],
+              "correctAnswer": "Shallow copies references, deep copies values",
+              "explanation": "Shallow copy creates a new array but copies references to objects, while deep copy creates new objects as well.",
+              "difficulty": "hard",
+              "topic": "arrays"
+            },
+            {
+              "id": "q16",
+              "type": "fillInBlank",
+              "question": "When comparing two arrays for equality, you typically need to compare both their _____ and corresponding elements.",
+              "correctAnswer": "length",
+              "explanation": "Array equality requires checking that arrays have the same length and that all corresponding elements are equal.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            }
+          ]
+        },
+        {
+          "id": "array-memory",
+          "title": "Memory",
+          "description": "Understanding how arrays manage memory and resizing",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q17",
+              "type": "mcq",
+              "question": "What is a key limitation of fixed-size arrays?",
+              "options": ["Slow access time", "Cannot change size after creation", "Use more memory", "Poor cache performance"],
+              "correctAnswer": "Cannot change size after creation",
+              "explanation": "Fixed-size arrays have their size determined at creation time and cannot be changed, unlike dynamic arrays.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q18",
+              "type": "fillInBlank",
+              "question": "Dynamic arrays like ArrayList in Java or vector in C++ are also called _____ arrays.",
+              "correctAnswer": "resizable",
+              "explanation": "Dynamic/resizable arrays can grow and shrink in size during runtime, unlike fixed-size arrays.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q19",
+              "type": "mcq",
+              "question": "When a dynamic array needs to grow beyond its current capacity, what typically happens?",
+              "options": ["It extends in place", "A new larger array is allocated and elements are copied", "It throws an error", "It compresses existing elements"],
+              "correctAnswer": "A new larger array is allocated and elements are copied",
+              "explanation": "Dynamic arrays typically allocate a new, larger array and copy all existing elements when they need to grow beyond capacity.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q20",
+              "type": "mcq",
+              "question": "What is a common resizing strategy for dynamic arrays when they need to grow?",
+              "options": ["Add one element at a time", "Double the current size", "Add 10 elements", "Triple the size"],
+              "correctAnswer": "Double the current size",
+              "explanation": "Doubling the size is a common strategy that provides good amortized performance - it balances memory usage with the frequency of expensive resize operations.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q21",
+              "type": "fillInBlank",
+              "question": "The process of creating a new larger array and copying elements during resizing is called _____.",
+              "correctAnswer": "reallocation",
+              "explanation": "Reallocation is the process of allocating new memory space and copying data when an array needs to resize.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q22",
+              "type": "mcq",
+              "question": "Why don't dynamic arrays shrink immediately when elements are removed?",
+              "options": ["It's impossible to shrink", "To avoid frequent reallocation", "To maintain order", "To save computation time"],
+              "correctAnswer": "To avoid frequent reallocation",
+              "explanation": "Dynamic arrays typically don't shrink immediately to avoid the overhead of frequent reallocations when elements are added and removed repeatedly.",
+              "difficulty": "hard",
+              "topic": "arrays"
+            }
+          ]
+        },
+        {
           "id": "array-algorithms",
-          "title": "Array Algorithms", 
+          "title": "Algorithms", 
           "description": "Common algorithms using arrays",
           "xpReward": 75,
           "questions": [
             {
-              "id": "q4",
+              "id": "q23",
               "type": "mcq",
               "question": "What is the optimal time complexity for finding two numbers in a sorted array that sum to a target?",
               "options": ["O(n²)", "O(n log n)", "O(n)", "O(log n)"],
@@ -61,7 +270,7 @@
               "topic": "arrays"
             },
             {
-              "id": "q5",
+              "id": "q24",
               "type": "fillInBlank", 
               "question": "The technique that uses two pointers moving towards each other is called the _____ pointer technique.",
               "correctAnswer": "two",
@@ -75,35 +284,289 @@
     },
     {
       "id": "unit-2", 
-      "title": "Linked Lists",
-      "description": "Learn about linked data structures and pointers",
-      "isUnlocked": false,
+      "title": "Hash Maps & Dictionaries",
+      "description": "Master key-value data structures and hashing techniques",
+      "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
         {
-          "id": "linked-list-basics",
-          "title": "Linked List Fundamentals",
-          "description": "Understanding nodes and pointers", 
+          "id": "hashmap-fundamentals",
+          "title": "Basics",
+          "description": "Understanding hash tables and key-value storage",
           "xpReward": 60,
           "questions": [
             {
-              "id": "q6",
+              "id": "q25",
               "type": "mcq",
-              "question": "What is the main advantage of linked lists over arrays?",
-              "options": ["Better cache performance", "Dynamic size", "Faster access", "Less memory usage"],
-              "correctAnswer": "Dynamic size",
-              "explanation": "Linked lists can grow and shrink during runtime, unlike arrays with fixed size.",
+              "question": "What is the primary purpose of a hash map (dictionary)?",
+              "options": ["Store elements in order", "Map keys to values for fast lookup", "Sort data automatically", "Compress data"],
+              "correctAnswer": "Map keys to values for fast lookup",
+              "explanation": "Hash maps are designed to store key-value pairs and provide fast O(1) average-case lookup, insertion, and deletion operations.",
               "difficulty": "easy",
-              "topic": "linked-lists"
+              "topic": "hashmap"
             },
             {
-              "id": "q7",
+              "id": "q26",
               "type": "fillInBlank",
-              "question": "In a singly linked list, each node contains data and a _____ to the next node.",
-              "correctAnswer": "pointer",
-              "explanation": "A pointer (or reference) stores the memory address of the next node in the list.",
-              "difficulty": "easy", 
-              "topic": "linked-lists"
+              "question": "A hash map uses a _____ function to convert keys into array indices.",
+              "correctAnswer": "hash",
+              "explanation": "A hash function takes a key and converts it into an array index where the corresponding value will be stored.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q27",
+              "type": "mcq",
+              "question": "What is the average time complexity for lookup in a hash map?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(1)",
+              "explanation": "Hash maps provide O(1) average-case time complexity for lookup operations due to direct index access via hashing.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q28",
+              "type": "mcq",
+              "question": "What happens when two different keys produce the same hash value?",
+              "options": ["One key overwrites the other", "A collision occurs", "The hash map breaks", "Keys are merged"],
+              "correctAnswer": "A collision occurs",
+              "explanation": "When different keys hash to the same index, it's called a collision. Hash maps need strategies to handle collisions.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q29",
+              "type": "fillInBlank",
+              "question": "Hash maps are also known as hash tables, dictionaries, or _____ arrays.",
+              "correctAnswer": "associative",
+              "explanation": "Associative arrays associate keys with values, allowing you to look up values using their corresponding keys.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            }
+          ]
+        },
+        {
+          "id": "hash-functions",
+          "title": "Functions",
+          "description": "Understanding how hash functions work and their characteristics",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q30",
+              "type": "mcq",
+              "question": "What is a key property that a good hash function should have?",
+              "options": ["Always return the same value", "Distribute keys uniformly across buckets", "Only work with strings", "Be reversible"],
+              "correctAnswer": "Distribute keys uniformly across buckets",
+              "explanation": "A good hash function should distribute keys uniformly to minimize collisions and ensure balanced performance.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q31",
+              "type": "fillInBlank",
+              "question": "A hash function should be _____, meaning the same key always produces the same hash value.",
+              "correctAnswer": "deterministic",
+              "explanation": "Deterministic behavior ensures that looking up the same key will always check the same location in the hash table.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q32",
+              "type": "mcq",
+              "question": "What is the 'avalanche effect' in hash functions?",
+              "options": ["Hash values increase exponentially", "Small input changes cause large output changes", "Function becomes slower", "Memory usage doubles"],
+              "correctAnswer": "Small input changes cause large output changes",
+              "explanation": "The avalanche effect means small changes to input should produce significantly different hash values, improving distribution.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q33",
+              "type": "mcq",
+              "question": "Why should hash functions be fast to compute?",
+              "options": ["To save memory", "To maintain O(1) performance", "To reduce collisions", "To improve security"],
+              "correctAnswer": "To maintain O(1) performance",
+              "explanation": "If hash function computation is slow, it would degrade the overall O(1) performance promise of hash maps.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q34",
+              "type": "fillInBlank",
+              "question": "The result of applying a hash function to a key is called a hash _____ or hash code.",
+              "correctAnswer": "value",
+              "explanation": "The hash value or hash code is the numerical result that determines where to store/find the key-value pair.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            }
+          ]
+        },
+        {
+          "id": "collision-handling",
+          "title": "Collisions",
+          "description": "Methods for handling hash collisions",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q35",
+              "type": "mcq",
+              "question": "What is chaining as a collision resolution method?",
+              "options": ["Linking hash functions together", "Storing collided items in linked lists", "Creating hash chains", "Connecting multiple hash maps"],
+              "correctAnswer": "Storing collided items in linked lists",
+              "explanation": "Chaining handles collisions by maintaining a linked list at each bucket to store all items that hash to the same index.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q36",
+              "type": "mcq",
+              "question": "What is open addressing in hash tables?",
+              "options": ["Tables that can be accessed by anyone", "Finding alternative locations for collided items", "Hash tables without collision handling", "Dynamic resizing of tables"],
+              "correctAnswer": "Finding alternative locations for collided items",
+              "explanation": "Open addressing resolves collisions by probing for alternative empty slots in the hash table when collisions occur.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q37",
+              "type": "fillInBlank",
+              "question": "Linear probing is a type of _____ addressing where we check the next sequential slot.",
+              "correctAnswer": "open",
+              "explanation": "Linear probing is an open addressing technique that checks slots sequentially (i, i+1, i+2, ...) to find an empty position.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q38",
+              "type": "mcq",
+              "question": "What is a disadvantage of linear probing?",
+              "options": ["Uses too much memory", "Creates clustering of elements", "Too slow for large datasets", "Cannot handle string keys"],
+              "correctAnswer": "Creates clustering of elements",
+              "explanation": "Linear probing can create clusters of consecutive occupied slots, leading to longer probe sequences and degraded performance.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q39",
+              "type": "mcq",
+              "question": "What is quadratic probing?",
+              "options": ["Probing with quadratic hash functions", "Checking slots at quadratic intervals (i²)", "Using four probes maximum", "Squaring the key before hashing"],
+              "correctAnswer": "Checking slots at quadratic intervals (i²)",
+              "explanation": "Quadratic probing checks slots at quadratic distances (i, i+1², i+2², i+3², ...) to reduce clustering compared to linear probing.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            }
+          ]
+        },
+        {
+          "id": "hashmap-operations",
+          "title": "Operations",
+          "description": "Core operations and their performance characteristics",
+          "xpReward": 55,
+          "questions": [
+            {
+              "id": "q40",
+              "type": "mcq",
+              "question": "What is the worst-case time complexity for hash map operations?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
+              "correctAnswer": "O(n)",
+              "explanation": "In the worst case (all keys hash to same bucket), hash map operations degrade to O(n) when using chaining or when the table is full with open addressing.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q41",
+              "type": "fillInBlank",
+              "question": "The _____ factor is the ratio of the number of stored elements to the size of the hash table.",
+              "correctAnswer": "load",
+              "explanation": "Load factor = (number of elements) / (table size). It's used to determine when to resize the hash table.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q42",
+              "type": "mcq",
+              "question": "When should a hash map typically be resized?",
+              "options": ["When it's completely full", "When load factor exceeds a threshold (e.g., 0.75)", "Every 100 insertions", "Never"],
+              "correctAnswer": "When load factor exceeds a threshold (e.g., 0.75)",
+              "explanation": "Hash maps typically resize when load factor exceeds 0.75 to maintain good performance and minimize collisions.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q43",
+              "type": "mcq",
+              "question": "What happens during hash map resizing?",
+              "options": ["Only the table size changes", "All elements are rehashed and moved", "Old elements are deleted", "Table is compressed"],
+              "correctAnswer": "All elements are rehashed and moved",
+              "explanation": "During resizing, a new larger table is created and all existing elements are rehashed and inserted into new positions.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q44",
+              "type": "fillInBlank",
+              "question": "Hash map deletion in open addressing often uses _____ deletion to avoid breaking probe sequences.",
+              "correctAnswer": "lazy",
+              "explanation": "Lazy deletion marks slots as 'deleted' rather than truly empty to maintain probe sequences for other elements.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            }
+          ]
+        },
+        {
+          "id": "hashmap-applications",
+          "title": "Applications",
+          "description": "Real-world applications and problem-solving with hash maps",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q45",
+              "type": "mcq",
+              "question": "Which problem is best solved using a hash map?",
+              "options": ["Finding the maximum element", "Checking if array contains duplicates", "Sorting an array", "Finding array length"],
+              "correctAnswer": "Checking if array contains duplicates",
+              "explanation": "Hash maps excel at membership testing and duplicate detection with O(1) average lookup time.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q46",
+              "type": "fillInBlank",
+              "question": "To count the frequency of elements in an array, you would use a hash map where keys are elements and values are their _____.",
+              "correctAnswer": "counts",
+              "explanation": "Frequency counting maps each unique element to how many times it appears in the dataset.",
+              "difficulty": "easy",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q47",
+              "type": "mcq",
+              "question": "What is a common use case for hash maps in caching?",
+              "options": ["Storing cache in order", "Fast key-based cache lookup", "Compressing cached data", "Sorting cache entries"],
+              "correctAnswer": "Fast key-based cache lookup",
+              "explanation": "Hash maps provide O(1) lookup time, making them ideal for caching where fast retrieval by key is essential.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q48",
+              "type": "mcq",
+              "question": "How would you find the first non-repeating character in a string using hash maps?",
+              "options": ["Count frequency, then find first with count=1", "Sort string first", "Use two hash maps", "Check each character individually"],
+              "correctAnswer": "Count frequency, then find first with count=1",
+              "explanation": "First pass counts frequency of each character, second pass finds the first character with frequency 1.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "q49",
+              "type": "fillInBlank",
+              "question": "In database systems, hash maps are commonly used to implement _____ joins for fast lookups.",
+              "correctAnswer": "hash",
+              "explanation": "Hash joins use hash maps to build lookup tables for one relation, then probe with the other relation for matches.",
+              "difficulty": "hard",
+              "topic": "hashmap"
             }
           ]
         }
@@ -113,7 +576,7 @@
       "id": "unit-3",
       "title": "Stack & Queue", 
       "description": "LIFO and FIFO data structures",
-      "isUnlocked": false,
+      "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
         {
@@ -123,7 +586,7 @@
           "xpReward": 55,
           "questions": [
             {
-              "id": "q8",
+              "id": "q50",
               "type": "mcq",
               "question": "What does LIFO stand for in the context of stacks?",
               "options": ["Last In First Out", "Last In Final Out", "Late In Fast Out", "Large In Full Out"],
@@ -140,7 +603,7 @@
       "id": "unit-4",
       "title": "Trees & Graphs",
       "description": "Hierarchical and network data structures", 
-      "isUnlocked": false,
+      "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
         {
@@ -150,7 +613,7 @@
           "xpReward": 80,
           "questions": [
             {
-              "id": "q9",
+              "id": "q51",
               "type": "fillInBlank",
               "question": "In a binary tree, each node can have at most _____ children.",
               "correctAnswer": "two",

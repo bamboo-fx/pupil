@@ -15,21 +15,8 @@ export const SimpleHomeScreen: React.FC<SimpleHomeScreenProps> = ({ navigation }
   const units = questionsData.units as Unit[];
 
   const isLessonUnlocked = (unitIndex: number, lessonIndex: number) => {
-    if (unitIndex === 0 && lessonIndex === 0) return true;
-    
-    // Simple logic: previous lesson must be completed
-    if (lessonIndex > 0) {
-      const previousLesson = units[unitIndex].lessons[lessonIndex - 1];
-      return completedLessons.includes(previousLesson.id);
-    }
-    
-    // First lesson of unit: previous unit must have at least one completed lesson
-    if (unitIndex > 0) {
-      const previousUnit = units[unitIndex - 1];
-      return previousUnit.lessons.some(lesson => completedLessons.includes(lesson.id));
-    }
-    
-    return false;
+    // All lessons are now unlocked - users can access any module
+    return true;
   };
 
   return (

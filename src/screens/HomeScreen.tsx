@@ -41,9 +41,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   });
 
   const isLessonUnlocked = (pathIndex: number) => {
-    if (pathIndex === 0) return true;
-    const previousItem = allLessons[pathIndex - 1];
-    return completedLessons.includes(previousItem.lesson.id);
+    // All lessons are now unlocked - users can access any module
+    return true;
   };
 
   const getCurrentLessonIndex = () => {
