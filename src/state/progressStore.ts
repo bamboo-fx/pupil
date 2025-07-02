@@ -5,6 +5,8 @@ import { UserProgress } from '../types';
 
 interface ProgressState extends UserProgress {
   completeLesson: (lessonId: string, xpGained: number) => void;
+  completeQuestion: (lessonId: string, questionId: string) => void;
+  getLessonProgress: (lessonId: string) => number;
   loseHeart: () => void;
   gainHeart: () => void;
   updateStreak: () => void;
@@ -18,6 +20,7 @@ const initialState: UserProgress = {
   lastStudyDate: new Date().toISOString().split('T')[0],
   completedLessons: [],
   unitProgress: {},
+  lessonQuestionProgress: {}, // Track questions completed per lesson
 };
 
 export const useProgressStore = create<ProgressState>()(
@@ -37,6 +40,28 @@ export const useProgressStore = create<ProgressState>()(
             lastStudyDate: today,
           };
         });
+      },
+
+      completeQuestion: (lessonId: string, questionId: string) => {
+        set((state) => {
+          const currentProgress = state.lessonQuestionProgress[lessonId] || [];
+          if (currentProgress.includes(questionId)) {
+            return state; // Question already completed, no change
+          }
+          
+          return {
+            lessonQuestionProgress: {
+              ...state.lessonQuestionProgress,
+              [lessonId]: [...currentProgress, questionId],
+            },
+          };
+        });
+      },
+
+      getLessonProgress: (lessonId: string) => {
+        const state = get();
+        const completedQuestions = state.lessonQuestionProgress[lessonId] || [];
+        return completedQuestions.length;
       },
       
       loseHeart: () => {

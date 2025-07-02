@@ -20,7 +20,7 @@ interface LessonScreenProps {
 
 export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route }) => {
   const { lesson } = route.params;
-  const { completeLesson, loseHeart, hearts } = useProgressStore();
+  const { completeLesson, completeQuestion, loseHeart, hearts } = useProgressStore();
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -73,6 +73,8 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
     setShowExplanation(true);
     
     if (correct) {
+      // Mark this question as completed - no going back!
+      completeQuestion(lesson.id, currentQuestion.id);
       setCorrectAnswers(prev => prev + 1);
       triggerSuccess();
     } else {

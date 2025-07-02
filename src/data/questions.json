@@ -168,7 +168,7 @@
             },
             {
               "id": "q15",
-              "type": "mcq",
+              "type": "mcq", 
               "question": "What is the difference between shallow and deep copying of arrays?",
               "options": ["Shallow copies references, deep copies values", "Shallow is faster, deep is slower", "Shallow copies first half, deep copies all", "No difference"],
               "correctAnswer": "Shallow copies references, deep copies values",
@@ -536,7 +536,7 @@
               "question": "To count the frequency of elements in an array, you would use a hash map where keys are elements and values are their _____.",
               "correctAnswer": "counts",
               "explanation": "Frequency counting maps each unique element to how many times it appears in the dataset.",
-              "difficulty": "easy",
+              "difficulty": "easy", 
               "topic": "hashmap"
             },
             {
@@ -574,15 +574,15 @@
     },
     {
       "id": "unit-3",
-      "title": "Stack & Queue", 
-      "description": "LIFO and FIFO data structures",
+      "title": "Stacks & Queues", 
+      "description": "LIFO and FIFO data structures for efficient operations",
       "isUnlocked": true,
       "completedLessons": 0,
       "lessons": [
         {
           "id": "stack-basics",
-          "title": "Stack Operations",
-          "description": "Push, pop, and peek operations",
+          "title": "Stack Basics",
+          "description": "Understanding LIFO principle and basic operations",
           "xpReward": 55,
           "questions": [
             {
@@ -593,6 +593,70 @@
               "correctAnswer": "Last In First Out",
               "explanation": "LIFO means the last element added to the stack is the first one to be removed.",
               "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q51",
+              "type": "fillInBlank",
+              "question": "The operation to add an element to the top of a stack is called _____.",
+              "correctAnswer": "push",
+              "explanation": "Push operation adds an element to the top of the stack.",
+              "difficulty": "easy",
+              "topic": "stack"
+            },
+            {
+              "id": "q52",
+              "type": "mcq",
+              "question": "What happens when you try to pop from an empty stack?",
+              "options": ["Returns null", "Stack underflow error", "Returns 0", "Creates new element"],
+              "correctAnswer": "Stack underflow error",
+              "explanation": "Attempting to pop from an empty stack results in a stack underflow error.",
+              "difficulty": "medium",
+              "topic": "stack"
+            }
+          ]
+        },
+        {
+          "id": "queue-basics",
+          "title": "Queue Basics",
+          "description": "Understanding FIFO principle and queue operations",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q53",
+              "type": "mcq",
+              "question": "What does FIFO stand for in the context of queues?",
+              "options": ["First In First Out", "Fast In Fast Out", "Final In First Out", "First In Final Out"],
+              "correctAnswer": "First In First Out",
+              "explanation": "FIFO means the first element added to the queue is the first one to be removed.",
+              "difficulty": "easy",
+              "topic": "queue"
+            },
+            {
+              "id": "q54",
+              "type": "fillInBlank",
+              "question": "Adding an element to the rear of a queue is called _____ operation.",
+              "correctAnswer": "enqueue",
+              "explanation": "Enqueue operation adds an element to the rear/back of the queue.",
+              "difficulty": "easy",
+              "topic": "queue"
+            }
+          ]
+        },
+        {
+          "id": "stack-queue-applications",
+          "title": "Applications",
+          "description": "Real-world uses of stacks and queues",
+          "xpReward": 65,
+          "questions": [
+            {
+              "id": "q55",
+              "type": "mcq",
+              "question": "Which data structure is best for implementing function call management?",
+              "options": ["Queue", "Stack", "Array", "Hash Map"],
+              "correctAnswer": "Stack",
+              "explanation": "Stacks are perfect for function calls due to LIFO - last called function returns first.",
+              "difficulty": "medium",
               "topic": "stack"
             }
           ]
@@ -607,19 +671,170 @@
       "completedLessons": 0,
       "lessons": [
         {
-          "id": "tree-basics",
+          "id": "binary-trees",
           "title": "Binary Trees",
           "description": "Understanding tree structure and terminology",
-          "xpReward": 80,
+          "xpReward": 70,
           "questions": [
             {
-              "id": "q51",
+              "id": "q56",
               "type": "fillInBlank",
               "question": "In a binary tree, each node can have at most _____ children.",
               "correctAnswer": "two",
               "explanation": "Binary trees are restricted to having at most two children per node: left and right.",
               "difficulty": "easy",
               "topic": "trees"
+            },
+            {
+              "id": "q57",
+              "type": "mcq",
+              "question": "What is the root of a tree?",
+              "options": ["The last node", "The node with no parent", "The deepest node", "Any leaf node"],
+              "correctAnswer": "The node with no parent",
+              "explanation": "The root is the topmost node in a tree that has no parent node.",
+              "difficulty": "easy",
+              "topic": "trees"
+            }
+          ]
+        },
+        {
+          "id": "tree-traversal",
+          "title": "Tree Traversal",
+          "description": "Methods for visiting all nodes in a tree",
+          "xpReward": 75,
+          "questions": [
+            {
+              "id": "q58",
+              "type": "mcq",
+              "question": "In which traversal do you visit the root before its children?",
+              "options": ["Inorder", "Preorder", "Postorder", "Level order"],
+              "correctAnswer": "Preorder",
+              "explanation": "Preorder traversal visits root first, then left subtree, then right subtree.",
+              "difficulty": "medium",
+              "topic": "trees"
+            }
+          ]
+        },
+        {
+          "id": "graph-basics",
+          "title": "Graph Basics",
+          "description": "Understanding vertices, edges, and graph types",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q59",
+              "type": "fillInBlank",
+              "question": "A graph consists of _____ (nodes) and edges (connections).",
+              "correctAnswer": "vertices",
+              "explanation": "Graphs are made up of vertices (nodes) connected by edges.",
+              "difficulty": "easy",
+              "topic": "graphs"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-5",
+      "title": "Sorting Algorithms",
+      "description": "Efficient methods for arranging data in order",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "bubble-sort",
+          "title": "Bubble Sort",
+          "description": "Understanding the simplest sorting algorithm",
+          "xpReward": 50,
+          "questions": [
+            {
+              "id": "q60",
+              "type": "mcq",
+              "question": "What is the time complexity of bubble sort?",
+              "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+              "correctAnswer": "O(n²)",
+              "explanation": "Bubble sort has O(n²) time complexity due to nested loops comparing adjacent elements.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            }
+          ]
+        },
+        {
+          "id": "merge-sort",
+          "title": "Merge Sort",
+          "description": "Divide and conquer sorting approach",
+          "xpReward": 70,
+          "questions": [
+            {
+              "id": "q61",
+              "type": "mcq",
+              "question": "What is the time complexity of merge sort?",
+              "options": ["O(n)", "O(n log n)", "O(n²)", "O(log n)"],
+              "correctAnswer": "O(n log n)",
+              "explanation": "Merge sort consistently runs in O(n log n) time using divide and conquer.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            }
+          ]
+        },
+        {
+          "id": "quick-sort",
+          "title": "Quick Sort",
+          "description": "Efficient in-place sorting algorithm",
+          "xpReward": 75,
+          "questions": [
+            {
+              "id": "q62",
+              "type": "fillInBlank",
+              "question": "Quick sort uses a _____ element to partition the array.",
+              "correctAnswer": "pivot",
+              "explanation": "Quick sort selects a pivot element and partitions the array around it.",
+              "difficulty": "medium",
+              "topic": "sorting"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "unit-6",
+      "title": "Dynamic Programming",
+      "description": "Optimizing recursive problems with memoization",
+      "isUnlocked": true,
+      "completedLessons": 0,
+      "lessons": [
+        {
+          "id": "dp-basics",
+          "title": "DP Fundamentals",
+          "description": "Understanding overlapping subproblems and optimal substructure",
+          "xpReward": 80,
+          "questions": [
+            {
+              "id": "q63",
+              "type": "mcq",
+              "question": "What are the two key properties of dynamic programming problems?",
+              "options": ["Fast and efficient", "Overlapping subproblems and optimal substructure", "Recursive and iterative", "Simple and complex"],
+              "correctAnswer": "Overlapping subproblems and optimal substructure",
+              "explanation": "DP problems must have overlapping subproblems and optimal substructure to benefit from memoization.",
+              "difficulty": "hard",
+              "topic": "dp"
+            }
+          ]
+        },
+        {
+          "id": "fibonacci-dp",
+          "title": "Fibonacci DP",
+          "description": "Classic example of dynamic programming optimization",
+          "xpReward": 60,
+          "questions": [
+            {
+              "id": "q64",
+              "type": "fillInBlank",
+              "question": "Memoized fibonacci reduces time complexity from O(2^n) to O(_____)",
+              "correctAnswer": "n",
+              "explanation": "Memoization eliminates redundant calculations, reducing time complexity to linear O(n).",
+              "difficulty": "medium",
+              "topic": "dp"
             }
           ]
         }

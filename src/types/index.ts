@@ -33,4 +33,5 @@ export interface UserProgress {
   lastStudyDate: string;
   completedLessons: string[];
   unitProgress: Record<string, number>; // unit id -> completed lessons count
+  lessonQuestionProgress: Record<string, string[]>; // lesson id -> completed question ids
 }

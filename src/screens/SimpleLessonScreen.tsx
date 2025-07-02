@@ -19,7 +19,7 @@ interface SimpleLessonScreenProps {
 
 export const SimpleLessonScreen: React.FC<SimpleLessonScreenProps> = ({ navigation, route }) => {
   const { lesson } = route.params;
-  const { completeLesson } = useProgressStore();
+  const { completeLesson, completeQuestion } = useProgressStore();
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -53,6 +53,8 @@ export const SimpleLessonScreen: React.FC<SimpleLessonScreenProps> = ({ navigati
     setShowExplanation(true);
     
     if (correct) {
+      // Mark this question as completed - no going back!
+      completeQuestion(lesson.id, currentQuestion.id);
       setCorrectAnswers(prev => prev + 1);
     }
   };
@@ -89,27 +91,7 @@ export const SimpleLessonScreen: React.FC<SimpleLessonScreenProps> = ({ navigati
     fillInAnswer.trim() !== '';
 
   return (
-    <SafeAreaView className="flex-1 bg-blue-500">
-      <View className="px-4 py-3 bg-blue-500">
-        <View className="flex-row items-center">
-          <Pressable onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </Pressable>
-          <Text className="flex-1 text-center text-white text-lg font-bold">{lesson.title}</Text>
-          <Text className="text-white">
-            {currentQuestionIndex + 1}/{lesson.questions.length}
-          </Text>
-        </View>
-        
-        <View className="bg-white/30 rounded-full h-2 mt-3">
-          <View 
-            className="bg-yellow-400 rounded-full h-2"
-            style={{
-              width: `${((currentQuestionIndex + 1) / lesson.questions.length) * 100}%`
-            }}
-          />
-        </View>
-      </View>
+    <SafeAreaView className="flex-1 bg-white">
 
       <ScrollView className="flex-1 bg-white p-4">
         <View className="bg-gray-50 rounded-lg p-6 mb-4">

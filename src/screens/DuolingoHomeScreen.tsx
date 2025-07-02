@@ -1,10 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Dimensions, Animated, PanResponder, Pressable } from 'react-native';
+import { 
+  View, 
+  Text, 
+  ScrollView, 
+  Dimensions, 
+  Animated, 
+  Pressable, 
+  StatusBar,
+  StyleSheet 
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { DuolingoPathNode } from '../components/DuolingoPathNode';
-import { SimplePath } from '../components/SimplePath';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useProgressStore } from '../state/progressStore';
 import questionsData from '../data/questions.json';
 import { Unit, Lesson } from '../types';
@@ -16,361 +23,590 @@ interface DuolingoHomeScreenProps {
 const { width, height } = Dimensions.get('window');
 
 export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigation }) => {
-  const { completedLessons } = useProgressStore();
+  const { completedLessons, getLessonProgress } = useProgressStore();
   const units = questionsData.units as Unit[];
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
-  const [isSwipeActive, setIsSwipeActive] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
-  const swipeAnim = useRef(new Animated.Value(0)).current;
 
   const currentUnit = units[currentUnitIndex];
+  
+  // Create lesson path
+  const createLessonPath = () => {
+    const lessons: Array<{
+      lesson: Lesson;
+      position: { x: number; y: number };
+      isCompleted: boolean;
+      isUnlocked: boolean;
+      isCurrent: boolean;
+      nodeType: 'start' | 'lesson' | 'checkpoint' | 'boss';
+    }> = [];
 
-  // Handle unit navigation
-  const handlePrevUnit = () => {
-    if (currentUnitIndex > 0) {
-      setIsSwipeActive(true);
-      // Animate slide out to right
-      Animated.timing(slideAnim, {
-        toValue: width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentUnitIndex(currentUnitIndex - 1);
-        slideAnim.setValue(-width);
-        // Animate slide in from left
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          setIsSwipeActive(false);
-        });
+    let currentY = 100;
+    const centerX = width / 2;
+    const offsetX = 60;
+    const uniformSpacing = 140; // Consistent spacing between all nodes
+
+    currentUnit.lessons.forEach((lesson, index) => {
+      const isCompleted = completedLessons.includes(lesson.id);
+      const isFirst = index === 0;
+      const isLast = index === currentUnit.lessons.length - 1;
+      
+      // Create zigzag pattern
+      let xPosition = centerX;
+      if (index % 3 === 1) xPosition = centerX + offsetX;
+      if (index % 3 === 2) xPosition = centerX - offsetX;
+      
+      const position = { x: xPosition, y: currentY };
+      
+      // Determine node type
+      let nodeType: 'start' | 'lesson' | 'checkpoint' | 'boss' = 'lesson';
+      if (isFirst) nodeType = 'start';
+      else if (isLast) nodeType = 'boss';
+      else if ((index + 1) % 3 === 0) nodeType = 'checkpoint';
+
+      lessons.push({
+        lesson,
+        position,
+        isCompleted,
+        isUnlocked: true, // All lessons unlocked
+        isCurrent: !isCompleted && lessons.every(l => l.isCompleted || l.lesson.id === lesson.id),
+        nodeType
       });
-    }
-  };
 
-  const handleNextUnit = () => {
-    if (currentUnitIndex < units.length - 1) {
-      setIsSwipeActive(true);
-      // Animate slide out to left
-      Animated.timing(slideAnim, {
-        toValue: -width,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentUnitIndex(currentUnitIndex + 1);
-        slideAnim.setValue(width);
-        // Animate slide in from right
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start(() => {
-          setIsSwipeActive(false);
-        });
-      });
-    }
-  };
-
-  // Create pan responder for swipe gestures
-  const panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      return Math.abs(gestureState.dx) > Math.abs(gestureState.dy) && Math.abs(gestureState.dx) > 15;
-    },
-    onPanResponderGrant: () => {
-      setIsSwipeActive(true);
-    },
-    onPanResponderMove: (evt, gestureState) => {
-      // Follow the gesture with animation
-      swipeAnim.setValue(gestureState.dx);
-    },
-    onPanResponderRelease: (evt, gestureState) => {
-      if (gestureState.dx > 30 && currentUnitIndex > 0) {
-        // Swipe right - previous unit
-        Animated.timing(swipeAnim, {
-          toValue: width,
-          duration: 150,
-          useNativeDriver: true,
-        }).start(() => {
-          setCurrentUnitIndex(currentUnitIndex - 1);
-          swipeAnim.setValue(-width);
-          Animated.timing(swipeAnim, {
-            toValue: 0,
-            duration: 150,
-            useNativeDriver: true,
-          }).start(() => {
-            setIsSwipeActive(false);
-          });
-        });
-      } else if (gestureState.dx < -30 && currentUnitIndex < units.length - 1) {
-        // Swipe left - next unit
-        Animated.timing(swipeAnim, {
-          toValue: -width,
-          duration: 150,
-          useNativeDriver: true,
-        }).start(() => {
-          setCurrentUnitIndex(currentUnitIndex + 1);
-          swipeAnim.setValue(width);
-          Animated.timing(swipeAnim, {
-            toValue: 0,
-            duration: 150,
-            useNativeDriver: true,
-          }).start(() => {
-            setIsSwipeActive(false);
-          });
-        });
-      } else {
-        // Snap back to original position
-        Animated.spring(swipeAnim, {
-          toValue: 0,
-          tension: 200,
-          friction: 8,
-          useNativeDriver: true,
-        }).start(() => {
-          setIsSwipeActive(false);
-        });
-      }
-    },
-  });
-
-  // Create lesson path for current unit
-  const allLessons: Array<{
-    lesson: Lesson;
-    unitTitle: string;
-    unitIndex: number;
-    lessonIndex: number;
-    position: { x: number; y: number };
-    nodeType: 'lesson' | 'checkpoint' | 'boss';
-  }> = [];
-
-  let currentY = 150; // Start position
-  const pathWidth = width - 80; // Leave margin
-  const baseX = width / 2; // Center the path
-
-  currentUnit.lessons.forEach((lesson, lessonIndex) => {
-    // Create a winding path pattern similar to Duolingo
-    const nodeIndex = allLessons.length;
-    let xOffset = 0;
-    
-    // Pattern: center, right, left, center, right, left...
-    const pattern = nodeIndex % 6;
-    if (pattern === 1 || pattern === 4) xOffset = 80;  // Right
-    else if (pattern === 2 || pattern === 5) xOffset = -80; // Left
-    // else center (0)
-
-    const position = {
-      x: baseX + xOffset,
-      y: currentY
-    };
-
-    const nodeType = lessonIndex === currentUnit.lessons.length - 1 && currentUnitIndex < units.length - 1 
-      ? 'boss' 
-      : (lessonIndex + 1) % 3 === 0 
-      ? 'checkpoint' 
-      : 'lesson';
-
-    allLessons.push({
-      lesson,
-      unitTitle: currentUnit.title,
-      unitIndex: currentUnitIndex,
-      lessonIndex,
-      position,
-      nodeType
+      currentY += uniformSpacing; // Uniform spacing between nodes
     });
 
-    currentY += 140; // Increased space between nodes to prevent text overlap
-  });
-
-  const isLessonUnlocked = (pathIndex: number) => {
-    // All lessons are now unlocked - users can access any module
-    return true;
+    return lessons;
   };
 
-  const getCurrentLessonIndex = () => {
-    for (let i = 0; i < allLessons.length; i++) {
-      if (!completedLessons.includes(allLessons[i].lesson.id)) {
-        return i;
-      }
-    }
-    return allLessons.length - 1;
+  const lessonPath = createLessonPath();
+
+  const LessonNode = ({ item }: { item: any }) => {
+    const getNodeColor = () => {
+      if (item.isCompleted) return '#58CC02'; // Green for completed
+      if (item.isCurrent) return '#1CB0F6'; // Blue for current
+      return '#E5E5E5'; // Gray for locked
+    };
+
+    const getNodeSize = () => {
+      // Uniform size for all nodes
+      return 70;
+    };
+
+    const getIcon = () => {
+      if (item.nodeType === 'start') return 'star';
+      if (item.nodeType === 'boss') return 'emoji-events';
+      if (item.nodeType === 'checkpoint') return 'bookmark';
+      return 'lightbulb';
+    };
+
+    // Calculate progress (0-100) based on actual question completion
+    const getProgress = () => {
+      if (item.isCompleted) return 100;
+      
+      const completedQuestions = getLessonProgress(item.lesson.id);
+      const totalQuestions = item.lesson.questions.length;
+      
+      if (completedQuestions === 0) return 0;
+      
+      // Prevent going backwards - once a question is completed, progress is locked
+      const progressPercentage = Math.min(100, (completedQuestions / totalQuestions) * 100);
+      return progressPercentage;
+    };
+
+    const progress = getProgress();
+    const nodeSize = getNodeSize();
+    const strokeWidth = 4;
+    const ringSpacing = 20; // Increased spacing between ring and node
+    const radius = (nodeSize + ringSpacing) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDasharray = circumference;
+    const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+    return (
+      <Pressable
+        style={[
+          styles.lessonNodeContainer,
+          {
+            left: item.position.x - (nodeSize + ringSpacing) / 2,
+            top: item.position.y,
+            width: nodeSize + ringSpacing,
+            height: nodeSize + ringSpacing,
+          }
+        ]}
+        onPress={() => {
+          navigation.navigate('Lesson', {
+            lessonId: item.lesson.id,
+            lesson: item.lesson
+          });
+        }}
+      >
+        {/* Progress Ring */}
+        {progress > 0 && (
+          <View style={styles.progressRing}>
+            {/* Background ring */}
+            <View
+              style={[
+                styles.progressCircle,
+                {
+                  width: nodeSize + ringSpacing,
+                  height: nodeSize + ringSpacing,
+                  borderRadius: (nodeSize + ringSpacing) / 2,
+                  borderWidth: strokeWidth,
+                  borderColor: '#E5E5E5',
+                }
+              ]}
+            />
+            {/* Progress arc using multiple segments for smooth animation */}
+            {Array.from({ length: Math.ceil(progress / 2.5) }).map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.progressSegment,
+                  {
+                    width: nodeSize + ringSpacing,
+                    height: nodeSize + ringSpacing,
+                    borderRadius: (nodeSize + ringSpacing) / 2,
+                    borderWidth: strokeWidth,
+                    borderColor: 'transparent',
+                    borderTopColor: item.isCompleted ? '#58CC02' : '#1CB0F6',
+                    transform: [
+                      { rotate: `${index * 9 - 90}deg` }
+                    ],
+                    opacity: index * 2.5 <= progress ? 1 : 0,
+                  }
+                ]}
+              />
+            ))}
+          </View>
+        )}
+
+        {/* Main Node */}
+        <View
+          style={[
+            styles.lessonNode,
+            {
+              width: nodeSize,
+              height: nodeSize,
+              backgroundColor: getNodeColor(),
+              position: 'absolute',
+              top: ringSpacing / 2,
+              left: ringSpacing / 2,
+            }
+          ]}
+        >
+                  <View style={styles.nodeInner}>
+          <MaterialIcons 
+            name={getIcon()} 
+            size={nodeSize * 0.4} 
+            color="white" 
+          />
+        </View>
+        </View>
+
+        {item.isCompleted && (
+          <View style={[styles.checkmark, { bottom: 0, right: 0 }]}>
+            <MaterialIcons name="check" size={16} color="white" />
+          </View>
+        )}
+        {/* Lesson Title Label */}
+        <View style={[styles.lessonLabel, { 
+          top: nodeSize + ringSpacing / 2 + 10,
+          width: 100,
+          left: ((nodeSize + ringSpacing) - 100) / 2,
+        }]}>
+          <Text style={styles.lessonText}>{item.lesson.title}</Text>
+        </View>
+
+        {item.nodeType === 'start' && (
+          <View style={[styles.startLabel, { top: -40 }]}>
+            <Text style={styles.startText}>START</Text>
+          </View>
+        )}
+      </Pressable>
+    );
   };
 
-  const currentLessonIndex = getCurrentLessonIndex();
 
-  // Auto-scroll to current lesson when unit changes
-  useEffect(() => {
-    if (currentLessonIndex >= 0 && scrollViewRef.current) {
-      const currentY = allLessons[currentLessonIndex]?.position.y || 0;
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({
-          y: Math.max(0, currentY - height / 2),
-          animated: true
-        });
-      }, 100);
-    }
-
-    // Fade in animation
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 500,
-      useNativeDriver: true,
-    }).start();
-  }, [currentUnitIndex, currentLessonIndex]);
 
   return (
-    <View className="flex-1 bg-blue-500" {...panResponder.panHandlers}>
-      <SafeAreaView className="flex-1">
-        {/* Header with Unit Navigation */}
-        <View className="px-4 py-3 bg-blue-500">
-          {/* Unit Navigation */}
-          <View className="flex-row items-center justify-between">
-            <Pressable 
-              className={`p-2 rounded-full ${currentUnitIndex > 0 ? 'bg-white/20' : 'bg-white/10'}`}
-              onPress={handlePrevUnit}
-              disabled={currentUnitIndex === 0}
-            >
-              <Ionicons 
-                name="chevron-back" 
-                size={24} 
-                color={currentUnitIndex > 0 ? "white" : "rgba(255,255,255,0.5)"} 
-              />
-            </Pressable>
-            
-            <View className="flex-1 mx-4">
-              <Text className="text-white text-lg font-bold text-center">
-                Unit {currentUnitIndex + 1} of {units.length}
-              </Text>
-            </View>
-            
-            <Pressable 
-              className={`p-2 rounded-full ${currentUnitIndex < units.length - 1 ? 'bg-white/20' : 'bg-white/10'}`}
-              onPress={handleNextUnit}
-              disabled={currentUnitIndex === units.length - 1}
-            >
-              <Ionicons 
-                name="chevron-forward" 
-                size={24} 
-                color={currentUnitIndex < units.length - 1 ? "white" : "rgba(255,255,255,0.5)"} 
-              />
-            </Pressable>
-          </View>
-        </View>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
+      <LinearGradient
+        colors={['#87CEEB', '#E0F6FF']}
+        style={styles.container}
+      >
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+                                {/* Unit Info at Top */}
+           <View style={styles.topUnitInfo}>
+             <View style={styles.topUnitHeader}>
+               <Pressable 
+                 style={styles.hamburgerMenu}
+                 onPress={() => setIsMenuOpen(!isMenuOpen)}
+               >
+                 <MaterialIcons name="menu" size={20} color="#333" />
+               </Pressable>
+               <View style={styles.unitTitleContainer}>
+                 <Text style={styles.topUnitTitle}>{currentUnit.title}</Text>
+                 <Text style={styles.topUnitDescription}>{currentUnit.description}</Text>
+               </View>
+             </View>
+           </View>
 
-        {/* Current Unit Header */}
-        <Animated.View 
-          className="px-4 pb-4 bg-blue-500"
-          style={{
-            transform: [{ 
-              translateX: Animated.add(slideAnim, swipeAnim) 
-            }]
-          }}
-        >
-          <Text className="text-white text-xl font-bold">{currentUnit.title}</Text>
-          <Text className="text-white/90 text-base">{currentUnit.description}</Text>
-        </Animated.View>
+           {/* Unit Selection Menu */}
+           {isMenuOpen && (
+             <View style={styles.menuOverlay}>
+               <View style={styles.menuContainer}>
+                 <Text style={styles.menuTitle}>Select Unit</Text>
+                 {units.map((unit, index) => (
+                   <Pressable
+                     key={unit.id}
+                     style={[
+                       styles.menuItem,
+                       { backgroundColor: index === currentUnitIndex ? '#E3F2FD' : 'transparent' }
+                     ]}
+                     onPress={() => {
+                       setCurrentUnitIndex(index);
+                       setIsMenuOpen(false);
+                     }}
+                   >
+                     <View style={styles.menuItemContent}>
+                       <Text style={[
+                         styles.menuItemTitle,
+                         { color: index === currentUnitIndex ? '#1CB0F6' : '#333' }
+                       ]}>
+                         Unit {index + 1}: {unit.title}
+                       </Text>
+                       <Text style={styles.menuItemDescription}>
+                         {unit.description}
+                       </Text>
+                     </View>
+                     {index === currentUnitIndex && (
+                       <MaterialIcons name="check" size={20} color="#1CB0F6" />
+                     )}
+                   </Pressable>
+                 ))}
+               </View>
+             </View>
+           )}
 
-        {/* Path Area */}
-        <View className="flex-1 bg-white">
-          <ScrollView
-            ref={scrollViewRef}
-            className="flex-1"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 200 }}
-            scrollEnabled={!isSwipeActive} // Disable scroll during swipe
-          >
-            <Animated.View 
-              style={{ 
-                height: currentY + 100,
-                opacity: fadeAnim,
-                transform: [
-                  {
-                    translateY: fadeAnim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [50, 0],
-                    })
-                  },
-                  { 
-                    translateX: Animated.add(slideAnim, swipeAnim)
-                  }
-                ]
-              }}
-            >
-              {/* Render path connections */}
-              {allLessons.map((item, index) => {
-                if (index === 0) return null;
-                
-                const prevItem = allLessons[index - 1];
-                const isCompleted = completedLessons.includes(prevItem.lesson.id);
-                const isActive = index <= currentLessonIndex + 1;
-                
-                return (
-                  <SimplePath
-                    key={`connection-${index}`}
-                    startPos={prevItem.position}
-                    endPos={item.position}
-                    isCompleted={isCompleted}
-                    isActive={isActive}
-                  />
-                );
-              })}
+           {/* Header with Unit Navigation */}
+           <View style={styles.header}>
+             <Pressable 
+               style={styles.unitNavButton}
+               onPress={() => currentUnitIndex > 0 && setCurrentUnitIndex(currentUnitIndex - 1)}
+               disabled={currentUnitIndex === 0}
+             >
+               <MaterialIcons 
+                 name="chevron-left" 
+                 size={24} 
+                 color={currentUnitIndex > 0 ? "#1CB0F6" : "#CCCCCC"} 
+               />
+             </Pressable>
+             
+             <View style={styles.centerContent}>
+               <View style={styles.streakContainer}>
+                 <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
+                 <Text style={styles.streakText}>0</Text>
+               </View>
+               <View style={styles.gemsContainer}>
+                 <MaterialIcons name="diamond" size={20} color="#1CB0F6" />
+                 <Text style={styles.gemsText}>500</Text>
+               </View>
+             </View>
+             
+             <Pressable 
+               style={styles.unitNavButton}
+               onPress={() => currentUnitIndex < units.length - 1 && setCurrentUnitIndex(currentUnitIndex + 1)}
+               disabled={currentUnitIndex === units.length - 1}
+             >
+               <MaterialIcons 
+                 name="chevron-right" 
+                 size={24} 
+                 color={currentUnitIndex < units.length - 1 ? "#1CB0F6" : "#CCCCCC"} 
+               />
+             </Pressable>
+           </View>
 
-              {/* Render lesson nodes */}
-              {allLessons.map((item, pathIndex) => {
-                const isCompleted = completedLessons.includes(item.lesson.id);
-                const isUnlocked = isLessonUnlocked(pathIndex);
-                const isCurrent = pathIndex === currentLessonIndex && isUnlocked;
-                
-                return (
-                  <DuolingoPathNode
-                    key={item.lesson.id}
-                    isCompleted={isCompleted}
-                    isUnlocked={isUnlocked}
-                    isCurrent={isCurrent}
-                    title={item.lesson.title}
-                    position={item.position}
-                    nodeType={item.nodeType}
-                    onPress={() => {
-                      if (item.nodeType === 'boss') {
-                        // Navigate to boss battle
-                        navigation.navigate('BossBattle', {
-                          unitTitle: item.unitTitle,
-                          unitIndex: item.unitIndex
-                        });
-                      } else {
-                        navigation.navigate('Lesson', {
-                          lessonId: item.lesson.id,
-                          lesson: item.lesson
-                        });
-                      }
-                    }}
-                  />
-                );
-              })}
-            </Animated.View>
-          </ScrollView>
-
-          {/* Unit indicator dots */}
-          <View className="absolute bottom-4 left-0 right-0 flex-row justify-center">
-            <View className="flex-row space-x-2">
-              {units.map((_, index) => (
-                <Animated.View
-                  key={index}
-                  className={`w-2 h-2 rounded-full ${
-                    index === currentUnitIndex ? 'bg-blue-500' : 'bg-gray-300'
-                  }`}
-                  style={{
-                    transform: [{
-                      scale: index === currentUnitIndex ? 1.2 : 1
-                    }]
-                  }}
-                />
-              ))}
-            </View>
-          </View>
-        </View>
-      </SafeAreaView>
-    </View>
+          {/* Path */}
+                     <ScrollView
+             ref={scrollViewRef}
+             style={styles.scrollView}
+             contentContainerStyle={styles.scrollContent}
+             showsVerticalScrollIndicator={false}
+           >
+             <View style={styles.pathArea}>
+               {/* Draw lesson nodes */}
+               {lessonPath.map((item, index) => (
+                 <LessonNode key={item.lesson.id} item={item} />
+               ))}
+             </View>
+           </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  topUnitInfo: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    backgroundColor: 'transparent',
+  },
+  topUnitHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  hamburgerMenu: {
+    padding: 4,
+  },
+  menuOverlay: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+    right: 20,
+    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderRadius: 12,
+  },
+  menuContainer: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  menuTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  menuItemContent: {
+    flex: 1,
+  },
+  menuItemTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  menuItemDescription: {
+    fontSize: 12,
+    color: '#666',
+  },
+  unitTitleContainer: {
+    flex: 1,
+  },
+  topUnitTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 2,
+  },
+  topUnitDescription: {
+    fontSize: 12,
+    color: '#666',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  unitNavButton: {
+    padding: 8,
+  },
+  centerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  streakContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  streakText: {
+    marginLeft: 4,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  gemsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  gemsText: {
+    marginLeft: 4,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  unitInfo: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+  },
+  unitTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  unitDescription: {
+    fontSize: 16,
+    color: '#666',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
+  },
+  pathArea: {
+    flex: 1,
+    minHeight: height * 0.8,
+    position: 'relative',
+  },
+  lessonNodeContainer: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressRing: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  progressCircle: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+  },
+  progressSegment: {
+    position: 'absolute',
+    backgroundColor: 'transparent',
+    borderRadius: 2, // Rounded ends for progress segments
+  },
+  lessonNode: {
+    borderRadius: 50,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nodeInner: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkmark: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: '#58CC02',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: 'white',
+  },
+  startLabel: {
+    position: 'absolute',
+    top: -30,
+    backgroundColor: 'white',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#58CC02',
+  },
+  startText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#58CC02',
+  },
+  lessonLabel: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  lessonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#333',
+    textAlign: 'center',
+  },
+
+  bottomNav: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    paddingTop: 10,
+    paddingBottom: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
+  },
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 5,
+  },
+  navText: {
+    fontSize: 12,
+    marginTop: 4,
+    color: '#AFAFAF',
+  },
+});
