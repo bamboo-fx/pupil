@@ -9,6 +9,7 @@ import {
   StatusBar,
   StyleSheet 
 } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -28,6 +29,57 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const slideAnim = useRef(new Animated.Value(-width)).current; // Start off-screen
+
+  const onGestureEvent = (event: any) => {
+    const { translationX } = event.nativeEvent;
+    
+    // Only respond to rightward swipes (positive translationX)
+    if (translationX > 0) {
+      if (!isMenuOpen) {
+        setIsMenuOpen(true);
+      }
+      // Map translationX (0 to width) to slideAnim (-width to 0)
+      const clampedTranslation = Math.max(-width, -width + translationX);
+      slideAnim.setValue(clampedTranslation);
+    }
+  };
+
+  const onHandlerStateChange = (event: any) => {
+    // Show the drawer immediately when gesture begins
+    if (event.nativeEvent.state === State.BEGAN) {
+      if (!isMenuOpen) {
+        setIsMenuOpen(true);
+        // Ensure it starts fully closed
+        slideAnim.setValue(-width);
+      }
+    }
+    if (event.nativeEvent.state === State.END) {
+      const { translationX } = event.nativeEvent;
+      
+      // If dragged more than 20%, animate to fully open
+      if (translationX > width * 0.2) {
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 80,
+          useNativeDriver: true,
+        }).start();
+      } else {
+        // Close the menu
+        closeMenu();
+      }
+    }
+  };
+
+  const openMenu = () => {
+    setIsMenuOpen(true);
+    slideAnim.setValue(0); // Instantly show the drawer
+  };
+
+  const closeMenu = () => {
+    slideAnim.setValue(-width);
+    setIsMenuOpen(false);
+  };
 
   const currentUnit = units[currentUnitIndex];
   
@@ -80,9 +132,9 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
     return lessons;
   };
 
-  const lessonPath = createLessonPath();
+  const lessonPath = React.useMemo(() => createLessonPath(), [currentUnit, completedLessons, getLessonProgress]);
 
-  const LessonNode = ({ item }: { item: any }) => {
+  const LessonNode = React.memo(({ item }: { item: any }) => {
     const getNodeColor = () => {
       if (item.isCompleted) return '#58CC02'; // Green for completed
       if (item.isCurrent) return '#1CB0F6'; // Blue for current
@@ -143,44 +195,42 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
         }}
       >
         {/* Progress Ring */}
-        {progress > 0 && (
-          <View style={styles.progressRing}>
-            {/* Background ring */}
+        <View style={styles.progressRing}>
+          {/* Background ring - always visible */}
+          <View
+            style={[
+              styles.progressCircle,
+              {
+                width: nodeSize + ringSpacing,
+                height: nodeSize + ringSpacing,
+                borderRadius: (nodeSize + ringSpacing) / 2,
+                borderWidth: strokeWidth,
+                borderColor: '#E5E5E5',
+              }
+            ]}
+          />
+          {/* Progress arc using fewer segments for better performance */}
+          {progress > 0 && Array.from({ length: Math.min(Math.ceil(progress / 10), 10) }).map((_, index) => (
             <View
+              key={index}
               style={[
-                styles.progressCircle,
+                styles.progressSegment,
                 {
                   width: nodeSize + ringSpacing,
                   height: nodeSize + ringSpacing,
                   borderRadius: (nodeSize + ringSpacing) / 2,
                   borderWidth: strokeWidth,
-                  borderColor: '#E5E5E5',
+                  borderColor: 'transparent',
+                  borderTopColor: item.isCompleted ? '#58CC02' : '#1CB0F6',
+                  transform: [
+                    { rotate: `${index * 36 - 90}deg` }
+                  ],
+                  opacity: index * 10 <= progress ? 1 : 0,
                 }
               ]}
             />
-            {/* Progress arc using multiple segments for smooth animation */}
-            {Array.from({ length: Math.ceil(progress / 2.5) }).map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.progressSegment,
-                  {
-                    width: nodeSize + ringSpacing,
-                    height: nodeSize + ringSpacing,
-                    borderRadius: (nodeSize + ringSpacing) / 2,
-                    borderWidth: strokeWidth,
-                    borderColor: 'transparent',
-                    borderTopColor: item.isCompleted ? '#58CC02' : '#1CB0F6',
-                    transform: [
-                      { rotate: `${index * 9 - 90}deg` }
-                    ],
-                    opacity: index * 2.5 <= progress ? 1 : 0,
-                  }
-                ]}
-              />
-            ))}
-          </View>
-        )}
+          ))}
+        </View>
 
         {/* Main Node */}
         <View
@@ -200,7 +250,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           <MaterialIcons 
             name={getIcon()} 
             size={nodeSize * 0.4} 
-            color="white" 
+            color={item.isCompleted || item.isCurrent ? "white" : "#999999"} 
           />
         </View>
         </View>
@@ -215,6 +265,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           top: nodeSize + ringSpacing / 2 + (progress > 0 ? 18 : 10),
           width: 100,
           left: ((nodeSize + ringSpacing) - 100) / 2,
+          marginTop: item.isCompleted ? 0 : 8,
         }]}>
           <Text style={styles.lessonText}>{item.lesson.title}</Text>
         </View>
@@ -226,7 +277,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
         )}
       </Pressable>
     );
-  };
+  });
 
 
 
@@ -240,7 +291,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
              <View style={styles.topUnitHeader}>
                <Pressable 
                  style={styles.hamburgerMenu}
-                 onPress={() => setIsMenuOpen(!isMenuOpen)}
+                 onPress={openMenu}
                >
                  <MaterialIcons name="menu" size={20} color="#333" />
                </Pressable>
@@ -260,15 +311,27 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
              </View>
            </View>
 
-           {/* Unit Selection Full-Screen Menu */}
-           {isMenuOpen && (
-             <View style={styles.fullScreenMenu}>
-               <Pressable style={styles.menuCloseButton} onPress={() => setIsMenuOpen(false)}>
-                 <MaterialIcons name="close" size={28} color="#333" />
-               </Pressable>
-               <Text style={styles.menuTitle}>Select Unit</Text>
+           {/* Animated Drawer Menu */}
+             <Animated.View 
+               pointerEvents={isMenuOpen ? 'auto' : 'none'}
+               style={[
+                 styles.animatedDrawer,
+                 {
+                   transform: [{ translateX: slideAnim }],
+                 }
+               ]}
+             >
+               {/* Header */}
+               <View style={styles.drawerHeader}>
+                 <Text style={styles.drawerTitle}>Select Unit</Text>
+                 <Pressable style={styles.drawerCloseButton} onPress={closeMenu}>
+                   <MaterialIcons name="close" size={24} color="#666" />
+                 </Pressable>
+               </View>
+               
+               {/* Units List */}
                <ScrollView
-                 style={{ flex: 1 }}
+                 style={styles.drawerScrollView}
                  contentContainerStyle={styles.drawerScrollContent}
                  showsVerticalScrollIndicator={false}
                >
@@ -276,33 +339,45 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                    <Pressable
                      key={unit.id}
                      style={[
-                       styles.menuItem,
+                       styles.drawerMenuItem,
                        { backgroundColor: index === currentUnitIndex ? '#E3F2FD' : 'transparent' }
                      ]}
                      onPress={() => {
                        setCurrentUnitIndex(index);
-                       setIsMenuOpen(false);
+                       closeMenu();
                      }}
                    >
-                     <View style={styles.menuItemContent}>
-                       <Text style={[
-                         styles.menuItemTitle,
-                         { color: index === currentUnitIndex ? '#1CB0F6' : '#333' }
+                     <View style={styles.drawerMenuItemContent}>
+                       <View style={[
+                         styles.unitIcon,
+                         { backgroundColor: index === currentUnitIndex ? '#1CB0F6' : '#E5E5E5' }
                        ]}>
-                         Unit {index + 1}: {unit.title}
-                       </Text>
-                       <Text style={styles.menuItemDescription}>
-                         {unit.description}
-                       </Text>
+                         <Text style={[
+                           styles.unitIconText,
+                           { color: index === currentUnitIndex ? 'white' : '#666' }
+                         ]}>
+                           {index + 1}
+                         </Text>
+                       </View>
+                       <View style={styles.unitInfoSection}>
+                         <Text style={[
+                           styles.drawerMenuItemTitle,
+                           { color: index === currentUnitIndex ? '#1CB0F6' : '#333' }
+                         ]}>
+                           {unit.title}
+                         </Text>
+                         <Text style={styles.drawerMenuItemDescription}>
+                           {unit.description}
+                         </Text>
+                       </View>
                      </View>
                      {index === currentUnitIndex && (
-                       <MaterialIcons name="check" size={20} color="#1CB0F6" />
+                       <MaterialIcons name="check-circle" size={24} color="#1CB0F6" />
                      )}
                    </Pressable>
                  ))}
                </ScrollView>
-             </View>
-           )}
+             </Animated.View>
 
            {/* Header with Unit Navigation */}
            <View style={styles.header}>
@@ -310,19 +385,27 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
            </View>
 
           {/* Path */}
-                     <ScrollView
-             ref={scrollViewRef}
-             style={styles.scrollView}
-             contentContainerStyle={styles.scrollContent}
-             showsVerticalScrollIndicator={false}
-           >
-             <View style={styles.pathArea}>
-               {/* Draw lesson nodes */}
-               {lessonPath.map((item, index) => (
-                 <LessonNode key={item.lesson.id} item={item} />
-               ))}
-             </View>
-           </ScrollView>
+          <PanGestureHandler 
+            onGestureEvent={onGestureEvent}
+            onHandlerStateChange={onHandlerStateChange}
+            minDist={0}
+          >
+            <View style={{ flex: 1 }}>
+              <ScrollView
+                ref={scrollViewRef}
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.pathArea}>
+                  {/* Draw lesson nodes */}
+                  {lessonPath.map((item, index) => (
+                    <LessonNode key={item.lesson.id} item={item} />
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          </PanGestureHandler>
         </SafeAreaView>
       </View>
     </>
@@ -351,52 +434,7 @@ const styles = StyleSheet.create({
   hamburgerMenu: {
     padding: 4,
   },
-  menuOverlay: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    right: 20,
-    zIndex: 1000,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderRadius: 12,
-  },
-  menuContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
-  },
-  menuTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    marginBottom: 4,
-  },
-  menuItemContent: {
-    flex: 1,
-  },
-  menuItemTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  menuItemDescription: {
-    fontSize: 12,
-    color: '#666',
-  },
+
   unitTitleContainer: {
     flex: 1,
   },
@@ -463,7 +501,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
-  unitInfo: {
+  unitInfoSection: {
     paddingHorizontal: 20,
     paddingVertical: 15,
   },
@@ -481,7 +519,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 150,
   },
   pathArea: {
     flex: 1,
@@ -511,8 +549,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
     elevation: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -600,45 +638,79 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.2)',
     zIndex: 1000,
   },
-  drawerContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 280,
-    height: '100%',
-    backgroundColor: 'white',
-    zIndex: 1100,
-    paddingTop: 40,
-    paddingHorizontal: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 12,
-    borderTopRightRadius: 16,
-    borderBottomRightRadius: 16,
-    display: 'flex',
-  },
   drawerScrollContent: {
-    paddingBottom: 40,
-    paddingLeft: 12,
+    paddingBottom: 30,
+    paddingTop: 8,
   },
-  fullScreenMenu: {
+  animatedDrawer: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     backgroundColor: 'white',
-    zIndex: 2000,
-    paddingTop: 52,
-    paddingHorizontal: 12,
+    zIndex: 1100,
+    shadowColor: '#000',
+    shadowOffset: { width: 4, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 16,
   },
-  menuCloseButton: {
-    position: 'absolute',
-    top: 38,
-    right: 24,
-    zIndex: 2100,
+  drawerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingTop: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  drawerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  drawerCloseButton: {
     padding: 8,
+  },
+  drawerScrollView: {
+    flex: 1,
+  },
+  drawerMenuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginHorizontal: 16,
+    marginVertical: 2,
+  },
+  drawerMenuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  unitIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  unitIconText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  drawerMenuItemTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  drawerMenuItemDescription: {
+    fontSize: 12,
+    color: '#666',
+    lineHeight: 16,
   },
 });
