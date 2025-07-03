@@ -7,8 +7,6 @@ interface ProgressState extends UserProgress {
   completeLesson: (lessonId: string, xpGained: number) => void;
   completeQuestion: (lessonId: string, questionId: string) => void;
   getLessonProgress: (lessonId: string) => number;
-  loseHeart: () => void;
-  gainHeart: () => void;
   updateStreak: () => void;
   resetProgress: () => void;
 }
@@ -16,7 +14,6 @@ interface ProgressState extends UserProgress {
 const initialState: UserProgress = {
   totalXp: 0,
   streak: 0,
-  hearts: 5,
   lastStudyDate: new Date().toISOString().split('T')[0],
   completedLessons: [],
   unitProgress: {},
@@ -62,18 +59,6 @@ export const useProgressStore = create<ProgressState>()(
         const state = get();
         const completedQuestions = state.lessonQuestionProgress[lessonId] || [];
         return completedQuestions.length;
-      },
-      
-      loseHeart: () => {
-        set((state) => ({
-          hearts: Math.max(0, state.hearts - 1),
-        }));
-      },
-      
-      gainHeart: () => {
-        set((state) => ({
-          hearts: Math.min(5, state.hearts + 1),
-        }));
       },
       
       updateStreak: () => {

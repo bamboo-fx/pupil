@@ -29,7 +29,6 @@ export interface Unit {
 export interface UserProgress {
   totalXp: number;
   streak: number;
-  hearts: number;
   lastStudyDate: string;
   completedLessons: string[];
   unitProgress: Record<string, number>; // unit id -> completed lessons count

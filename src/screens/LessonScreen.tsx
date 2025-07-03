@@ -19,7 +19,7 @@ interface LessonScreenProps {
 
 export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route }) => {
   const { lesson } = route.params;
-  const { completeLesson, completeQuestion, loseHeart, hearts } = useProgressStore();
+  const { completeLesson, completeQuestion } = useProgressStore();
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
@@ -52,11 +52,6 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
   };
 
   const handleAnswerSubmit = () => {
-    if (hearts <= 0) {
-      Alert.alert("No Hearts Left", "You need hearts to continue learning!");
-      return;
-    }
-
     const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
     
     console.log('Submitting answer:', {
@@ -78,7 +73,6 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
       setTotalXpEarned(prev => prev + xpForThisQuestion);
       triggerSuccess();
     } else {
-      loseHeart();
       triggerShake();
     }
     

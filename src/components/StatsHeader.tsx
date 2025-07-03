@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useProgressStore } from '../state/progressStore';
 
 export const StatsHeader: React.FC = () => {
-  const { totalXp, streak, hearts } = useProgressStore();
+  const { totalXp, streak } = useProgressStore();
 
   return (
     <View className="flex-row justify-between items-center px-4 py-3 bg-green-500">
@@ -22,11 +22,6 @@ export const StatsHeader: React.FC = () => {
         <View className="flex-row items-center">
           <Ionicons name="diamond" size={20} color="#00D4FF" />
           <Text className="text-white font-bold ml-1">{totalXp}</Text>
-        </View>
-        
-        <View className="flex-row items-center">
-          <Ionicons name="heart" size={20} color="#FF6B9D" />
-          <Text className="text-white font-bold ml-1">{hearts}</Text>
         </View>
       </View>
     </View>

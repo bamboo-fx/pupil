@@ -86,21 +86,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         <ScrollView 
           className="flex-1" 
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 20 }}
+          contentContainerStyle={{ 
+            paddingTop: 20,
+            paddingBottom: 200,
+            minHeight: '100%'
+          }}
+          style={{ flex: 1 }}
+          nestedScrollEnabled={true}
         >
-          {/* Game Title */}
-          <View className="items-center mb-8">
-            <LinearGradient
-              colors={['#FFD700', '#FFA500']}
-              className="px-6 py-3 rounded-full"
-            >
-              <Text className="text-white text-2xl font-bold">🧠 DSA Quest</Text>
-            </LinearGradient>
-            <Text className="text-gray-700 text-center mt-2 text-lg font-medium">
-              Master Data Structures & Algorithms
-            </Text>
-          </View>
-
           {/* Game Path */}
           <View className="px-4">
             {allLessons.map((item, pathIndex) => {
@@ -145,6 +138,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
             })}
           </View>
 
+          {/* Debug info */}
+          <View className="items-center mt-8 mb-4">
+            <Text className="text-gray-600 text-sm">
+              Total lessons: {allLessons.length}
+            </Text>
+          </View>
+
           {/* Completion Message */}
           {completedLessons.length === allLessons.length && (
             <View className="items-center mt-12 mb-8">
@@ -161,8 +161,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               </LinearGradient>
             </View>
           )}
-          
-          <View className="h-32" />
+
+          {/* Extra bottom spacing to ensure scrollability */}
+          <View style={{ height: 150 }} />
         </ScrollView>
       </LinearGradient>
     </SafeAreaView>

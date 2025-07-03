@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useProgressStore } from '../state/progressStore';
 
 export const TestScreen: React.FC = () => {
-  const { totalXp, streak, hearts, completedLessons } = useProgressStore();
+  const { totalXp, streak, completedLessons } = useProgressStore();
 
   return (
     <SafeAreaView className="flex-1 bg-blue-500">
@@ -27,11 +27,6 @@ export const TestScreen: React.FC = () => {
             <View className="flex-row justify-between">
               <Text className="text-gray-700">🔥 Streak:</Text>
               <Text className="font-bold text-orange-600">{streak}</Text>
-            </View>
-            
-            <View className="flex-row justify-between">
-              <Text className="text-gray-700">❤️ Hearts:</Text>
-              <Text className="font-bold text-pink-600">{hearts}</Text>
             </View>
             
             <View className="flex-row justify-between">

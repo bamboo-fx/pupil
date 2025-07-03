@@ -11,7 +11,7 @@ interface SimpleHomeScreenProps {
 }
 
 export const SimpleHomeScreen: React.FC<SimpleHomeScreenProps> = ({ navigation }) => {
-  const { completedLessons, totalXp, streak, hearts } = useProgressStore();
+  const { completedLessons, totalXp, streak } = useProgressStore();
   const units = questionsData.units as Unit[];
 
   const isLessonUnlocked = (unitIndex: number, lessonIndex: number) => {
@@ -31,9 +31,6 @@ export const SimpleHomeScreen: React.FC<SimpleHomeScreenProps> = ({ navigation }
             </View>
             <View className="flex-row items-center bg-blue-500 rounded-full px-3 py-1">
               <Text className="text-white font-bold">💎 {totalXp}</Text>
-            </View>
-            <View className="flex-row items-center bg-pink-500 rounded-full px-3 py-1">
-              <Text className="text-white font-bold">❤️ {hearts}</Text>
             </View>
           </View>
         </View>

@@ -7,12 +7,11 @@ import { GameStatsHeader } from '../components/GameStatsHeader';
 import { useProgressStore } from '../state/progressStore';
 
 export const ProfileScreen: React.FC = () => {
-  const { totalXp, streak, hearts, completedLessons, resetProgress } = useProgressStore();
+  const { totalXp, streak, completedLessons, resetProgress } = useProgressStore();
 
   const statsData = [
     { emoji: '💎', label: 'Total XP', value: totalXp, gradient: ['#00D4FF', '#0099CC'] },
     { emoji: '🔥', label: 'Day Streak', value: streak, gradient: ['#FF6B35', '#E55A31'] },
-    { emoji: '❤️', label: 'Hearts', value: hearts, gradient: ['#FF6B9D', '#E55A8A'] },
     { emoji: '📚', label: 'Lessons Completed', value: completedLessons.length, gradient: ['#4CAF50', '#45A049'] },
   ];
 

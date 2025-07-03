@@ -5,7 +5,7 @@ import { useProgressStore } from '../state/progressStore';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export const GameStatsHeader: React.FC = () => {
-  const { totalXp, streak, hearts } = useProgressStore();
+  const { totalXp, streak } = useProgressStore();
 
   return (
     <LinearGradient
@@ -30,13 +30,6 @@ export const GameStatsHeader: React.FC = () => {
               <Text className="text-blue-700 font-bold text-xs">💎</Text>
             </View>
             <Text className="text-white font-bold text-lg">{totalXp}</Text>
-          </View>
-          
-          <View className="flex-row items-center bg-pink-500 rounded-full px-3 py-1 shadow-lg">
-            <View className="w-6 h-6 bg-red-300 rounded-full items-center justify-center mr-2">
-              <Text className="text-pink-700 font-bold text-xs">❤️</Text>
-            </View>
-            <Text className="text-white font-bold text-lg">{hearts}</Text>
           </View>
         </View>
       </View>
