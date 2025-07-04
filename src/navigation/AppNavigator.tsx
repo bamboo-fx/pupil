@@ -6,8 +6,23 @@ import { DuolingoHomeScreen } from '../screens/DuolingoHomeScreen';
 import { LessonScreen } from '../screens/LessonScreen';
 import { LessonCompleteScreen } from '../screens/LessonCompleteScreen';
 import { SimpleProfileScreen } from '../screens/SimpleProfileScreen';
+import { Lesson } from '../types';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Main: undefined;
+  Lesson: {
+    lessonId: string;
+    lesson: Lesson;
+  };
+  LessonComplete: {
+    lessonTitle: string;
+    xpEarned: number;
+    correctAnswers: number;
+    totalQuestions: number;
+  };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
 
 const MainTabNavigator: React.FC = () => {
@@ -33,15 +48,13 @@ const MainTabNavigator: React.FC = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#1E40AF',
-        tabBarInactiveTintColor: '#6B7280',
+        tabBarActiveTintColor: 'white',
+        tabBarInactiveTintColor: 'rgba(255,255,255,0.5)',
         tabBarStyle: {
-          backgroundColor: '#F8F9FA',
-          borderTopColor: '#F3F4F6',
-          borderTopWidth: 3,
-          paddingBottom: 6,
-          paddingTop: 16,
-          height: 90,
+          position: 'absolute',
+          backgroundColor: 'transparent',
+          borderTopWidth: 0,
+          elevation: 0,
         },
       })}
     >
@@ -69,23 +82,21 @@ const MainTabNavigator: React.FC = () => {
   );
 };
 
-export const AppNavigator: React.FC = () => {
+const AppStack = () => {
   return (
-    <Stack.Navigator
+    <Stack.Navigator 
       initialRouteName="Main"
       screenOptions={{
-        headerShown: false,
+        headerShown: false
       }}
     >
       <Stack.Screen name="Main" component={MainTabNavigator} />
       <Stack.Screen name="Lesson" component={LessonScreen} />
-      <Stack.Screen 
-        name="LessonComplete" 
-        component={LessonCompleteScreen}
-        options={{
-          gestureEnabled: false,
-        }}
-      />
+      <Stack.Screen name="LessonComplete" component={LessonCompleteScreen} />
     </Stack.Navigator>
   );
+};
+
+export const AppNavigator: React.FC = () => {
+  return <AppStack />;
 };

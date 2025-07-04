@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SimpleRootNavigator } from "./src/navigation/SimpleRootNavigator";
 
@@ -25,11 +25,19 @@ const openai_api_key = Constants.expoConfig.extra.apikey;
 
 */
 
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: 'transparent',
+  },
+};
+
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <NavigationContainer>
+        <NavigationContainer theme={MyTheme}>
           <SimpleRootNavigator />
           <StatusBar style="light" />
         </NavigationContainer>

@@ -13,6 +13,7 @@ import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { useProgressStore } from '../state/progressStore';
 import questionsData from '../data/questions.json';
 import { Unit, Lesson } from '../types';
@@ -135,10 +136,10 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   const lessonPath = React.useMemo(() => createLessonPath(), [currentUnit, completedLessons, getLessonProgress]);
 
   const LessonNode = React.memo(({ item }: { item: any }) => {
-    const getNodeColor = () => {
-      if (item.isCompleted) return '#58CC02'; // Green for completed
-      if (item.isCurrent) return '#1CB0F6'; // Blue for current
-      return '#E5E5E5'; // Gray for locked
+    const getNodeColors = () => {
+      if (item.isCompleted) return ['#58CC02', '#52B802'] as const;
+      if (item.isCurrent) return ['#1CB0F6', '#1899D6'] as const;
+      return ['rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0.1)'] as const;
     };
 
     const getNodeSize = () => {
@@ -205,7 +206,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                 height: nodeSize + ringSpacing,
                 borderRadius: (nodeSize + ringSpacing) / 2,
                 borderWidth: strokeWidth,
-                borderColor: '#E5E5E5',
+                borderColor: 'rgba(255,255,255,0.2)',
               }
             ]}
           />
@@ -233,27 +234,27 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
         </View>
 
         {/* Main Node */}
-        <View
+        <LinearGradient
+          colors={getNodeColors()}
           style={[
             styles.lessonNode,
             {
               width: nodeSize,
               height: nodeSize,
-              backgroundColor: getNodeColor(),
               position: 'absolute',
               top: ringSpacing / 2,
               left: ringSpacing / 2,
             }
           ]}
         >
-                  <View style={styles.nodeInner}>
-          <MaterialIcons 
-            name={getIcon()} 
-            size={nodeSize * 0.4} 
-            color={item.isCompleted || item.isCurrent ? "white" : "#999999"} 
-          />
-        </View>
-        </View>
+          <View style={styles.nodeInner}>
+            <MaterialIcons 
+              name={getIcon()} 
+              size={nodeSize * 0.4} 
+              color={item.isCompleted || item.isCurrent ? "white" : "rgba(255,255,255,0.7)"} 
+            />
+          </View>
+        </LinearGradient>
 
         {item.isCompleted && (
           <View style={[styles.checkmark, { bottom: 0, right: 0 }]}>
@@ -261,14 +262,18 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           </View>
         )}
         {/* Lesson Title Label */}
-        <View style={[styles.lessonLabel, { 
-          top: nodeSize + ringSpacing / 2 + (progress > 0 ? 18 : 10),
-          width: 100,
-          left: ((nodeSize + ringSpacing) - 100) / 2,
-          marginTop: item.isCompleted ? 0 : 8,
-        }]}>
+        <BlurView
+          intensity={50}
+          tint="dark"
+          style={[styles.lessonLabel, { 
+            top: nodeSize + ringSpacing / 2 + (progress > 0 ? 18 : 10),
+            width: 100,
+            left: ((nodeSize + ringSpacing) - 100) / 2,
+            marginTop: item.isCompleted ? 0 : 8,
+          }]}
+        >
           <Text style={styles.lessonText}>{item.lesson.title}</Text>
-        </View>
+        </BlurView>
 
         {item.nodeType === 'start' && (
           <View style={[styles.startLabel, { top: -40 }]}>
@@ -279,134 +284,161 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
     );
   });
 
-
-
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
-      <View style={[styles.container, { backgroundColor: '#F8F9FA' }]}>
-        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                                {/* Unit Info at Top */}
-           <View style={styles.topUnitInfo}>
-             <View style={styles.topUnitHeader}>
-               <Pressable 
-                 style={styles.hamburgerMenu}
-                 onPress={openMenu}
-               >
-                 <MaterialIcons name="menu" size={20} color="#333" />
-               </Pressable>
-               <View style={styles.unitTitleContainer}>
-                 <Text style={styles.topUnitTitle}>{currentUnit.title}</Text>
-               </View>
-               <View style={styles.topRightContent}>
-                 <View style={styles.streakContainer}>
-                   <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
-                   <Text style={styles.streakText}>0</Text>
-                 </View>
-                 <View style={styles.xpContainer}>
-                   <MaterialIcons name="star" size={20} color="#FFD700" />
-                   <Text style={styles.xpText}>{totalXp}</Text>
-                 </View>
-               </View>
-             </View>
-           </View>
-
-           {/* Animated Drawer Menu */}
-             <Animated.View 
-               pointerEvents={isMenuOpen ? 'auto' : 'none'}
-               style={[
-                 styles.animatedDrawer,
-                 {
-                   transform: [{ translateX: slideAnim }],
-                 }
-               ]}
-             >
-               {/* Header */}
-               <View style={styles.drawerHeader}>
-                 <Text style={styles.drawerTitle}>Select Unit</Text>
-                 <Pressable style={styles.drawerCloseButton} onPress={closeMenu}>
-                   <MaterialIcons name="close" size={24} color="#666" />
-                 </Pressable>
-               </View>
-               
-               {/* Units List */}
-               <ScrollView
-                 style={styles.drawerScrollView}
-                 contentContainerStyle={styles.drawerScrollContent}
-                 showsVerticalScrollIndicator={false}
-               >
-                 {units.map((unit, index) => (
-                   <Pressable
-                     key={unit.id}
-                     style={[
-                       styles.drawerMenuItem,
-                       { backgroundColor: index === currentUnitIndex ? '#E3F2FD' : 'transparent' }
-                     ]}
-                     onPress={() => {
-                       setCurrentUnitIndex(index);
-                       closeMenu();
-                     }}
-                   >
-                     <View style={styles.drawerMenuItemContent}>
-                       <View style={[
-                         styles.unitIcon,
-                         { backgroundColor: index === currentUnitIndex ? '#1CB0F6' : '#E5E5E5' }
-                       ]}>
-                         <Text style={[
-                           styles.unitIconText,
-                           { color: index === currentUnitIndex ? 'white' : '#666' }
-                         ]}>
-                           {index + 1}
-                         </Text>
-                       </View>
-                       <View style={styles.unitInfoSection}>
-                         <Text style={[
-                           styles.drawerMenuItemTitle,
-                           { color: index === currentUnitIndex ? '#1CB0F6' : '#333' }
-                         ]}>
-                           {unit.title}
-                         </Text>
-                         <Text style={styles.drawerMenuItemDescription}>
-                           {unit.description}
-                         </Text>
-                       </View>
-                     </View>
-                     {index === currentUnitIndex && (
-                       <MaterialIcons name="check-circle" size={24} color="#1CB0F6" />
-                     )}
-                   </Pressable>
-                 ))}
-               </ScrollView>
-             </Animated.View>
-
-           {/* Header with Unit Navigation */}
-           <View style={styles.header}>
-             <View style={styles.centerSpace} />
-           </View>
-
-          {/* Path */}
-          <PanGestureHandler 
-            onGestureEvent={onGestureEvent}
-            onHandlerStateChange={onHandlerStateChange}
-            minDist={0}
-          >
-            <View style={{ flex: 1 }}>
-              <ScrollView
-                ref={scrollViewRef}
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-              >
-                <View style={styles.pathArea}>
-                  {/* Draw lesson nodes */}
-                  {lessonPath.map((item, index) => (
-                    <LessonNode key={item.lesson.id} item={item} />
-                  ))}
-                </View>
-              </ScrollView>
+      <View style={styles.container}>
+        <LinearGradient
+          colors={['#1a1a2e', '#16213e', '#0f3460']}
+          style={styles.gradient}
+        >
+          <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            {/* Unit Info at Top */}
+            <View style={styles.topUnitInfo}>
+              <BlurView intensity={30} tint="dark" style={styles.topUnitCard}>
+                <LinearGradient
+                  colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                  style={styles.topUnitGradient}
+                >
+                  <View style={styles.topUnitHeader}>
+                    <Pressable 
+                      style={styles.hamburgerMenu}
+                      onPress={openMenu}
+                    >
+                      <MaterialIcons name="menu" size={20} color="white" />
+                    </Pressable>
+                    <View style={styles.unitTitleContainer}>
+                      <Text style={styles.topUnitTitle}>{currentUnit.title}</Text>
+                    </View>
+                    <View style={styles.topRightContent}>
+                      <View style={styles.streakContainer}>
+                        <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
+                        <Text style={styles.streakText}>0</Text>
+                      </View>
+                      <View style={styles.xpContainer}>
+                        <MaterialIcons name="star" size={20} color="#FFD700" />
+                        <Text style={styles.xpText}>{totalXp}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </BlurView>
             </View>
-          </PanGestureHandler>
-        </SafeAreaView>
+
+            {/* Animated Drawer Menu */}
+            <Animated.View 
+              pointerEvents={isMenuOpen ? 'auto' : 'none'}
+              style={[
+                styles.animatedDrawer,
+                {
+                  transform: [{ translateX: slideAnim }],
+                }
+              ]}
+            >
+              <BlurView intensity={90} tint="dark" style={styles.drawerBlurView}>
+                <LinearGradient
+                  colors={['rgba(26,26,46,0.8)', 'rgba(22,33,62,0.8)']}
+                  style={styles.drawerGradient}
+                >
+                  {/* Header */}
+                  <View style={styles.drawerHeader}>
+                    <LinearGradient
+                      colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                      style={styles.drawerHeaderCard}
+                    >
+                      <Text style={styles.drawerTitle}>Select Unit</Text>
+                      <Pressable style={styles.drawerCloseButton} onPress={closeMenu}>
+                        <MaterialIcons name="close" size={24} color="rgba(255,255,255,0.7)" />
+                      </Pressable>
+                    </LinearGradient>
+                  </View>
+                  
+                  {/* Units List */}
+                  <ScrollView
+                    style={styles.drawerScrollView}
+                    contentContainerStyle={styles.drawerScrollContent}
+                    showsVerticalScrollIndicator={false}
+                  >
+                    {units.map((unit, index) => (
+                      <Pressable
+                        key={unit.id}
+                        style={styles.drawerMenuItem}
+                        onPress={() => {
+                          setCurrentUnitIndex(index);
+                          closeMenu();
+                        }}
+                      >
+                        <LinearGradient
+                          colors={index === currentUnitIndex ? 
+                            ['rgba(59,130,246,0.2)', 'rgba(59,130,246,0.1)'] :
+                            ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.04)']
+                          }
+                          style={styles.drawerMenuItemCard}
+                        >
+                          <View style={styles.drawerMenuItemContent}>
+                            <View style={[
+                              styles.unitIcon,
+                              { backgroundColor: index === currentUnitIndex ? '#3b82f6' : 'rgba(255,255,255,0.1)' }
+                            ]}>
+                              <Text style={[
+                                styles.unitIconText,
+                                { color: index === currentUnitIndex ? 'white' : 'rgba(255,255,255,0.7)' }
+                              ]}>
+                                {index + 1}
+                              </Text>
+                            </View>
+                            <View style={styles.unitInfoSection}>
+                              <Text style={[
+                                styles.drawerMenuItemTitle,
+                                { color: index === currentUnitIndex ? '#3b82f6' : 'white' }
+                              ]}>
+                                {unit.title}
+                              </Text>
+                              <Text style={styles.drawerMenuItemDescription}>
+                                {unit.description}
+                              </Text>
+                            </View>
+                          </View>
+                          {index === currentUnitIndex && (
+                            <MaterialIcons name="check-circle" size={24} color="#3b82f6" />
+                          )}
+                        </LinearGradient>
+                      </Pressable>
+                    ))}
+                  </ScrollView>
+                </LinearGradient>
+              </BlurView>
+            </Animated.View>
+
+            {/* Header with Unit Navigation */}
+            <View style={styles.header}>
+              <View style={styles.centerSpace} />
+            </View>
+
+            {/* Path */}
+            <PanGestureHandler 
+              onGestureEvent={onGestureEvent}
+              onHandlerStateChange={onHandlerStateChange}
+              minDist={0}
+            >
+              <View style={{ flex: 1 }}>
+                <ScrollView
+                  ref={scrollViewRef}
+                  style={styles.scrollView}
+                  contentContainerStyle={styles.scrollContent}
+                  showsVerticalScrollIndicator={false}
+                >
+                  <View style={styles.pathArea}>
+                    {/* Draw lesson nodes */}
+                    {lessonPath.map((item, index) => (
+                      <LessonNode key={item.lesson.id} item={item} />
+                    ))}
+                  </View>
+                </ScrollView>
+              </View>
+            </PanGestureHandler>
+          </SafeAreaView>
+        </LinearGradient>
       </View>
     </>
   );
@@ -414,6 +446,9 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  gradient: {
     flex: 1,
   },
   safeArea: {
@@ -425,6 +460,13 @@ const styles = StyleSheet.create({
     paddingBottom: 0,
     backgroundColor: 'transparent',
   },
+  topUnitCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
+  topUnitGradient: {
+    padding: 16,
+  },
   topUnitHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -434,19 +476,21 @@ const styles = StyleSheet.create({
   hamburgerMenu: {
     padding: 4,
   },
-
   unitTitleContainer: {
     flex: 1,
   },
   topUnitTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
     marginBottom: 2,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   topUnitDescription: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.6)',
   },
   topRightContent: {
     flexDirection: 'row',
@@ -466,40 +510,40 @@ const styles = StyleSheet.create({
   streakContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   streakText: {
     marginLeft: 4,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   xpContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(255,255,255,0.15)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
   },
   xpText: {
     marginLeft: 4,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   unitInfoSection: {
     paddingHorizontal: 20,
@@ -508,12 +552,12 @@ const styles = StyleSheet.create({
   unitTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
     marginBottom: 4,
   },
   unitDescription: {
     fontSize: 16,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
   },
   scrollView: {
     flex: 1,
@@ -549,8 +593,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 5,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
     elevation: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -573,51 +617,55 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: 'white',
+    borderColor: '#1a1a2e',
   },
   startLabel: {
     position: 'absolute',
     top: -30,
-    backgroundColor: 'white',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#58CC02',
+    backgroundColor: '#58CC02',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
   startText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#58CC02',
+    color: 'white',
   },
   lessonLabel: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   lessonText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
-
   bottomNav: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(255,255,255,0.1)',
     paddingTop: 10,
     paddingBottom: 5,
     borderTopWidth: 1,
-    borderTopColor: '#E5E5E5',
+    borderTopColor: 'rgba(255,255,255,0.1)',
   },
   navItem: {
     flex: 1,
@@ -627,7 +675,7 @@ const styles = StyleSheet.create({
   navText: {
     fontSize: 12,
     marginTop: 4,
-    color: '#AFAFAF',
+    color: 'rgba(255,255,255,0.6)',
   },
   drawerBackdrop: {
     position: 'absolute',
@@ -637,6 +685,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.2)',
     zIndex: 1000,
+  },
+  drawerBlurView: {
+    flex: 1,
+    overflow: 'hidden',
   },
   drawerScrollContent: {
     paddingBottom: 30,
@@ -648,7 +700,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'white',
     zIndex: 1100,
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 0 },
@@ -656,20 +707,32 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 16,
   },
+  drawerGradient: {
+    flex: 1,
+  },
   drawerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 12,
     paddingTop: 60,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+  },
+  drawerHeaderCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   drawerTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
+    letterSpacing: 1,
+    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   drawerCloseButton: {
     padding: 8,
@@ -678,13 +741,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   drawerMenuItem: {
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginVertical: 4,
+  },
+  drawerMenuItemCard: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 16,
-    borderRadius: 8,
-    marginHorizontal: 16,
-    marginVertical: 2,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   drawerMenuItemContent: {
     flexDirection: 'row',
@@ -697,20 +766,20 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 12,
   },
   unitIconText: {
     fontSize: 14,
     fontWeight: 'bold',
   },
   drawerMenuItemTitle: {
-    fontSize: 15,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
     marginBottom: 2,
   },
   drawerMenuItemDescription: {
     fontSize: 12,
-    color: '#666',
+    color: 'rgba(255,255,255,0.7)',
     lineHeight: 16,
   },
 });

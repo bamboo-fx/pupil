@@ -1,122 +1,573 @@
-import React from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import { useProgressStore } from '../state/progressStore';
 import { useAuthStore } from '../state/authStore';
 
 export const SimpleProfileScreen: React.FC = () => {
-  const { totalXp, completedLessons, resetProgress } = useProgressStore();
+  const { totalXp, completedLessons, resetProgress, streak } = useProgressStore();
   const { user, logout } = useAuthStore();
+  const [showAllAchievements, setShowAllAchievements] = useState(false);
+
+  const currentLevel = Math.floor(totalXp / 100) + 1;
+  const xpInCurrentLevel = totalXp % 100;
+  const xpForNextLevel = 100;
+  const levelProgress = xpInCurrentLevel / xpForNextLevel;
+
+  const achievements = [
+    {
+      id: 'first_steps',
+      title: 'First Steps',
+      description: 'Complete your first lesson',
+      icon: 'workspace-premium',
+      unlocked: completedLessons.length >= 1,
+    },
+    {
+      id: 'learning_streak',
+      title: 'On Fire',
+      description: 'Maintain a 3-day streak',
+      icon: 'whatshot',
+      unlocked: streak >= 3,
+    },
+    {
+      id: 'xp_master',
+      title: 'XP Master',
+      description: 'Earn 100 XP points',
+      icon: 'military-tech',
+      unlocked: totalXp >= 100,
+    },
+    {
+      id: 'dedication',
+      title: 'Dedicated Learner',
+      description: 'Complete 10 lessons',
+      icon: 'psychology',
+      unlocked: completedLessons.length >= 10,
+    },
+    {
+      id: 'algorithm_apprentice',
+      title: 'Algorithm Apprentice',
+      description: 'Complete 25 lessons',
+      icon: 'model-training',
+      unlocked: completedLessons.length >= 25,
+    },
+    {
+      id: 'data_structure_devotee',
+      title: 'Data Structure Devotee',
+      description: 'Complete 50 lessons',
+      icon: 'legend-toggle',
+      unlocked: completedLessons.length >= 50,
+    },
+    {
+      id: 'xp_enthusiast',
+      title: 'XP Enthusiast',
+      description: 'Earn 500 XP points',
+      icon: 'insights',
+      unlocked: totalXp >= 500,
+    },
+    {
+      id: 'quest_king',
+      title: 'Quest King',
+      description: 'Earn 1000 XP points',
+      icon: 'emoji-events',
+      unlocked: totalXp >= 1000,
+    },
+  ];
+
+  const stats = [
+    {
+      label: 'Day Streak',
+      value: streak,
+      icon: 'local-fire-department',
+      color: '#f59e0b', // amber-500
+    },
+    {
+      label: 'Total XP',
+      value: totalXp,
+      icon: 'star',
+      color: '#facc15', // yellow-400
+    },
+    {
+      label: 'Level',
+      value: currentLevel,
+      icon: 'auto-awesome',
+      color: '#3b82f6', // blue-500
+    },
+    {
+      label: 'Lessons',
+      value: completedLessons.length,
+      icon: 'school',
+      color: '#22c55e', // green-500
+    },
+  ];
+
+  const visibleAchievements = showAllAchievements ? achievements : achievements.slice(0, 3);
+
+  const handleResetProgress = () => {
+    Alert.alert(
+      "Reset Progress",
+      "Are you sure you want to reset all your progress? This action cannot be undone.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "Reset", 
+          onPress: () => resetProgress(),
+          style: 'destructive' 
+        }
+      ]
+    );
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-blue-500">
-      <View className="px-4 py-3 bg-blue-500">
-        <Text className="text-white text-xl font-bold text-center">👤 Your Profile</Text>
-      </View>
-      
-      <ScrollView className="flex-1 bg-gray-100 p-4">
-        <View className="items-center mb-6">
-          <View className="w-24 h-24 bg-yellow-400 rounded-full items-center justify-center mb-4">
-            <Text style={{ fontSize: 48 }}>🧠</Text>
-          </View>
-          <Text className="text-gray-800 text-2xl font-bold">{user?.name || 'DSA Master'}</Text>
-          <Text className="text-gray-600 text-base">Level {Math.floor(totalXp / 100) + 1}</Text>
-        </View>
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#1a1a2e', '#16213e', '#0f3460']}
+        style={styles.gradient}
+      >
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+          >
+            {/* Profile Avatar & Info */}
+            <BlurView intensity={30} tint="dark" style={styles.profileCard}>
+              <LinearGradient
+                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                style={styles.profileContent}
+              >
+                <View style={styles.avatarContainer}>
+                  <LinearGradient
+                    colors={['#3b82f6', '#2563eb']}
+                    style={styles.avatar}
+                  >
+                    <MaterialIcons name="person" size={48} color="white" />
+                  </LinearGradient>
+                  <View style={styles.levelBadge}>
+                    <Text style={styles.levelText}>{currentLevel}</Text>
+                  </View>
+                </View>
+                
+                <Text style={styles.userName}>{user?.name || 'DSA Master'}</Text>
+                <Text style={styles.userTitle}>Level {currentLevel} Explorer</Text>
+                
+                {/* Level Progress Bar */}
+                <View style={styles.progressContainer}>
+                  <View style={styles.progressLabels}>
+                    <Text style={styles.progressLabel}>Level {currentLevel}</Text>
+                    <Text style={styles.progressLabel}>Level {currentLevel + 1}</Text>
+                  </View>
+                  <View style={styles.progressBarBackground}>
+                    <LinearGradient
+                      colors={['#3b82f6', '#2563eb']}
+                      style={[styles.progressBar, { width: `${levelProgress * 100}%` }]}
+                    />
+                  </View>
+                  <Text style={styles.progressText}>
+                    {xpInCurrentLevel}/{xpForNextLevel} XP to next level
+                  </Text>
+                </View>
+              </LinearGradient>
+            </BlurView>
 
-        <View className="bg-white rounded-lg p-6 mb-6">
-          <Text className="text-xl font-bold text-gray-800 mb-4">📊 Your Stats</Text>
-          
-          <View className="space-y-4">
-            <View className="flex-row justify-between items-center p-4 bg-blue-100 rounded-lg">
-              <View className="flex-row items-center">
-                <Text className="text-3xl mr-3">💎</Text>
-                <Text className="text-gray-800 font-medium text-lg">Total XP</Text>
-              </View>
-              <Text className="text-blue-600 text-2xl font-bold">{totalXp}</Text>
-            </View>
-            
-            <View className="flex-row justify-between items-center p-4 bg-green-100 rounded-lg">
-              <View className="flex-row items-center">
-                <Text className="text-3xl mr-3">📚</Text>
-                <Text className="text-gray-800 font-medium text-lg">Lessons Completed</Text>
-              </View>
-              <Text className="text-green-600 text-2xl font-bold">{completedLessons.length}</Text>
-            </View>
-          </View>
-        </View>
+            {/* Stats Grid */}
+            <BlurView intensity={30} tint="dark" style={styles.statsCard}>
+              <LinearGradient
+                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                style={styles.cardContent}
+              >
+                <Text style={styles.sectionTitle}>Statistics</Text>
+                <View style={styles.statsGrid}>
+                  {stats.map((stat, index) => (
+                    <View key={index} style={styles.statItem}>
+                      <BlurView intensity={50} tint="dark" style={styles.statCard}>
+                        <View style={styles.statTopRow}>
+                          <MaterialIcons name={stat.icon as any} size={22} color={stat.color} />
+                          <Text style={styles.statValue}>{stat.value}</Text>
+                        </View>
+                        <Text style={styles.statLabel}>{stat.label}</Text>
+                      </BlurView>
+                    </View>
+                  ))}
+                </View>
+              </LinearGradient>
+            </BlurView>
 
-        <View className="bg-white rounded-lg p-6 mb-6">
-          <Text className="text-xl font-bold text-gray-800 mb-4">🏆 Achievements</Text>
-          
-          <View className="space-y-3">
-            <View className={`flex-row items-center p-3 rounded-lg ${
-              completedLessons.length >= 1 ? 'bg-green-100' : 'bg-gray-100'
-            }`}>
-              <Text className="text-2xl mr-3">
-                {completedLessons.length >= 1 ? '⭐' : '🔒'}
-              </Text>
-              <View className="flex-1">
-                <Text className="font-bold text-gray-800">First Steps</Text>
-                <Text className="text-gray-600 text-sm">Complete your first lesson</Text>
-              </View>
-              {completedLessons.length >= 1 && (
-                <Text className="text-green-600 text-xl">✓</Text>
-              )}
-            </View>
-            
-            <View className={`flex-row items-center p-3 rounded-lg ${
-              completedLessons.length >= 5 ? 'bg-orange-100' : 'bg-gray-100'
-            }`}>
-              <Text className="text-2xl mr-3">
-                {completedLessons.length >= 5 ? '🔥' : '🔒'}
-              </Text>
-              <View className="flex-1">
-                <Text className="font-bold text-gray-800">Learning Streak</Text>
-                <Text className="text-gray-600 text-sm">Complete 5 lessons</Text>
-              </View>
-              {completedLessons.length >= 5 && (
-                <Text className="text-orange-600 text-xl">✓</Text>
-              )}
-            </View>
-            
-            <View className={`flex-row items-center p-3 rounded-lg ${
-              totalXp >= 100 ? 'bg-purple-100' : 'bg-gray-100'
-            }`}>
-              <Text className="text-2xl mr-3">
-                {totalXp >= 100 ? '💎' : '🔒'}
-              </Text>
-              <View className="flex-1">
-                <Text className="font-bold text-gray-800">XP Master</Text>
-                <Text className="text-gray-600 text-sm">Earn 100 XP points</Text>
-              </View>
-              {totalXp >= 100 && (
-                <Text className="text-purple-600 text-xl">✓</Text>
-              )}
-            </View>
-          </View>
-        </View>
+            {/* Achievements */}
+            <BlurView intensity={30} tint="dark" style={styles.achievementsCard}>
+              <LinearGradient
+                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                style={styles.cardContent}
+              >
+                <Text style={styles.sectionTitle}>Achievements</Text>
+                <View style={styles.achievementsList}>
+                  {visibleAchievements.map((achievement) => (
+                    <BlurView
+                      key={achievement.id}
+                      intensity={achievement.unlocked ? 40 : 20}
+                      tint="dark"
+                      style={[
+                        styles.achievementItem,
+                        achievement.unlocked ? styles.achievementUnlocked : styles.achievementLocked,
+                      ]}
+                    >
+                      <View style={styles.achievementContent}>
+                        <View style={[
+                          styles.achievementIcon,
+                          achievement.unlocked ? styles.achievementIconUnlocked : styles.achievementIconLocked
+                        ]}>
+                          <MaterialIcons 
+                            name={achievement.unlocked ? achievement.icon as any : 'lock'} 
+                            size={24} 
+                            color={achievement.unlocked ? "#3b82f6" : "rgba(255,255,255,0.4)"} 
+                          />
+                        </View>
+                        <View style={styles.achievementText}>
+                          <Text style={styles.achievementTitle}>{achievement.title}</Text>
+                          <Text style={styles.achievementDescription}>{achievement.description}</Text>
+                        </View>
+                        {achievement.unlocked && (
+                          <View style={styles.achievementCheckmark}>
+                            <MaterialIcons name="check" size={16} color="white" />
+                          </View>
+                        )}
+                      </View>
+                    </BlurView>
+                  ))}
+                </View>
+                {achievements.length > 3 && (
+                  <Pressable 
+                    onPress={() => setShowAllAchievements(!showAllAchievements)}
+                    style={styles.viewAllButton}
+                  >
+                    <Text style={styles.viewAllText}>
+                      {showAllAchievements ? 'Show Less' : 'View All'}
+                    </Text>
+                    <MaterialIcons 
+                      name={showAllAchievements ? 'expand-less' : 'expand-more'} 
+                      size={20} 
+                      color="rgba(255,255,255,0.7)" 
+                    />
+                  </Pressable>
+                )}
+              </LinearGradient>
+            </BlurView>
 
-        <View className="bg-white rounded-lg p-6 mb-4">
-          <Text className="text-xl font-bold text-gray-800 mb-4">⚙️ Settings</Text>
-          
-          <View className="space-y-3">
-            <Pressable
-              onPress={() => resetProgress()}
-              className="bg-red-500 p-4 rounded-lg mb-3"
-            >
-              <Text className="text-white font-bold text-center">🔄 Reset Progress</Text>
-            </Pressable>
-            
-            <Pressable
-              onPress={() => logout()}
-              className="bg-blue-600 p-4 rounded-lg"
-            >
-              <Text className="text-white font-bold text-center">🚪 Sign Out</Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            {/* Settings */}
+            <BlurView intensity={30} tint="dark" style={styles.settingsCard}>
+              <LinearGradient
+                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                style={styles.cardContent}
+              >
+                <Text style={styles.sectionTitle}>Settings</Text>
+                
+                <View style={styles.settingsList}>
+                  <Pressable onPress={handleResetProgress}>
+                    <BlurView intensity={40} tint="dark" style={styles.settingItemReset}>
+                      <View style={styles.settingContent}>
+                        <View style={styles.settingIconReset}>
+                          <MaterialIcons name="refresh" size={20} color="#ef4444" />
+                        </View>
+                        <Text style={styles.settingText}>Reset Progress</Text>
+                        <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
+                      </View>
+                    </BlurView>
+                  </Pressable>
+                  
+                  <Pressable onPress={() => logout()}>
+                    <BlurView intensity={40} tint="dark" style={styles.settingItem}>
+                      <View style={styles.settingContent}>
+                        <View style={styles.settingIcon}>
+                          <MaterialIcons name="logout" size={20} color="rgba(255,255,255,0.7)" />
+                        </View>
+                        <Text style={styles.settingText}>Sign Out</Text>
+                        <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
+                      </View>
+                    </BlurView>
+                  </Pressable>
+                </View>
+              </LinearGradient>
+            </BlurView>
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  scrollContent: {
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  profileCard: {
+    borderRadius: 24,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  profileContent: {
+    padding: 32,
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  levelBadge: {
+    position: 'absolute',
+    bottom: -8,
+    right: -8,
+    backgroundColor: '#3b82f6',
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#1a1a2e',
+  },
+  levelText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  userName: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  userTitle: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 18,
+    marginBottom: 16,
+  },
+  progressContainer: {
+    width: '100%',
+  },
+  progressLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  progressLabel: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 14,
+  },
+  progressBarBackground: {
+    height: 8,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  progressText: {
+    color: 'rgba(255,255,255,0.6)',
+    textAlign: 'center',
+    fontSize: 14,
+    marginTop: 8,
+  },
+  statsCard: {
+    borderRadius: 24,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  achievementsCard: {
+    borderRadius: 24,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  settingsCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+  },
+  cardContent: {
+    padding: 24,
+  },
+  sectionTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+    textAlign: 'left',
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  statItem: {
+    width: '48%',
+    marginBottom: 16,
+  },
+  statCard: {
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+  },
+  statTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  statValue: {
+    color: 'white',
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginLeft: 8,
+  },
+  statLabel: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  achievementsList: {
+    gap: 12,
+  },
+  achievementItem: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+  },
+  achievementUnlocked: {
+    borderColor: 'rgba(59,130,246,0.3)',
+  },
+  achievementLocked: {
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  achievementContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  achievementIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  achievementIconUnlocked: {
+    backgroundColor: 'rgba(59,130,246,0.2)',
+  },
+  achievementIconLocked: {
+    backgroundColor: 'rgba(255,255,255,0.05)',
+  },
+  achievementText: {
+    flex: 1,
+  },
+  achievementTitle: {
+    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 18,
+  },
+  achievementDescription: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 14,
+  },
+  achievementCheckmark: {
+    width: 32,
+    height: 32,
+    backgroundColor: '#3b82f6',
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsList: {
+    gap: 12,
+  },
+  settingItem: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  settingItemReset: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(239,68,68,0.3)',
+  },
+  settingContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  },
+  settingIcon: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  settingIconReset: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(239,68,68,0.2)',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  settingText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    flex: 1,
+  },
+  viewAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
+    paddingVertical: 12,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  viewAllText: {
+    color: 'rgba(255,255,255,0.7)',
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginRight: 4,
+  },
+});
