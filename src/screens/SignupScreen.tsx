@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../state/authStore';
 
 interface SignupScreenProps {
@@ -43,7 +44,12 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     
     try {
-      const success = await signup(name, email, password);
+      // Split the full name into first and last names
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      const success = await signup(firstName, lastName, email, password);
       if (success) {
         // Navigation will be handled by the auth state change
       } else {
@@ -57,147 +63,295 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={['#667eea', '#764ba2']}
-      className="flex-1"
-    >
-      <SafeAreaView className="flex-1">
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="flex-1"
-        >
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-            {/* Header */}
-            <View className="items-center pt-8 pb-6">
-              <View className="w-20 h-20 bg-white/20 rounded-full items-center justify-center mb-4 border-3 border-white/30">
-                <Text style={{ fontSize: 40 }}>🧠</Text>
-              </View>
-              <Text className="text-white text-3xl font-bold mb-2">Join DSA Quest!</Text>
-              <Text className="text-white/80 text-base text-center">
-                Start your algorithm mastery journey
-              </Text>
-            </View>
-
-            {/* Signup Form */}
-            <View className="px-6 pb-6">
-              <View className="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/20">
-                <Text className="text-white text-xl font-bold mb-6 text-center">Create Account</Text>
-                
-                {/* Name Input */}
-                <View className="mb-4">
-                  <Text className="text-white/90 text-sm font-medium mb-2">Full Name</Text>
-                  <View className="bg-white/20 rounded-xl p-4 flex-row items-center">
-                    <Ionicons name="person" size={20} color="white" />
-                    <TextInput
-                      value={name}
-                      onChangeText={setName}
-                      placeholder="Enter your full name"
-                      placeholderTextColor="rgba(255,255,255,0.6)"
-                      className="flex-1 ml-3 text-white text-base"
-                      autoCapitalize="words"
-                    />
-                  </View>
-                </View>
-
-                {/* Email Input */}
-                <View className="mb-4">
-                  <Text className="text-white/90 text-sm font-medium mb-2">Email</Text>
-                  <View className="bg-white/20 rounded-xl p-4 flex-row items-center">
-                    <Ionicons name="mail" size={20} color="white" />
-                    <TextInput
-                      value={email}
-                      onChangeText={setEmail}
-                      placeholder="Enter your email"
-                      placeholderTextColor="rgba(255,255,255,0.6)"
-                      className="flex-1 ml-3 text-white text-base"
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                    />
-                  </View>
-                </View>
-
-                {/* Password Input */}
-                <View className="mb-4">
-                  <Text className="text-white/90 text-sm font-medium mb-2">Password</Text>
-                  <View className="bg-white/20 rounded-xl p-4 flex-row items-center">
-                    <Ionicons name="lock-closed" size={20} color="white" />
-                    <TextInput
-                      value={password}
-                      onChangeText={setPassword}
-                      placeholder="Create a password"
-                      placeholderTextColor="rgba(255,255,255,0.6)"
-                      className="flex-1 ml-3 text-white text-base"
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                    />
-                    <Pressable onPress={() => setShowPassword(!showPassword)}>
-                      <Ionicons 
-                        name={showPassword ? "eye" : "eye-off"} 
-                        size={20} 
-                        color="rgba(255,255,255,0.7)" 
-                      />
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Confirm Password Input */}
-                <View className="mb-6">
-                  <Text className="text-white/90 text-sm font-medium mb-2">Confirm Password</Text>
-                  <View className="bg-white/20 rounded-xl p-4 flex-row items-center">
-                    <Ionicons name="lock-closed" size={20} color="white" />
-                    <TextInput
-                      value={confirmPassword}
-                      onChangeText={setConfirmPassword}
-                      placeholder="Confirm your password"
-                      placeholderTextColor="rgba(255,255,255,0.6)"
-                      className="flex-1 ml-3 text-white text-base"
-                      secureTextEntry={!showConfirmPassword}
-                      autoCapitalize="none"
-                    />
-                    <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                      <Ionicons 
-                        name={showConfirmPassword ? "eye" : "eye-off"} 
-                        size={20} 
-                        color="rgba(255,255,255,0.7)" 
-                      />
-                    </Pressable>
-                  </View>
-                </View>
-
-                {/* Signup Button */}
-                <Pressable
-                  onPress={handleSignup}
-                  disabled={isLoading}
-                  className={`rounded-xl p-4 mb-4 ${isLoading ? 'opacity-70' : ''}`}
-                >
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#1a1a2e', '#16213e', '#0f3460']}
+        style={styles.gradient}
+      >
+        <SafeAreaView style={styles.safeArea}>
+          <KeyboardAvoidingView 
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.keyboardView}
+          >
+            <ScrollView 
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Signup Form */}
+              <View style={styles.formContainer}>
+                <BlurView intensity={30} tint="dark" style={styles.formCard}>
                   <LinearGradient
-                    colors={['#4facfe', '#00f2fe']}
-                    className="rounded-xl p-4"
+                    colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                    style={styles.formGradient}
                   >
-                    <Text className="text-white text-center font-bold text-lg">
-                      {isLoading ? 'Creating Account...' : 'Create Account'}
+                    <Text style={styles.formTitle}>Create Account</Text>
+                    
+                    {/* Name Input */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>Full Name</Text>
+                      <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
+                        <MaterialIcons name="person" size={20} color="rgba(255,255,255,0.7)" />
+                        <TextInput
+                          value={name}
+                          onChangeText={setName}
+                          placeholder="Enter your full name"
+                          placeholderTextColor="rgba(255,255,255,0.5)"
+                          style={styles.textInput}
+                          autoCapitalize="words"
+                        />
+                      </BlurView>
+                    </View>
+
+                    {/* Email Input */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>Email</Text>
+                      <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
+                        <MaterialIcons name="email" size={20} color="rgba(255,255,255,0.7)" />
+                        <TextInput
+                          value={email}
+                          onChangeText={setEmail}
+                          placeholder="Enter your email"
+                          placeholderTextColor="rgba(255,255,255,0.5)"
+                          style={styles.textInput}
+                          keyboardType="email-address"
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                        />
+                      </BlurView>
+                    </View>
+
+                    {/* Password Input */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>Password</Text>
+                      <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
+                        <MaterialIcons name="lock" size={20} color="rgba(255,255,255,0.7)" />
+                        <TextInput
+                          value={password}
+                          onChangeText={setPassword}
+                          placeholder="Create a password"
+                          placeholderTextColor="rgba(255,255,255,0.5)"
+                          style={styles.textInput}
+                          secureTextEntry={!showPassword}
+                          autoCapitalize="none"
+                        />
+                        <Pressable onPress={() => setShowPassword(!showPassword)}>
+                          <MaterialIcons 
+                            name={showPassword ? "visibility" : "visibility-off"} 
+                            size={20} 
+                            color="rgba(255,255,255,0.6)" 
+                          />
+                        </Pressable>
+                      </BlurView>
+                    </View>
+
+                    {/* Confirm Password Input */}
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.inputLabel}>Confirm Password</Text>
+                      <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
+                        <MaterialIcons name="lock" size={20} color="rgba(255,255,255,0.7)" />
+                        <TextInput
+                          value={confirmPassword}
+                          onChangeText={setConfirmPassword}
+                          placeholder="Confirm your password"
+                          placeholderTextColor="rgba(255,255,255,0.5)"
+                          style={styles.textInput}
+                          secureTextEntry={!showConfirmPassword}
+                          autoCapitalize="none"
+                        />
+                        <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+                          <MaterialIcons 
+                            name={showConfirmPassword ? "visibility" : "visibility-off"} 
+                            size={20} 
+                            color="rgba(255,255,255,0.6)" 
+                          />
+                        </Pressable>
+                      </BlurView>
+                    </View>
+
+                    {/* Signup Button */}
+                    <Pressable
+                      onPress={handleSignup}
+                      disabled={isLoading}
+                      style={[styles.signupButton, isLoading && styles.signupButtonDisabled]}
+                    >
+                      <BlurView intensity={50} tint="dark" style={styles.buttonBlur}>
+                        <LinearGradient
+                          colors={['#60a5fa', '#3b82f6', '#2563eb']}
+                          style={styles.buttonGradient}
+                        >
+                          <Text style={styles.buttonText}>
+                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                          </Text>
+                        </LinearGradient>
+                      </BlurView>
+                    </Pressable>
+
+                    {/* Terms */}
+                    <Text style={styles.termsText}>
+                      By creating an account, you agree to our{'\n'}Terms of Service and Privacy Policy
                     </Text>
                   </LinearGradient>
-                </Pressable>
-
-                {/* Terms */}
-                <Text className="text-white/60 text-xs text-center">
-                  By creating an account, you agree to our Terms of Service and Privacy Policy
-                </Text>
+                </BlurView>
               </View>
 
               {/* Login Link */}
-              <View className="flex-row justify-center items-center mt-6">
-                <Text className="text-white/80 text-base">Already have an account? </Text>
-                <Pressable onPress={() => navigation.navigate('Login')}>
-                  <Text className="text-white font-bold text-base underline">Sign In</Text>
-                </Pressable>
+              <View style={styles.loginContainer}>
+                <BlurView intensity={20} tint="dark" style={styles.loginCard}>
+                  <LinearGradient
+                    colors={['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.04)']}
+                    style={styles.loginGradient}
+                  >
+                    <Text style={styles.loginText}>Already have an account? </Text>
+                    <Pressable onPress={() => navigation.navigate('Login')}>
+                      <Text style={styles.loginLink}>Sign In</Text>
+                    </Pressable>
+                  </LinearGradient>
+                </BlurView>
               </View>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </LinearGradient>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    paddingHorizontal: 24,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  header: {
+    alignItems: 'center',
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+  welcomeTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  welcomeSubtitle: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.7)',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  formContainer: {
+    marginTop: 24,
+    marginBottom: 24,
+  },
+  formCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+  },
+  formGradient: {
+    padding: 32,
+  },
+  formTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 32,
+  },
+  inputGroup: {
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.8)',
+    marginBottom: 8,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+  },
+  textInput: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 16,
+    color: 'white',
+  },
+  signupButton: {
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  signupButtonDisabled: {
+    opacity: 0.7,
+  },
+  buttonBlur: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(96,165,250,0.3)',
+  },
+  buttonGradient: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  termsText: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
+    textAlign: 'center',
+    lineHeight: 16,
+  },
+  loginContainer: {
+    marginTop: 8,
+  },
+  loginCard: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+  },
+  loginGradient: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+  },
+  loginText: {
+    fontSize: 16,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  loginLink: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#60a5fa',
+  },
+});

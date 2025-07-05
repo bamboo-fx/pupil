@@ -8,7 +8,7 @@ import { useProgressStore } from '../state/progressStore';
 import { useAuthStore } from '../state/authStore';
 
 export const SimpleProfileScreen: React.FC = () => {
-  const { totalXp, completedLessons, resetProgress, streak } = useProgressStore();
+  const { totalXp, completedLessons, resetProgress, streak, achievements } = useProgressStore();
   const { user, logout } = useAuthStore();
   const [showAllAchievements, setShowAllAchievements] = useState(false);
 
@@ -17,64 +17,7 @@ export const SimpleProfileScreen: React.FC = () => {
   const xpForNextLevel = 100;
   const levelProgress = xpInCurrentLevel / xpForNextLevel;
 
-  const achievements = [
-    {
-      id: 'first_steps',
-      title: 'First Steps',
-      description: 'Complete your first lesson',
-      icon: 'workspace-premium',
-      unlocked: completedLessons.length >= 1,
-    },
-    {
-      id: 'learning_streak',
-      title: 'On Fire',
-      description: 'Maintain a 3-day streak',
-      icon: 'whatshot',
-      unlocked: streak >= 3,
-    },
-    {
-      id: 'xp_master',
-      title: 'XP Master',
-      description: 'Earn 100 XP points',
-      icon: 'military-tech',
-      unlocked: totalXp >= 100,
-    },
-    {
-      id: 'dedication',
-      title: 'Dedicated Learner',
-      description: 'Complete 10 lessons',
-      icon: 'psychology',
-      unlocked: completedLessons.length >= 10,
-    },
-    {
-      id: 'algorithm_apprentice',
-      title: 'Algorithm Apprentice',
-      description: 'Complete 25 lessons',
-      icon: 'model-training',
-      unlocked: completedLessons.length >= 25,
-    },
-    {
-      id: 'data_structure_devotee',
-      title: 'Data Structure Devotee',
-      description: 'Complete 50 lessons',
-      icon: 'legend-toggle',
-      unlocked: completedLessons.length >= 50,
-    },
-    {
-      id: 'xp_enthusiast',
-      title: 'XP Enthusiast',
-      description: 'Earn 500 XP points',
-      icon: 'insights',
-      unlocked: totalXp >= 500,
-    },
-    {
-      id: 'quest_king',
-      title: 'Quest King',
-      description: 'Earn 1000 XP points',
-      icon: 'emoji-events',
-      unlocked: totalXp >= 1000,
-    },
-  ];
+  const visibleAchievements = showAllAchievements ? (achievements || []) : (achievements || []).slice(0, 3);
 
   const stats = [
     {
@@ -102,8 +45,6 @@ export const SimpleProfileScreen: React.FC = () => {
       color: '#22c55e', // green-500
     },
   ];
-
-  const visibleAchievements = showAllAchievements ? achievements : achievements.slice(0, 3);
 
   const handleResetProgress = () => {
     Alert.alert(
@@ -153,7 +94,7 @@ export const SimpleProfileScreen: React.FC = () => {
                   </View>
                 </View>
                 
-                <Text style={styles.userName}>{user?.name || 'DSA Master'}</Text>
+                <Text style={styles.userName}>{user?.fullName || 'DSA Master'}</Text>
                 <Text style={styles.userTitle}>Level {currentLevel} Explorer</Text>
                 
                 {/* Level Progress Bar */}
@@ -209,29 +150,29 @@ export const SimpleProfileScreen: React.FC = () => {
                   {visibleAchievements.map((achievement) => (
                     <BlurView
                       key={achievement.id}
-                      intensity={achievement.unlocked ? 40 : 20}
+                      intensity={achievement.isUnlocked ? 40 : 20}
                       tint="dark"
                       style={[
                         styles.achievementItem,
-                        achievement.unlocked ? styles.achievementUnlocked : styles.achievementLocked,
+                        achievement.isUnlocked ? styles.achievementUnlocked : styles.achievementLocked,
                       ]}
                     >
                       <View style={styles.achievementContent}>
                         <View style={[
                           styles.achievementIcon,
-                          achievement.unlocked ? styles.achievementIconUnlocked : styles.achievementIconLocked
+                          achievement.isUnlocked ? styles.achievementIconUnlocked : styles.achievementIconLocked
                         ]}>
                           <MaterialIcons 
-                            name={achievement.unlocked ? achievement.icon as any : 'lock'} 
+                            name={achievement.isUnlocked ? achievement.icon as any : 'lock'} 
                             size={24} 
-                            color={achievement.unlocked ? "#3b82f6" : "rgba(255,255,255,0.4)"} 
+                            color={achievement.isUnlocked ? "#3b82f6" : "rgba(255,255,255,0.4)"} 
                           />
                         </View>
                         <View style={styles.achievementText}>
                           <Text style={styles.achievementTitle}>{achievement.title}</Text>
                           <Text style={styles.achievementDescription}>{achievement.description}</Text>
                         </View>
-                        {achievement.unlocked && (
+                        {achievement.isUnlocked && (
                           <View style={styles.achievementCheckmark}>
                             <MaterialIcons name="check" size={16} color="white" />
                           </View>
@@ -316,7 +257,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 20,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   profileCard: {
     borderRadius: 24,

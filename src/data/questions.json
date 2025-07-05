@@ -675,7 +675,7 @@
       "lessons": [
         {
           "id": "stack-basics",
-          "title": "Stack Basics",
+          "title": "Basics",
           "description": "Understanding LIFO principle and basic operations",
           "xpReward": 55,
           "questions": [
@@ -1258,7 +1258,7 @@
       "lessons": [
         {
           "id": "queue-basics",
-          "title": "Queue Basics",
+          "title": "Basics",
           "description": "Understanding FIFO principle and queue operations",
           "xpReward": 60,
           "questions": [
@@ -1519,7 +1519,7 @@
       "lessons": [
         {
           "id": "binary-trees",
-          "title": "Binary Trees",
+          "title": "Basics",
           "description": "Understanding tree structure and terminology",
           "xpReward": 70,
           "questions": [
@@ -1770,7 +1770,7 @@
       "lessons": [
         {
           "id": "graph-basics",
-          "title": "Graph Basics",
+          "title": "Basics",
           "description": "Understanding vertices, edges, and graph types",
           "xpReward": 80,
           "questions": [
@@ -2355,7 +2355,7 @@
         },
         {
           "id": "divide-conquer-analysis",
-          "title": "Divide & Conquer Analysis",
+          "title": "Divide & Conquer",
           "description": "Understanding the mathematics behind efficient sorting",
           "xpReward": 85,
           "questions": [
@@ -2402,7 +2402,7 @@
         },
         {
           "id": "hybrid-sorting",
-          "title": "Hybrid Sorting Algorithms",
+          "title": "Hybrid Sorting",
           "description": "Combining multiple sorting techniques for optimal performance",
           "xpReward": 90,
           "questions": [

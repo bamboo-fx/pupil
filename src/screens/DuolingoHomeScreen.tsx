@@ -17,6 +17,7 @@ import { BlurView } from 'expo-blur';
 import { useProgressStore } from '../state/progressStore';
 import questionsData from '../data/questions.json';
 import { Unit, Lesson } from '../types';
+import { SidebarDrawer } from '../components/SidebarDrawer';
 
 interface DuolingoHomeScreenProps {
   navigation: any;
@@ -29,8 +30,10 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   const units = questionsData.units as Unit[];
   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const slideAnim = useRef(new Animated.Value(-width)).current; // Start off-screen
+  const dropdownAnim = useRef(new Animated.Value(0)).current; // Dropdown animation
 
   const onGestureEvent = (event: any) => {
     const { translationX } = event.nativeEvent;
@@ -80,6 +83,25 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   const closeMenu = () => {
     slideAnim.setValue(-width);
     setIsMenuOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    if (isDropdownOpen) {
+      // Close dropdown
+      Animated.timing(dropdownAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => setIsDropdownOpen(false));
+    } else {
+      // Open dropdown
+      setIsDropdownOpen(true);
+      Animated.timing(dropdownAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }).start();
+    }
   };
 
   const currentUnit = units[currentUnitIndex];
@@ -134,6 +156,116 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
   };
 
   const lessonPath = React.useMemo(() => createLessonPath(), [currentUnit, completedLessons, getLessonProgress]);
+
+  // Calculate dynamic font sizes to ensure title fits in one line
+  const [titleFontSize, setTitleFontSize] = useState(20);
+  const [isTextMeasured, setIsTextMeasured] = useState(false);
+  
+  const dynamicFontSizes = React.useMemo(() => {
+    const titleLength = currentUnit.title.length;
+    let baseFontSize = titleFontSize;
+    let secondaryFontSize = titleFontSize * 0.8;
+    
+    // Gentler character-based scaling since we allow 2 lines
+    if (titleLength > 30) {
+      baseFontSize = Math.min(baseFontSize, 16);
+      secondaryFontSize = 13;
+    } else if (titleLength > 25) {
+      baseFontSize = Math.min(baseFontSize, 17);
+      secondaryFontSize = 14;
+    } else if (titleLength > 20) {
+      baseFontSize = Math.min(baseFontSize, 18);
+      secondaryFontSize = 15;
+    } else if (titleLength > 15) {
+      baseFontSize = Math.min(baseFontSize, 19);
+      secondaryFontSize = 15.5;
+    }
+    
+    return {
+      title: baseFontSize,
+      secondary: secondaryFontSize
+    };
+  }, [currentUnit.title, titleFontSize]);
+
+    // Handle text layout to measure actual width
+  const handleTextLayout = (event: any) => {
+    if (isTextMeasured) return;
+    
+    const lines = event.nativeEvent.lines;
+    const availableWidth = width - 180; // Account for menu button, streak, XP containers
+    
+    // Check if text fits on one line
+    if (lines.length === 1 && lines[0].width <= availableWidth) {
+      setIsTextMeasured(true);
+      return;
+    }
+    
+    // If text is too wide for one line and font is still large enough, try smaller font
+    if (lines.length === 1 && lines[0].width > availableWidth && titleFontSize > 16) {
+      setTitleFontSize(prev => Math.max(prev - 1, 16));
+    } 
+    // If font is already small (16px), allow 2 lines
+    else {
+      setIsTextMeasured(true);
+    }
+  };
+
+  // Reset text measurement when unit changes
+  React.useEffect(() => {
+    setTitleFontSize(20);
+    setIsTextMeasured(false);
+  }, [currentUnitIndex]);
+
+  // Calculate dynamic bottom padding based on number of lessons
+  const dynamicBottomPadding = React.useMemo(() => {
+    const lessonCount = currentUnit.lessons.length;
+    const uniformSpacing = 140;
+    const startY = 100;
+    const nodeSize = 70;
+    const ringSpacing = 28;
+    
+    // Account for variable label height based on text length
+    // Labels can wrap to multiple lines with longer titles
+    const estimatedLabelHeight = 60; // Increased from 40 to account for text wrapping
+    
+    // Dynamic navbar height handled in logic below
+    
+    // Calculate the Y position of the last lesson
+    const lastLessonY = startY + (lessonCount - 1) * uniformSpacing;
+    
+    // Add extra padding to ensure the last lesson + its label + buffer is visible
+    const totalContentHeight = lastLessonY + nodeSize + ringSpacing + estimatedLabelHeight;
+    
+    // Smart padding logic based on lesson count
+    let baseNavbarHeight, minPadding, lessonCountBuffer, contentMultiplier, minGuarantee;
+    
+    if (lessonCount <= 5) {
+      // Minimal padding for short units
+      baseNavbarHeight = 80;
+      minPadding = Math.max(80 + baseNavbarHeight, height * 0.15);
+      lessonCountBuffer = 0;
+      contentMultiplier = 0.12;
+      minGuarantee = 160;
+    } else if (lessonCount === 6) {
+      // Perfect padding for 6 lessons (current "just right" amount)
+      baseNavbarHeight = 140;
+      minPadding = Math.max(140 + baseNavbarHeight, height * 0.3);
+      lessonCountBuffer = 25; // 1 lesson above 5
+      contentMultiplier = 0.25;
+      minGuarantee = 300;
+    } else {
+      // Aggressive padding for 7+ lessons
+      baseNavbarHeight = 140;
+      minPadding = Math.max(140 + baseNavbarHeight, height * 0.3);
+      lessonCountBuffer = 25 + (lessonCount - 6) * 30; // 25 for 6th + 30px per additional
+      contentMultiplier = 0.25;
+      minGuarantee = 300;
+    }
+    
+    const dynamicPadding = Math.max(minPadding, totalContentHeight * contentMultiplier) + lessonCountBuffer + baseNavbarHeight;
+    
+    return Math.max(dynamicPadding, minGuarantee);
+  }, [currentUnit.lessons.length, height]);
 
   const LessonNode = React.memo(({ item }: { item: any }) => {
     const getNodeColors = () => {
@@ -300,7 +432,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                   colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
                   style={styles.topUnitGradient}
                 >
-                  <View style={styles.topUnitHeader}>
+                  <Pressable onPress={toggleDropdown} style={styles.topUnitHeader}>
                     <Pressable 
                       style={styles.hamburgerMenu}
                       onPress={openMenu}
@@ -308,107 +440,65 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                       <MaterialIcons name="menu" size={20} color="white" />
                     </Pressable>
                     <View style={styles.unitTitleContainer}>
-                      <Text style={styles.topUnitTitle}>{currentUnit.title}</Text>
+                      <Text 
+                        style={[styles.topUnitTitle, { fontSize: dynamicFontSizes.title }]}
+                        onTextLayout={handleTextLayout}
+                        numberOfLines={2}
+                        adjustsFontSizeToFit={true}
+                        minimumFontScale={0.8}
+                      >
+                        {currentUnit.title}
+                      </Text>
                     </View>
                     <View style={styles.topRightContent}>
                       <View style={styles.streakContainer}>
-                        <MaterialIcons name="local-fire-department" size={20} color="#FF9600" />
-                        <Text style={styles.streakText}>0</Text>
+                        <MaterialIcons name="local-fire-department" size={dynamicFontSizes.secondary + 4} color="#FF9600" />
+                        <Text style={[styles.streakText, { fontSize: dynamicFontSizes.secondary }]}>0</Text>
                       </View>
                       <View style={styles.xpContainer}>
-                        <MaterialIcons name="star" size={20} color="#FFD700" />
-                        <Text style={styles.xpText}>{totalXp}</Text>
+                        <MaterialIcons name="star" size={dynamicFontSizes.secondary + 4} color="#FFD700" />
+                        <Text style={[styles.xpText, { fontSize: dynamicFontSizes.secondary }]}>{totalXp}</Text>
                       </View>
+                      <MaterialIcons 
+                        name={isDropdownOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
+                        size={24} 
+                        color="rgba(255,255,255,0.7)" 
+                      />
                     </View>
-                  </View>
+                  </Pressable>
+                  
+                  {/* Animated Dropdown */}
+                  {isDropdownOpen && (
+                    <Animated.View 
+                      style={[
+                        styles.dropdownContainer,
+                        {
+                          maxHeight: dropdownAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0, 100],
+                          }),
+                          opacity: dropdownAnim,
+                        }
+                      ]}
+                    >
+                      <View style={styles.dropdownContent}>
+                        <Text style={styles.unitDescription}>{currentUnit.description}</Text>
+                      </View>
+                    </Animated.View>
+                  )}
                 </LinearGradient>
               </BlurView>
             </View>
 
-            {/* Animated Drawer Menu */}
-            <Animated.View 
-              pointerEvents={isMenuOpen ? 'auto' : 'none'}
-              style={[
-                styles.animatedDrawer,
-                {
-                  transform: [{ translateX: slideAnim }],
-                }
-              ]}
-            >
-              <BlurView intensity={90} tint="dark" style={styles.drawerBlurView}>
-                <LinearGradient
-                  colors={['rgba(26,26,46,0.8)', 'rgba(22,33,62,0.8)']}
-                  style={styles.drawerGradient}
-                >
-                  {/* Header */}
-                  <View style={styles.drawerHeader}>
-                    <LinearGradient
-                      colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
-                      style={styles.drawerHeaderCard}
-                    >
-                      <Text style={styles.drawerTitle}>Select Unit</Text>
-                      <Pressable style={styles.drawerCloseButton} onPress={closeMenu}>
-                        <MaterialIcons name="close" size={24} color="rgba(255,255,255,0.7)" />
-                      </Pressable>
-                    </LinearGradient>
-                  </View>
-                  
-                  {/* Units List */}
-                  <ScrollView
-                    style={styles.drawerScrollView}
-                    contentContainerStyle={styles.drawerScrollContent}
-                    showsVerticalScrollIndicator={false}
-                  >
-                    {units.map((unit, index) => (
-                      <Pressable
-                        key={unit.id}
-                        style={styles.drawerMenuItem}
-                        onPress={() => {
-                          setCurrentUnitIndex(index);
-                          closeMenu();
-                        }}
-                      >
-                        <LinearGradient
-                          colors={index === currentUnitIndex ? 
-                            ['rgba(59,130,246,0.2)', 'rgba(59,130,246,0.1)'] :
-                            ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.04)']
-                          }
-                          style={styles.drawerMenuItemCard}
-                        >
-                          <View style={styles.drawerMenuItemContent}>
-                            <View style={[
-                              styles.unitIcon,
-                              { backgroundColor: index === currentUnitIndex ? '#3b82f6' : 'rgba(255,255,255,0.1)' }
-                            ]}>
-                              <Text style={[
-                                styles.unitIconText,
-                                { color: index === currentUnitIndex ? 'white' : 'rgba(255,255,255,0.7)' }
-                              ]}>
-                                {index + 1}
-                              </Text>
-                            </View>
-                            <View style={styles.unitInfoSection}>
-                              <Text style={[
-                                styles.drawerMenuItemTitle,
-                                { color: index === currentUnitIndex ? '#3b82f6' : 'white' }
-                              ]}>
-                                {unit.title}
-                              </Text>
-                              <Text style={styles.drawerMenuItemDescription}>
-                                {unit.description}
-                              </Text>
-                            </View>
-                          </View>
-                          {index === currentUnitIndex && (
-                            <MaterialIcons name="check-circle" size={24} color="#3b82f6" />
-                          )}
-                        </LinearGradient>
-                      </Pressable>
-                    ))}
-                  </ScrollView>
-                </LinearGradient>
-              </BlurView>
-            </Animated.View>
+            {/* Sidebar Drawer */}
+            <SidebarDrawer
+              isOpen={isMenuOpen}
+              units={units}
+              currentUnitIndex={currentUnitIndex}
+              slideAnim={slideAnim}
+              onClose={closeMenu}
+              onUnitSelect={setCurrentUnitIndex}
+            />
 
             {/* Header with Unit Navigation */}
             <View style={styles.header}>
@@ -425,7 +515,10 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                 <ScrollView
                   ref={scrollViewRef}
                   style={styles.scrollView}
-                  contentContainerStyle={styles.scrollContent}
+                  contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingBottom: dynamicBottomPadding }
+                  ]}
                   showsVerticalScrollIndicator={false}
                 >
                   <View style={styles.pathArea}>
@@ -556,14 +649,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   unitDescription: {
-    fontSize: 16,
-    color: 'rgba(255,255,255,0.7)',
+    fontSize: 14,
+    color: 'rgba(255,255,255,0.8)',
+    lineHeight: 20,
+  },
+  dropdownContainer: {
+    overflow: 'hidden',
+    marginTop: 8,
+  },
+  dropdownContent: {
+    paddingTop: 8,
+    paddingBottom: 4,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 150,
+    // paddingBottom is now calculated dynamically
   },
   pathArea: {
     flex: 1,
@@ -657,129 +761,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
+        textShadowRadius: 2,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingTop: 10,
-    paddingBottom: 5,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 5,
-  },
-  navText: {
-    fontSize: 12,
-    marginTop: 4,
-    color: 'rgba(255,255,255,0.6)',
-  },
-  drawerBackdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    zIndex: 1000,
-  },
-  drawerBlurView: {
-    flex: 1,
-    overflow: 'hidden',
-  },
-  drawerScrollContent: {
-    paddingBottom: 30,
-    paddingTop: 8,
-  },
-  animatedDrawer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1100,
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 16,
-  },
-  drawerGradient: {
-    flex: 1,
-  },
-  drawerHeader: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    paddingTop: 60,
-  },
-  drawerHeaderCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  drawerTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: 'white',
-    letterSpacing: 1,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 1, height: 1 },
-    textShadowRadius: 2,
-  },
-  drawerCloseButton: {
-    padding: 8,
-  },
-  drawerScrollView: {
-    flex: 1,
-  },
-  drawerMenuItem: {
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-    marginHorizontal: 16,
-    marginVertical: 4,
-  },
-  drawerMenuItemCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-  },
-  drawerMenuItemContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  unitIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  unitIconText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  drawerMenuItemTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  drawerMenuItemDescription: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.7)',
-    lineHeight: 16,
-  },
+
 });

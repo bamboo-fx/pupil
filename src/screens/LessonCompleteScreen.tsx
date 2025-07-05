@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, Animated } from 'react-native';
+import { View, Text, Pressable, Animated, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 interface LessonCompleteScreenProps {
   navigation: any;
@@ -46,118 +47,235 @@ export const LessonCompleteScreen: React.FC<LessonCompleteScreenProps> = ({
   }, []);
 
   return (
-    <SafeAreaView className="flex-1" style={{ backgroundColor: '#F8F9FA' }}>
-      <View className="flex-1">
-        <View className="flex-1 items-center justify-center px-6">
-          <Animated.View 
-            style={{
-              transform: [
-                { 
-                  scale: bounceAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0.3, 1],
-                  })
+    <View style={styles.container}>
+      <LinearGradient
+        colors={['#1a1a2e', '#16213e', '#0f3460']}
+        style={styles.gradient}
+      >
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+          <View style={styles.innerContainer}>
+            <Animated.View 
+              style={[
+                styles.animatedTrophy,
+                {
+                  transform: [
+                    { 
+                      scale: bounceAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.3, 1],
+                      })
+                    }
+                  ]
                 }
-              ]
-            }}
-            className="items-center mb-8"
-          >
-            <LinearGradient
-              colors={['#FFD700', '#FFA500']}
-              className="w-32 h-32 rounded-full items-center justify-center mb-4"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.3,
-                shadowRadius: 16,
-                elevation: 8,
-              }}
+              ]}
             >
-              <Text style={{ fontSize: 64 }}>🏆</Text>
-            </LinearGradient>
-            
-            <Text className="text-gray-800 text-4xl font-bold text-center mb-2">
-              Quest Complete!
-            </Text>
-            
-            <Text className="text-gray-600 text-xl text-center font-medium">
-              {lessonTitle}
-            </Text>
-          </Animated.View>
-          
-          <Animated.View 
-            style={{
-              transform: [{ scale: scaleAnimation }]
-            }}
-            className="w-full mb-8"
-          >
-            <LinearGradient
-              colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.1)']}
-              className="rounded-2xl p-6"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 12,
-                elevation: 6,
-              }}
+              <BlurView intensity={40} tint="dark" style={styles.trophyCard}>
+                <LinearGradient
+                  colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
+                  style={styles.trophyGradient}
+                >
+                  <View style={styles.trophyIconContainer}>
+                    <MaterialIcons name="emoji-events" size={64} color="#FFD700" style={styles.trophyIcon} />
+                  </View>
+                  <Text style={styles.title}>Quest Complete!</Text>
+                  <Text style={styles.lessonTitle}>{lessonTitle}</Text>
+                </LinearGradient>
+              </BlurView>
+            </Animated.View>
+
+            <Animated.View 
+              style={[
+                styles.animatedCard,
+                { transform: [{ scale: scaleAnimation }] }
+              ]}
             >
-              <View className="flex-row justify-between items-center mb-6">
-                <Text className="text-gray-800 text-lg font-bold">Rewards Earned:</Text>
-                <Text className="text-yellow-500 text-2xl">✨</Text>
-              </View>
-              
-              <View className="space-y-4">
-                <View className="flex-row justify-between items-center">
-                  <View className="flex-row items-center">
-                    <Text className="text-2xl mr-2">💎</Text>
-                    <Text className="text-gray-800 text-lg font-medium">XP Points</Text>
+              <BlurView intensity={30} tint="dark" style={styles.rewardsCard}>
+                <LinearGradient
+                  colors={['rgba(255,255,255,0.13)', 'rgba(255,255,255,0.07)']}
+                  style={styles.rewardsGradient}
+                >
+                  <Text style={styles.rewardsTitle}>Rewards Earned</Text>
+                  <View style={styles.rewardsList}>
+                    <View style={styles.rewardRow}>
+                      <View style={styles.rewardLabel}>
+                        <MaterialIcons name="star" size={28} color="#FFD700" style={styles.rewardIcon} />
+                        <Text style={styles.rewardText}>XP Points</Text>
+                      </View>
+                      <Text style={[styles.rewardValue, { color: '#3b82f6' }]}>+{xpEarned}</Text>
+                    </View>
+                    <View style={styles.rewardRow}>
+                      <View style={styles.rewardLabel}>
+                        <MaterialIcons name="track-changes" size={28} color="#22c55e" style={styles.rewardIcon} />
+                        <Text style={styles.rewardText}>Accuracy</Text>
+                      </View>
+                      <Text style={[styles.rewardValue, { color: '#22c55e' }]}>{accuracy}%</Text>
+                    </View>
+                    <View style={styles.rewardRow}>
+                      <View style={styles.rewardLabel}>
+                        <MaterialIcons name="check-circle" size={28} color="#facc15" style={styles.rewardIcon} />
+                        <Text style={styles.rewardText}>Correct Answers</Text>
+                      </View>
+                      <Text style={[styles.rewardValue, { color: '#facc15' }]}>{correctAnswers}/{totalQuestions}</Text>
+                    </View>
                   </View>
-                  <Text className="text-blue-600 text-2xl font-bold">+{xpEarned}</Text>
-                </View>
-                
-                <View className="flex-row justify-between items-center">
-                  <View className="flex-row items-center">
-                    <Text className="text-2xl mr-2">🎯</Text>
-                    <Text className="text-gray-800 text-lg font-medium">Accuracy</Text>
-                  </View>
-                  <Text className="text-green-600 text-2xl font-bold">{accuracy}%</Text>
-                </View>
-                
-                <View className="flex-row justify-between items-center">
-                  <View className="flex-row items-center">
-                    <Text className="text-2xl mr-2">✅</Text>
-                    <Text className="text-gray-800 text-lg font-medium">Correct Answers</Text>
-                  </View>
-                  <Text className="text-blue-600 text-2xl font-bold">
-                    {correctAnswers}/{totalQuestions}
-                  </Text>
-                </View>
-              </View>
-            </LinearGradient>
-          </Animated.View>
-          
-          <Pressable
-            onPress={() => navigation.navigate('Main')}
-          >
-            <LinearGradient
-              colors={['#10B981', '#059669']}
-              className="py-4 px-12 rounded-2xl"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.3,
-                shadowRadius: 12,
-                elevation: 8,
-              }}
+                </LinearGradient>
+              </BlurView>
+            </Animated.View>
+
+            <Pressable
+              onPress={() => navigation.navigate('Main')}
+              style={styles.continueButtonWrapper}
             >
-              <Text className="text-white text-xl font-bold text-center">
-                🚀 Continue Adventure
-              </Text>
-            </LinearGradient>
-          </Pressable>
-        </View>
-      </View>
-    </SafeAreaView>
+              <LinearGradient
+                colors={["#10B981", "#059669"]}
+                style={styles.continueButton}
+              >
+                <MaterialIcons name="arrow-forward" size={24} color="white" style={{ marginRight: 8 }} />
+                <Text style={styles.continueButtonText}>Continue Adventure</Text>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  gradient: {
+    flex: 1,
+  },
+  safeArea: {
+    flex: 1,
+  },
+  innerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  animatedTrophy: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  trophyCard: {
+    borderRadius: 32,
+    overflow: 'hidden',
+    width: 180,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  trophyGradient: {
+    padding: 28,
+    alignItems: 'center',
+  },
+  trophyIconContainer: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 48,
+    width: 96,
+    height: 96,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.12)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  trophyIcon: {
+    textShadowColor: 'rgba(0,0,0,0.18)',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 6,
+  },
+  title: {
+    color: 'white',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.18)',
+    textShadowOffset: { width: 1, height: 2 },
+    textShadowRadius: 6,
+  },
+  lessonTitle: {
+    color: 'rgba(255,255,255,0.7)',
+    fontSize: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  animatedCard: {
+    width: '100%',
+    marginBottom: 32,
+  },
+  rewardsCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    width: '100%',
+  },
+  rewardsGradient: {
+    padding: 24,
+  },
+  rewardsTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 18,
+    textAlign: 'left',
+  },
+  rewardsList: {
+    gap: 18,
+  },
+  rewardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  rewardLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rewardIcon: {
+    marginRight: 10,
+  },
+  rewardText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '500',
+  },
+  rewardValue: {
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  continueButtonWrapper: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  continueButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  continueButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 20,
+    textAlign: 'center',
+  },
+});
