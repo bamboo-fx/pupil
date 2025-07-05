@@ -3,7 +3,8 @@ export interface Question {
   type: 'mcq' | 'fillInBlank';
   question: string;
   options?: string[]; // For MCQ
-  correctAnswer: string;
+  correctAnswer?: string; // For MCQ
+  acceptedAnswers?: string[]; // For fillInBlank
   explanation: string;
   difficulty: 'easy' | 'medium' | 'hard';
   topic: string;

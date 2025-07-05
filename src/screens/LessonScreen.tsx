@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useProgressStore } from '../state/progressStore';
 import { Question, Lesson } from '../types';
-import { checkAnswerFlexible } from '../utils/cn';
+import { checkAnswer } from '../utils/cn';
 
 interface LessonScreenProps {
   navigation: any;
@@ -54,14 +54,19 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
   const handleAnswerSubmit = () => {
     const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
     
+    // Get the correct answer(s) based on question type
+    const correctAnswerData = currentQuestion.type === 'mcq' 
+      ? currentQuestion.correctAnswer 
+      : currentQuestion.acceptedAnswers || currentQuestion.correctAnswer;
+    
     console.log('Submitting answer:', {
       questionType: currentQuestion.type,
       userAnswer,
-      correctAnswer: currentQuestion.correctAnswer,
+      correctAnswerData,
       question: currentQuestion.question
     });
     
-    const correct = checkAnswerFlexible(userAnswer, currentQuestion.correctAnswer, currentQuestion.type);
+    const correct = checkAnswer(userAnswer, correctAnswerData, currentQuestion.type);
     
     setIsCorrect(correct);
     setShowExplanation(true);
@@ -270,7 +275,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
                     <Text className={`text-lg font-semibold ${
                       isCorrect ? 'text-green-800' : 'text-red-800'
                     }`}>
-                      Correct answer: {currentQuestion.correctAnswer}
+                      Correct answer: {currentQuestion.acceptedAnswers ? currentQuestion.acceptedAnswers[0] : currentQuestion.correctAnswer}
                     </Text>
                   </View>
                 )}

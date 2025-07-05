@@ -14,65 +14,67 @@ export function normalizeAnswer(answer: string): string {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, ' ') // Replace multiple spaces with single space
-    .replace(/[^\w\s\-\(\)]/g, '') // Keep letters, numbers, spaces, hyphens, and parentheses
+    .replace(/[^\w\s\-\(\)\/\²\³]/g, '') // Keep letters, numbers, spaces, hyphens, parentheses, slashes, and superscripts
 }
 
-export function checkAnswer(userAnswer: string, correctAnswer: string, questionType: 'mcq' | 'fillInBlank'): boolean {
+export function checkAnswer(
+  userAnswer: string, 
+  correctAnswer: string | string[] | undefined, 
+  questionType: 'mcq' | 'fillInBlank'
+): boolean {
   // Validate inputs
-  if (!userAnswer || !correctAnswer) {
-    console.warn('Invalid answer inputs:', { userAnswer, correctAnswer });
+  if (!userAnswer) {
+    console.warn('Invalid user answer:', userAnswer);
     return false;
   }
   
   if (questionType === 'mcq') {
     // For MCQ, exact match (case-sensitive)
-    return userAnswer === correctAnswer;
-  } else {
-    // For fill-in-the-blank, normalize both answers
-    const normalizedUser = normalizeAnswer(userAnswer);
-    const normalizedCorrect = normalizeAnswer(correctAnswer);
-    
-    // Debug logging (remove in production)
-    console.log('Answer Check:', {
-      originalUser: userAnswer,
-      originalCorrect: correctAnswer,
-      normalizedUser,
-      normalizedCorrect,
-      isCorrect: normalizedUser === normalizedCorrect
-    });
-    
-    return normalizedUser === normalizedCorrect;
-  }
-}
-
-// Alternative more flexible checking for edge cases
-export function checkAnswerFlexible(userAnswer: string, correctAnswer: string, questionType: 'mcq' | 'fillInBlank'): boolean {
-  // Validate inputs
-  if (!userAnswer || !correctAnswer) {
-    console.warn('Invalid answer inputs:', { userAnswer, correctAnswer });
+    if (typeof correctAnswer === 'string') {
+      return userAnswer === correctAnswer;
+    }
+    console.warn('MCQ question missing correctAnswer string:', correctAnswer);
     return false;
-  }
-  
-  if (questionType === 'mcq') {
-    return userAnswer === correctAnswer;
   } else {
-    // Multiple normalization strategies
-    const strategies = [
-      // Strategy 1: Basic normalization
-      () => normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer),
-      // Strategy 2: Remove all spaces
-      () => userAnswer.toLowerCase().replace(/\s/g, '') === correctAnswer.toLowerCase().replace(/\s/g, ''),
-      // Strategy 3: Exact match (case-insensitive)
-      () => userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim(),
-      // Strategy 4: Handle mathematical notation (O(1), O(n), etc.)
-      () => {
-        const cleanUser = userAnswer.toLowerCase().trim().replace(/\s/g, '');
-        const cleanCorrect = correctAnswer.toLowerCase().trim().replace(/\s/g, '');
-        return cleanUser === cleanCorrect;
-      }
-    ];
+    // For fill-in-the-blank, check against acceptedAnswers array
+    if (Array.isArray(correctAnswer)) {
+      // New format with acceptedAnswers array
+      const normalizedUser = normalizeAnswer(userAnswer);
+      
+      // Check if user answer matches any of the accepted answers
+      const isCorrect = correctAnswer.some(acceptedAnswer => {
+        const normalizedAccepted = normalizeAnswer(acceptedAnswer);
+        return normalizedUser === normalizedAccepted;
+      });
+      
+      // Debug logging (remove in production)
+      console.log('Answer Check (array):', {
+        originalUser: userAnswer,
+        acceptedAnswers: correctAnswer,
+        normalizedUser,
+        isCorrect
+      });
+      
+      return isCorrect;
+    } else if (typeof correctAnswer === 'string') {
+      // Backward compatibility with old format
+      const normalizedUser = normalizeAnswer(userAnswer);
+      const normalizedCorrect = normalizeAnswer(correctAnswer);
+      
+      // Debug logging (remove in production)
+      console.log('Answer Check (legacy):', {
+        originalUser: userAnswer,
+        originalCorrect: correctAnswer,
+        normalizedUser,
+        normalizedCorrect,
+        isCorrect: normalizedUser === normalizedCorrect
+      });
+      
+      return normalizedUser === normalizedCorrect;
+    }
     
-    return strategies.some(strategy => strategy());
+    console.warn('Fill-in-blank question missing acceptedAnswers or correctAnswer:', correctAnswer);
+    return false;
   }
 }
 
@@ -83,20 +85,24 @@ export function testAnswerChecking() {
     { user: "O(1)", correct: "O(1)", type: 'mcq' as const, expected: true },
     { user: "O(n)", correct: "O(1)", type: 'mcq' as const, expected: false },
     
-    // Fill-in-the-blank tests
-    { user: "length", correct: "length", type: 'fillInBlank' as const, expected: true },
-    { user: "Length", correct: "length", type: 'fillInBlank' as const, expected: true },
-    { user: "LENGTH", correct: "length", type: 'fillInBlank' as const, expected: true },
-    { user: " length ", correct: "length", type: 'fillInBlank' as const, expected: true },
-    { user: "two", correct: "two", type: 'fillInBlank' as const, expected: true },
-    { user: "Two", correct: "two", type: 'fillInBlank' as const, expected: true },
-    { user: "pointer", correct: "pointer", type: 'fillInBlank' as const, expected: true },
-    { user: "Pointer", correct: "pointer", type: 'fillInBlank' as const, expected: true },
+    // Fill-in-the-blank tests (new array format)
+    { user: "length", correct: ["length", "Length", "LENGTH"], type: 'fillInBlank' as const, expected: true },
+    { user: "Length", correct: ["length", "Length", "LENGTH"], type: 'fillInBlank' as const, expected: true },
+    { user: "LENGTH", correct: ["length", "Length", "LENGTH"], type: 'fillInBlank' as const, expected: true },
+    { user: " length ", correct: ["length", "Length", "LENGTH"], type: 'fillInBlank' as const, expected: true },
+    { user: "two", correct: ["two", "Two", "TWO", "2"], type: 'fillInBlank' as const, expected: true },
+    { user: "2", correct: ["two", "Two", "TWO", "2"], type: 'fillInBlank' as const, expected: true },
+    { user: "stack", correct: ["stack", "Stack", "STACK"], type: 'fillInBlank' as const, expected: true },
+    { user: "STACK", correct: ["stack", "Stack", "STACK"], type: 'fillInBlank' as const, expected: true },
+    
+    // Fill-in-the-blank tests (legacy single string format)
+    { user: "legacy", correct: "legacy", type: 'fillInBlank' as const, expected: true },
+    { user: "Legacy", correct: "legacy", type: 'fillInBlank' as const, expected: true },
   ];
   
   console.log('Testing answer checking logic...');
   testCases.forEach((testCase, index) => {
-    const result = checkAnswerFlexible(testCase.user, testCase.correct, testCase.type);
+    const result = checkAnswer(testCase.user, testCase.correct, testCase.type);
     const passed = result === testCase.expected;
     console.log(`Test ${index + 1}: ${passed ? 'PASS' : 'FAIL'}`, {
       user: testCase.user,

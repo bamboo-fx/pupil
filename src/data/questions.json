@@ -17,7 +17,7 @@
               "id": "q1",
               "type": "mcq",
               "question": "What is the key characteristic of how arrays store elements in memory?",
-              "options": ["Elements are stored in random locations", "Elements are stored in contiguous memory locations", "Elements are stored in separate memory blocks", "Elements are stored in linked memory nodes"],
+              "options": ["Elements are stored with pointers to the next element", "Elements are stored in contiguous memory locations", "Elements are stored on the heap in separate objects", "Elements are organized in a tree structure for fast search"],
               "correctAnswer": "Elements are stored in contiguous memory locations",
               "explanation": "Arrays store elements in contiguous (adjacent) memory locations, which enables constant-time access by index and better cache performance.",
               "difficulty": "easy",
@@ -45,11 +45,12 @@
             },
             {
               "id": "q4",
-              "type": "fillInBlank",
-              "question": "In most programming languages, array indexing starts from _____.",
-              "correctAnswer": "0",
-              "explanation": "Most programming languages use 0-based indexing, where the first element is at index 0, second at index 1, and so on.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What happens when you access an array index that equals the array length?",
+              "options": ["Returns the last element", "Returns the first element", "Causes an index out of bounds error", "Automatically extends the array"],
+              "correctAnswer": "Causes an index out of bounds error",
+              "explanation": "In most programming languages, accessing index[length] when valid indices are 0 to length-1 results in an out of bounds error.",
+              "difficulty": "medium",
               "topic": "arrays"
             },
             {
@@ -104,7 +105,7 @@
               "id": "q9",
               "type": "fillInBlank",
               "question": "The time complexity of deleting an element from the end of an array is _____.",
-              "correctAnswer": "O(1)",
+              "acceptedAnswers": ["O(1)", "o(1)", "O( 1 )", "O(1)", "constant", "Constant", "CONSTANT"],
               "explanation": "Deleting from the end only requires removing the last element without shifting others, making it O(1).",
               "difficulty": "easy",
               "topic": "arrays"
@@ -141,7 +142,7 @@
               "id": "q12",
               "type": "fillInBlank",
               "question": "To find the number of elements in an array, you typically use the _____ property.",
-              "correctAnswer": "length",
+              "acceptedAnswers": ["length", "Length", "LENGTH", "size", "Size", "SIZE", "count", "Count", "COUNT"],
               "explanation": "The 'length' property returns the number of elements in an array and is available in most programming languages.",
               "difficulty": "easy",
               "topic": "arrays"
@@ -180,7 +181,7 @@
               "id": "q16",
               "type": "fillInBlank",
               "question": "When comparing two arrays for equality, you typically need to compare both their _____ and corresponding elements.",
-              "correctAnswer": "length",
+              "acceptedAnswers": ["length", "Length", "LENGTH", "size", "Size", "SIZE", "lengths", "Lengths", "LENGTHS", "sizes", "Sizes", "SIZES"],
               "explanation": "Array equality requires checking that arrays have the same length and that all corresponding elements are equal.",
               "difficulty": "medium",
               "topic": "arrays"
@@ -207,7 +208,7 @@
               "id": "q18",
               "type": "fillInBlank",
               "question": "Dynamic arrays like ArrayList in Java or vector in C++ are also called _____ arrays.",
-              "correctAnswer": "resizable",
+              "acceptedAnswers": ["resizable", "Resizable", "RESIZABLE", "dynamic", "Dynamic", "DYNAMIC", "growable", "Growable", "GROWABLE"],
               "explanation": "Dynamic/resizable arrays can grow and shrink in size during runtime, unlike fixed-size arrays.",
               "difficulty": "easy",
               "topic": "arrays"
@@ -236,7 +237,7 @@
               "id": "q21",
               "type": "fillInBlank",
               "question": "The process of creating a new larger array and copying elements during resizing is called _____.",
-              "correctAnswer": "reallocation",
+              "acceptedAnswers": ["reallocation", "Reallocation", "REALLOCATION", "reallocating", "Reallocating", "REALLOCATING", "resizing", "Resizing", "RESIZING"],
               "explanation": "Reallocation is the process of allocating new memory space and copying data when an array needs to resize.",
               "difficulty": "medium",
               "topic": "arrays"
@@ -273,9 +274,185 @@
               "id": "q24",
               "type": "fillInBlank", 
               "question": "The technique that uses two pointers moving towards each other is called the _____ pointer technique.",
-              "correctAnswer": "two",
+              "acceptedAnswers": ["two", "Two", "TWO", "2", "dual", "Dual", "DUAL", "double", "Double", "DOUBLE"],
               "explanation": "Two pointer technique is commonly used for array problems where you need to find pairs or subarrays.",
               "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24e",
+              "type": "codeCompletion",
+              "question": "Complete the function to find the maximum element in an array:",
+              "codeTemplate": "function findMax(arr) {\n  let max = arr[0];\n  for (let i = 1; i < arr.length; i++) {\n    if (______) {\n      max = arr[i];\n    }\n  }\n  return max;\n}",
+              "blanks": [
+                {
+                  "position": "______",
+                  "acceptedAnswers": ["arr[i] > max", "max < arr[i]", "arr[i] > max", "max < arr[i]"],
+                  "explanation": "We update max when the current element is greater than the current maximum."
+                }
+              ],
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24f",
+              "type": "dragAndDrop",
+              "question": "Arrange these steps of bubble sort in the correct order:",
+              "items": [
+                "Start with the first element",
+                "Compare adjacent elements",
+                "Swap if they are in wrong order",
+                "Move to next pair",
+                "Repeat until no swaps needed"
+              ],
+              "correctOrder": [0, 1, 2, 3, 4],
+              "explanation": "Bubble sort systematically compares adjacent elements and swaps them if needed, repeating until the array is sorted.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24g",
+              "type": "interactiveVisualization",
+              "question": "Click the array elements in the order they would be accessed during binary search to find the value 7:",
+              "visualizationData": {
+                "array": [1, 3, 5, 7, 9, 11, 13, 15],
+                "target": 7,
+                "type": "binarySearch"
+              },
+                                            "correctSequence": [3, 1, 2],
+               "explanation": "Binary search checks the middle element (9), then the left half middle (3), then finds 7.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24h",
+              "type": "codeOutput",
+              "question": "What will this code output?",
+              "code": "let arr = [1, 2, 3, 4, 5];\nlet result = [];\nfor (let i = arr.length - 1; i >= 0; i--) {\n  result.push(arr[i]);\n}\nconsole.log(result);",
+              "options": ["[1, 2, 3, 4, 5]", "[5, 4, 3, 2, 1]", "[5, 4, 3, 2, 1, 1, 2, 3, 4, 5]", "Error"],
+              "correctAnswer": "[5, 4, 3, 2, 1]",
+              "explanation": "The loop iterates backwards through the array, pushing elements to result in reverse order.",
+              "difficulty": "easy",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24i",
+              "type": "algorithmTrace",
+              "question": "Trace through the insertion sort algorithm step by step:",
+              "initialArray": [5, 2, 8, 1, 9],
+              "steps": [
+                { "step": 1, "array": [2, 5, 8, 1, 9], "explanation": "Insert 2 in correct position" },
+                { "step": 2, "array": [2, 5, 8, 1, 9], "explanation": "8 is already in correct position" },
+                { "step": 3, "array": [1, 2, 5, 8, 9], "explanation": "Insert 1 at the beginning" },
+                { "step": 4, "array": [1, 2, 5, 8, 9], "explanation": "Insert 9 at the end" }
+              ],
+              "userTask": "Select the correct array state after each step",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24j",
+              "type": "interactiveDebugging",
+              "question": "Find and fix the bug in this binary search implementation:",
+              "buggyCode": "function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length;\n  \n  while (left < right) {\n    let mid = Math.floor((left + right) / 2);\n    \n    if (arr[mid] === target) {\n      return mid;\n    } else if (arr[mid] < target) {\n      left = mid;\n    } else {\n      right = mid;\n    }\n  }\n  \n  return -1;\n}",
+              "bugs": [
+                {
+                  "line": 3,
+                  "issue": "Should be arr.length - 1",
+                  "explanation": "Right boundary should be the last valid index"
+                },
+                {
+                  "line": 10,
+                  "issue": "Should be mid + 1",
+                  "explanation": "Need to move left boundary past mid to avoid infinite loop"
+                }
+              ],
+              "difficulty": "hard",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24k",
+              "type": "performanceComparison",
+              "question": "Compare the time complexities of these array operations:",
+              "operations": [
+                { "name": "Linear Search", "complexity": "O(n)" },
+                { "name": "Binary Search", "complexity": "O(log n)" },
+                { "name": "Array Access", "complexity": "O(1)" },
+                { "name": "Insertion at End", "complexity": "O(1)" }
+              ],
+              "userTask": "Rank from fastest to slowest",
+                                            "correctRanking": [2, 1, 3, 0],
+               "explanation": "O(1) operations are fastest, followed by O(log n), then O(n).",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24l",
+              "type": "memoryLayout",
+              "question": "How would this array be laid out in memory?",
+              "array": [10, 20, 30, 40],
+              "visualizationData": {
+                "baseAddress": 1000,
+                "elementSize": 4,
+                "type": "integer"
+              },
+              "userTask": "Click on the correct memory addresses",
+              "correctAddresses": [1000, 1004, 1008, 1012],
+              "explanation": "Arrays store elements in contiguous memory locations, each integer taking 4 bytes.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24m",
+              "type": "interactiveAnimation",
+              "question": "Control the animation to show how merge sort divides and conquers:",
+              "animationData": {
+                "array": [8, 3, 1, 6, 4, 7, 2, 5],
+                "algorithm": "mergeSort",
+                "controls": ["play", "pause", "step", "reset", "speed"]
+              },
+              "challenges": [
+                "Pause when the array is fully divided",
+                "Step through the merge process",
+                "Identify when the first merge happens"
+              ],
+              "explanation": "Merge sort recursively divides the array, then merges sorted subarrays.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24n",
+              "type": "buildDataStructure",
+              "question": "Build a 2D array representation of a matrix:",
+              "task": "Create a 3x3 matrix with values 1-9",
+              "constraints": {
+                "rows": 3,
+                "cols": 3,
+                "startValue": 1
+              },
+              "targetStructure": [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]
+              ],
+              "tools": ["drag", "input", "generate"],
+              "explanation": "2D arrays represent matrices where each element is accessed by row and column indices.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "q24o",
+              "type": "complexityAnalysis",
+              "question": "Analyze the time complexity of this nested loop:",
+              "code": "for (let i = 0; i < n; i++) {\n  for (let j = i; j < n; j++) {\n    // O(1) operation\n  }\n}",
+              "analysisSteps": [
+                { "step": "Outer loop runs n times", "complexity": "O(n)" },
+                { "step": "Inner loop runs n-i times", "complexity": "O(n-i)" },
+                { "step": "Total iterations", "complexity": "O(n²)" }
+              ],
+              "userTask": "Select the correct complexity for each step",
+              "explanation": "The inner loop runs fewer times as i increases, but the total is still O(n²).",
+              "difficulty": "hard",
               "topic": "arrays"
             }
           ]
@@ -310,7 +487,7 @@
               "id": "q24c",
               "type": "fillInBlank",
               "question": "The Boyer-Moore majority vote algorithm finds an element that appears more than _____ times in an array.",
-              "correctAnswer": "n/2",
+              "acceptedAnswers": ["n/2", "n / 2", "n/two", "n / two", "half", "Half", "HALF"],
               "explanation": "Boyer-Moore algorithm finds the majority element that appears more than n/2 times in the array.",
               "difficulty": "hard",
               "topic": "arrays"
@@ -356,7 +533,7 @@
               "id": "q26",
               "type": "fillInBlank",
               "question": "A hash map uses a _____ function to convert keys into array indices.",
-              "correctAnswer": "hash",
+              "acceptedAnswers": ["hash", "Hash", "HASH", "hashing", "Hashing", "HASHING"],
               "explanation": "A hash function takes a key and converts it into an array index where the corresponding value will be stored.",
               "difficulty": "easy",
               "topic": "hashmap"
@@ -385,7 +562,7 @@
               "id": "q29",
               "type": "fillInBlank",
               "question": "Hash maps are also known as hash tables, dictionaries, or _____ arrays.",
-              "correctAnswer": "associative",
+              "acceptedAnswers": ["associative", "Associative", "ASSOCIATIVE", "associative-array", "Associative-Array", "ASSOCIATIVE-ARRAY"],
               "explanation": "Associative arrays associate keys with values, allowing you to look up values using their corresponding keys.",
               "difficulty": "easy",
               "topic": "hashmap"
@@ -412,7 +589,7 @@
               "id": "q31",
               "type": "fillInBlank",
               "question": "A hash function should be _____, meaning the same key always produces the same hash value.",
-              "correctAnswer": "deterministic",
+              "acceptedAnswers": ["deterministic", "Deterministic", "DETERMINISTIC", "deterministic-function", "Deterministic-Function", "DETERMINISTIC-FUNCTION"],
               "explanation": "Deterministic behavior ensures that looking up the same key will always check the same location in the hash table.",
               "difficulty": "medium",
               "topic": "hashmap"
@@ -441,7 +618,7 @@
               "id": "q34",
               "type": "fillInBlank",
               "question": "The result of applying a hash function to a key is called a hash _____ or hash code.",
-              "correctAnswer": "value",
+              "acceptedAnswers": ["value", "Value", "VALUE", "hash-code", "HashCode", "HASH-CODE"],
               "explanation": "The hash value or hash code is the numerical result that determines where to store/find the key-value pair.",
               "difficulty": "easy",
               "topic": "hashmap"
@@ -478,7 +655,7 @@
               "id": "q37",
               "type": "fillInBlank",
               "question": "Linear probing is a type of _____ addressing where we check the next sequential slot.",
-              "correctAnswer": "open",
+              "acceptedAnswers": ["open", "Open", "OPEN", "linear-probing", "Linear-Probing", "LINEAR-PROBING", "sequential", "Sequential", "SEQUENTIAL"],
               "explanation": "Linear probing is an open addressing technique that checks slots sequentially (i, i+1, i+2, ...) to find an empty position.",
               "difficulty": "medium",
               "topic": "hashmap"
@@ -525,7 +702,7 @@
               "id": "q41",
               "type": "fillInBlank",
               "question": "The _____ factor is the ratio of the number of stored elements to the size of the hash table.",
-              "correctAnswer": "load",
+              "acceptedAnswers": ["load", "Load", "LOAD", "load-factor", "Load-Factor", "LOAD-FACTOR", "load-factor-ratio", "Load-Factor-Ratio", "LOAD-FACTOR-RATIO"],
               "explanation": "Load factor = (number of elements) / (table size). It's used to determine when to resize the hash table.",
               "difficulty": "medium",
               "topic": "hashmap"
@@ -554,7 +731,7 @@
               "id": "q44",
               "type": "fillInBlank",
               "question": "Hash map deletion in open addressing often uses _____ deletion to avoid breaking probe sequences.",
-              "correctAnswer": "lazy",
+              "acceptedAnswers": ["lazy", "Lazy", "LAZY", "lazy-deletion", "Lazy-Deletion", "LAZY-DELETION", "deletion", "Deletion", "DELETION"],
               "explanation": "Lazy deletion marks slots as 'deleted' rather than truly empty to maintain probe sequences for other elements.",
               "difficulty": "hard",
               "topic": "hashmap"
@@ -581,7 +758,7 @@
               "id": "q46",
               "type": "fillInBlank",
               "question": "To count the frequency of elements in an array, you would use a hash map where keys are elements and values are their _____.",
-              "correctAnswer": "counts",
+              "acceptedAnswers": ["counts", "Counts", "COUNTS", "frequency", "Frequency", "FREQUENCY", "count", "Count", "COUNT"],
               "explanation": "Frequency counting maps each unique element to how many times it appears in the dataset.",
               "difficulty": "easy", 
               "topic": "hashmap"
@@ -610,7 +787,7 @@
               "id": "q49",
               "type": "fillInBlank",
               "question": "In database systems, hash maps are commonly used to implement _____ joins for fast lookups.",
-              "correctAnswer": "hash",
+              "acceptedAnswers": ["hash", "Hash", "HASH", "hash-join", "Hash-Join", "HASH-JOIN", "hash-joins", "Hash-Joins", "HASH-JOINS"],
               "explanation": "Hash joins use hash maps to build lookup tables for one relation, then probe with the other relation for matches.",
               "difficulty": "hard",
               "topic": "hashmap"
@@ -637,7 +814,7 @@
               "id": "q49b",
               "type": "fillInBlank",
               "question": "Cuckoo hashing guarantees O(1) worst-case lookup time but may require _____ during insertion.",
-              "correctAnswer": "rehashing",
+              "acceptedAnswers": ["rehashing", "Rehashing", "REHASHING", "rehashing-on-insert", "Rehashing-On-Insert", "REHASHING-ON-INSERT", "rehashing-on-insert-only", "Rehashing-On-Insert-Only", "REHASHING-ON-INSERT-ONLY"],
               "explanation": "Cuckoo hashing may need to rehash the entire table if cycles occur during insertion, but guarantees constant lookup time.",
               "difficulty": "hard",
               "topic": "hashmap"
@@ -683,7 +860,7 @@
               "id": "q50",
               "type": "mcq",
               "question": "What does LIFO stand for in the context of stacks?",
-              "options": ["Last In First Out", "Last In Final Out", "Late In Fast Out", "Large In Full Out"],
+              "options": ["Last In First Out", "Layered Input First Output", "List Insertion File Output", "Local-In-First-Out"],
               "correctAnswer": "Last In First Out",
               "explanation": "LIFO means the last element added to the stack is the first one to be removed.",
               "difficulty": "easy",
@@ -691,11 +868,12 @@
             },
             {
               "id": "q51",
-              "type": "fillInBlank",
-              "question": "The operation to add an element to the top of a stack is called _____.",
-              "correctAnswer": "push",
-              "explanation": "Push operation adds an element to the top of the stack.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the primary characteristic that distinguishes stack behavior from queue behavior?",
+              "options": ["Stacks are faster than queues", "Stacks reverse the order of elements during processing", "Stacks use less memory than queues", "Stacks only work with integers"],
+              "correctAnswer": "Stacks reverse the order of elements during processing",
+              "explanation": "Stacks follow LIFO (Last In First Out), which inherently reverses the order of elements compared to their insertion order, while queues maintain FIFO order.",
+              "difficulty": "medium",
               "topic": "stack"
             },
             {
@@ -710,11 +888,12 @@
             },
             {
               "id": "q52a",
-              "type": "fillInBlank",
-              "question": "The operation to remove and return the top element from a stack is called _____.",
-              "correctAnswer": "pop",
-              "explanation": "Pop operation removes and returns the element at the top of the stack.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "In what scenario would you choose a stack over an array for temporary storage?",
+              "options": ["When you need random access to elements", "When you need to access elements in reverse order of insertion", "When you need to sort the elements", "When you need to search for specific values"],
+              "correctAnswer": "When you need to access elements in reverse order of insertion",
+              "explanation": "Stacks are ideal when you need to access elements in reverse order of their insertion, such as in undo operations or expression evaluation.",
+              "difficulty": "hard",
               "topic": "stack"
             },
             {
@@ -739,10 +918,11 @@
             },
             {
               "id": "q52d",
-              "type": "fillInBlank",
-              "question": "When a stack exceeds its maximum capacity, it results in a stack _____ error.",
-              "correctAnswer": "overflow",
-              "explanation": "Stack overflow occurs when trying to push elements beyond the stack's capacity limit.",
+              "type": "mcq",
+              "question": "Which limitation becomes critical when implementing a stack using a fixed-size array?",
+              "options": ["Cannot access middle elements", "Risk of stack overflow when capacity is exceeded", "Cannot determine current size", "Slower access time"],
+              "correctAnswer": "Risk of stack overflow when capacity is exceeded",
+              "explanation": "Fixed-size array implementations face the risk of stack overflow when trying to push elements beyond the allocated capacity.",
               "difficulty": "medium",
               "topic": "stack"
             },
@@ -788,7 +968,7 @@
               "id": "q55b",
               "type": "fillInBlank",
               "question": "Stacks are commonly used to check for balanced _____ in expressions.",
-              "correctAnswer": "parentheses",
+              "acceptedAnswers": ["parentheses", "Parentheses", "PARENTHESES", "brackets", "Brackets", "BRACKETS", "braces", "Braces", "BRACES"],
               "explanation": "Stacks are ideal for checking balanced parentheses, brackets, and braces in mathematical expressions.",
               "difficulty": "medium",
               "topic": "stack"
@@ -817,7 +997,7 @@
               "id": "q55e",
               "type": "fillInBlank",
               "question": "Undo operations in text editors are typically implemented using a _____.",
-              "correctAnswer": "stack",
+              "acceptedAnswers": ["stack", "Stack", "STACK", "stack-based", "Stack-Based", "STACK-BASED", "stack-based-undo", "Stack-Based-Undo", "STACK-BASED-UNDO"],
               "explanation": "Undo functionality uses a stack to store actions in reverse order - last action is first to be undone.",
               "difficulty": "medium",
               "topic": "stack"
@@ -846,7 +1026,7 @@
               "id": "q55h",
               "type": "fillInBlank",
               "question": "Depth-First Search (DFS) traversal can be implemented using a _____ or recursion.",
-              "correctAnswer": "stack",
+              "acceptedAnswers": ["stack", "Stack", "STACK", "stack-based", "Stack-Based", "STACK-BASED", "stack-based-dfs", "Stack-Based-DFS", "STACK-BASED-DFS"],
               "explanation": "DFS uses a stack (explicit or implicit via recursion) to explore as deep as possible before backtracking.",
               "difficulty": "medium",
               "topic": "stack"
@@ -907,11 +1087,17 @@
                 },
                 {
                   "id": "q55r",
-                  "type": "fillInBlank",
-                  "question": "Stacks are used to check for balanced _____ in code and expressions.",
-                  "correctAnswer": "parentheses",
-                  "explanation": "Stacks are ideal for checking balanced parentheses, brackets, and braces in code and mathematical expressions.",
-                  "difficulty": "easy",
+                  "type": "mcq",
+                  "question": "In the Shunting-yard algorithm for converting infix to postfix notation, what is the purpose of the operator stack?",
+                  "options": [
+                    "To store operands temporarily",
+                    "To hold operators and manage precedence",
+                    "To reverse the input expression",
+                    "To count the number of operators"
+                  ],
+                  "correctAnswer": "To hold operators and manage precedence",
+                  "explanation": "The Shunting-yard algorithm uses an operator stack to manage operator precedence and associativity rules, ensuring correct conversion from infix to postfix notation.",
+                  "difficulty": "hard",
                   "topic": "stack"
                 },
                 {
@@ -956,7 +1142,7 @@
                   "id": "q55v",
                   "type": "fillInBlank",
                   "question": "The call stack stores local variables and the _____ address for each function call.",
-                  "correctAnswer": "return",
+                  "acceptedAnswers": ["return", "Return", "RETURN", "return-address", "Return-Address", "RETURN-ADDRESS", "return-address-pointer", "Return-Address-Pointer", "RETURN-ADDRESS-POINTER"],
                   "explanation": "The return address tells the program where to continue after a function call completes.",
                   "difficulty": "medium",
                   "topic": "stack"
@@ -993,7 +1179,7 @@
                   "id": "q55y",
                   "type": "fillInBlank",
                   "question": "In the N-Queens problem, the stack is used to keep track of the _____ of queens placed so far.",
-                  "correctAnswer": "positions",
+                  "acceptedAnswers": ["positions", "Positions", "POSITIONS", "queen-positions", "Queen-Positions", "QUEEN-POSITIONS", "queen-position", "Queen-Position", "QUEEN-POSITION"],
                   "explanation": "The stack tracks the positions of queens placed so you can backtrack and try new configurations.",
                   "difficulty": "hard",
                   "topic": "stack"
@@ -1022,7 +1208,7 @@
               "id": "q55aa",
               "type": "fillInBlank",
               "question": "Monotonic stacks are commonly used to solve the _____ greater element problem efficiently.",
-              "correctAnswer": "next",
+              "acceptedAnswers": ["next", "Next", "NEXT", "next-greater", "Next-Greater", "NEXT-GREATER", "next-greater-element", "Next-Greater-Element", "NEXT-GREATER-ELEMENT"],
               "explanation": "Monotonic stacks efficiently find the next greater element for each element in an array.",
               "difficulty": "hard",
               "topic": "stack"
@@ -1069,7 +1255,7 @@
               "id": "q55ee",
               "type": "fillInBlank",
               "question": "A _____ stack can efficiently return the minimum element in O(1) time.",
-              "correctAnswer": "min",
+              "acceptedAnswers": ["min", "Min", "MIN", "min-stack", "Min-Stack", "MIN-STACK", "min-stack-top", "Min-Stack-Top", "MIN-STACK-TOP"],
               "explanation": "A min stack maintains the minimum element at each level to provide O(1) minimum retrieval.",
               "difficulty": "medium",
               "topic": "stack"
@@ -1116,7 +1302,7 @@
               "id": "q55ii",
               "type": "fillInBlank",
               "question": "When evaluating a postfix expression, operands are _____ onto the stack and operators _____ operands from the stack.",
-              "correctAnswer": "pushed, pop",
+              "acceptedAnswers": ["pushed, pop", "Pushed, Pop", "PUSHED, POP", "pushed-onto-stack, pop-from-stack", "Pushed-Onto-Stack, Pop-From-Stack", "PUSHED-ONTO-STACK, POP-FROM-STACK", "push-onto-stack, pop-from-stack", "Push-Onto-Stack, Pop-From-Stack", "PUSH-ONTO-STACK, POP-FROM-STACK"],
               "explanation": "Postfix evaluation pushes operands onto stack and pops them when operators are encountered.",
               "difficulty": "medium",
               "topic": "stack"
@@ -1163,7 +1349,7 @@
               "id": "q55mm",
               "type": "fillInBlank",
               "question": "The celebrity problem can be solved using a stack in O(_____) time complexity.",
-              "correctAnswer": "n",
+              "acceptedAnswers": ["n", "N", "N", "n-celebrities", "N-Celebrities", "N-CELEBRITIES", "n-celebrity", "N-Celebrity", "N-CELEBRITY"],
               "explanation": "The celebrity problem can be solved in O(n) time using a stack to eliminate non-celebrities.",
               "difficulty": "hard",
               "topic": "stack"
@@ -1220,7 +1406,7 @@
               "id": "q55k",
               "type": "fillInBlank",
               "question": "In array-based stack implementation, the _____ variable keeps track of the top element's index.",
-              "correctAnswer": "top",
+              "acceptedAnswers": ["top", "Top", "TOP", "stack-top", "Stack-Top", "STACK-TOP", "stack-top-index", "Stack-Top-Index", "STACK-TOP-INDEX"],
               "explanation": "A 'top' pointer/index variable maintains the position of the current top element in the array.",
               "difficulty": "easy",
               "topic": "stack"
@@ -1274,20 +1460,22 @@
             },
             {
               "id": "q54",
-              "type": "fillInBlank",
-              "question": "Adding an element to the rear of a queue is called _____ operation.",
-              "correctAnswer": "enqueue",
-              "explanation": "Enqueue operation adds an element to the rear/back of the queue.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the key difference between enqueue and dequeue operations in terms of queue positions?",
+              "options": ["Enqueue adds to front, dequeue removes from front", "Enqueue adds to rear, dequeue removes from front", "Both operations work on the same end", "Enqueue adds to middle, dequeue removes from ends"],
+              "correctAnswer": "Enqueue adds to rear, dequeue removes from front",
+              "explanation": "Enqueue adds elements to the rear (back) of the queue, while dequeue removes elements from the front, maintaining FIFO order.",
+              "difficulty": "medium",
               "topic": "queue"
             },
             {
               "id": "q54a",
-              "type": "fillInBlank",
-              "question": "Removing an element from the front of a queue is called _____ operation.",
-              "correctAnswer": "dequeue",
-              "explanation": "Dequeue operation removes an element from the front of the queue.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "In a circular queue implementation, what advantage does it provide over a linear queue?",
+              "options": ["Faster access to elements", "Eliminates wasted space from dequeued elements", "Supports unlimited size", "Automatic sorting of elements"],
+              "correctAnswer": "Eliminates wasted space from dequeued elements",
+              "explanation": "Circular queues reuse space freed by dequeued elements, preventing the 'false full' condition that occurs in linear queues.",
+              "difficulty": "hard",
               "topic": "queue"
             }
           ]
@@ -1340,7 +1528,7 @@
               "id": "q54e",
               "type": "fillInBlank",
               "question": "In a circular queue implementation, when rear reaches the end of array, it wraps around to _____ if there's space.",
-              "correctAnswer": "0",
+              "acceptedAnswers": ["0", "0", "ZERO", "rear-index-wraps-around", "Rear-Index-Wraps-Around", "REAR-INDEX-WRAPS-AROUND", "rear-index-wraps-to-zero", "Rear-Index-Wraps-To-Zero", "REAR-INDEX-WRAPS-TO-ZERO"],
               "explanation": "Circular queues wrap the rear pointer to index 0 when it reaches the array end, creating a circular behavior.",
               "difficulty": "easy",
               "topic": "queue"
@@ -1387,7 +1575,7 @@
               "id": "q54i",
               "type": "fillInBlank",
               "question": "Priority queues are commonly implemented using a _____ data structure.",
-              "correctAnswer": "heap",
+              "acceptedAnswers": ["heap", "Heap", "HEAP", "priority-queue", "Priority-Queue", "PRIORITY-QUEUE", "priority-queue-heap", "Priority-Queue-Heap", "PRIORITY-QUEUE-HEAP"],
               "explanation": "Binary heaps provide efficient O(log n) insertion and O(log n) extraction for priority queues.",
               "difficulty": "medium",
               "topic": "queue"
@@ -1434,7 +1622,7 @@
               "id": "q54m",
               "type": "fillInBlank",
               "question": "A deque can be used to implement both _____ and _____ data structures efficiently.",
-              "correctAnswer": "stack, queue",
+              "acceptedAnswers": ["stack, queue", "Stack, Queue", "STACK, QUEUE", "stack-queue", "Stack-Queue", "STACK-QUEUE", "stack-and-queue", "Stack-And-Queue", "STACK-AND-QUEUE"],
               "explanation": "Deques can simulate stacks (using one end) and queues (using both ends) efficiently.",
               "difficulty": "medium",
               "topic": "queue"
@@ -1481,7 +1669,7 @@
               "id": "q54q",
               "type": "fillInBlank",
               "question": "The _____ queue pattern allows multiple consumers to process tasks concurrently.",
-              "correctAnswer": "producer-consumer",
+              "acceptedAnswers": ["producer-consumer", "Producer-Consumer", "PRODUCER-CONSUMER", "producer-consumer-pattern", "Producer-Consumer-Pattern", "PRODUCER-CONSUMER-PATTERN", "producer-consumer-queue", "Producer-Consumer-Queue", "PRODUCER-CONSUMER-QUEUE"],
               "explanation": "Producer-consumer pattern uses queues to decouple task production from consumption, enabling concurrency.",
               "difficulty": "medium",
               "topic": "queue"
@@ -1525,11 +1713,12 @@
           "questions": [
             {
               "id": "q56",
-              "type": "fillInBlank",
-              "question": "In a binary tree, each node can have at most _____ children.",
-              "correctAnswer": "two",
-              "explanation": "Binary trees are restricted to having at most two children per node: left and right.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What distinguishes a binary tree from other tree structures?",
+              "options": ["Each node must have exactly two children", "Each node has at most two children", "Each node has at least two children", "Each node has two parent nodes"],
+              "correctAnswer": "Each node has at most two children",
+              "explanation": "Binary trees are characterized by the constraint that each node can have at most two children, typically called left and right child.",
+              "difficulty": "medium",
               "topic": "trees"
             },
             {
@@ -1544,11 +1733,12 @@
             },
             {
               "id": "q57a",
-              "type": "fillInBlank",
-              "question": "Nodes with no children are called _____ nodes.",
-              "correctAnswer": "leaf",
-              "explanation": "Leaf nodes are terminal nodes that have no children.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the relationship between leaf nodes and internal nodes in a tree?",
+              "options": ["Leaf nodes are parents of internal nodes", "Internal nodes have children, leaf nodes don't", "Leaf nodes are always deeper than internal nodes", "Internal nodes store data, leaf nodes don't"],
+              "correctAnswer": "Internal nodes have children, leaf nodes don't",
+              "explanation": "Internal nodes have at least one child, while leaf nodes have no children, making them terminal nodes in the tree structure.",
+              "difficulty": "medium",
               "topic": "trees"
             }
           ]
@@ -1583,7 +1773,7 @@
               "id": "q58b",
               "type": "fillInBlank",
               "question": "Inorder traversal of a binary search tree visits nodes in _____ order.",
-              "correctAnswer": "sorted",
+              "acceptedAnswers": ["sorted", "Sorted", "SORTED", "ascending", "Ascending", "ASCENDING", "in-order", "In-Order", "IN-ORDER"],
               "explanation": "Inorder traversal of a BST visits nodes in ascending sorted order.",
               "difficulty": "medium",
               "topic": "trees"
@@ -1638,7 +1828,7 @@
               "id": "q58f",
               "type": "fillInBlank",
               "question": "In a Red-Black tree, every path from root to leaf contains the same number of _____ nodes.",
-              "correctAnswer": "black",
+              "acceptedAnswers": ["black", "Black", "BLACK", "red", "Red", "RED", "black-nodes", "Black-Nodes", "BLACK-NODES"],
               "explanation": "Red-Black trees maintain the property that all root-to-leaf paths have equal numbers of black nodes.",
               "difficulty": "hard",
               "topic": "trees"
@@ -1685,7 +1875,7 @@
               "id": "q58j",
               "type": "fillInBlank",
               "question": "Morris traversal achieves tree traversal in O(1) space by temporarily modifying _____ pointers.",
-              "correctAnswer": "predecessor",
+              "acceptedAnswers": ["predecessor", "Predecessor", "PREDECESSOR", "threading", "Threading", "THREADING", "predecessor-pointer", "Predecessor-Pointer", "PREDECESSOR-POINTER"],
               "explanation": "Morris traversal uses threading by temporarily modifying predecessor pointers to enable constant space traversal.",
               "difficulty": "hard",
               "topic": "trees"
@@ -1732,7 +1922,7 @@
               "id": "q58n",
               "type": "fillInBlank",
               "question": "A Segment Tree allows range queries and updates in O(_____ ) time.",
-              "correctAnswer": "log n",
+              "acceptedAnswers": ["log n", "Log n", "LOG N", "log-n", "Log-n", "LOG-N", "log-n-time", "Log-n-Time", "LOG-N-TIME"],
               "explanation": "Segment trees support both range queries and range updates in O(log n) time complexity.",
               "difficulty": "hard",
               "topic": "trees"
@@ -1776,11 +1966,12 @@
           "questions": [
             {
               "id": "q59",
-              "type": "fillInBlank",
-              "question": "A graph consists of _____ (nodes) and edges (connections).",
-              "correctAnswer": "vertices",
-              "explanation": "Graphs are made up of vertices (nodes) connected by edges.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the fundamental difference between vertices and edges in graph theory?",
+              "options": ["Vertices store data, edges store relationships", "Vertices represent entities, edges represent connections", "Vertices are numbered, edges are named", "Vertices are internal, edges are external"],
+              "correctAnswer": "Vertices represent entities, edges represent connections",
+              "explanation": "In graph theory, vertices (nodes) represent entities or objects, while edges represent the relationships or connections between these entities.",
+              "difficulty": "medium",
               "topic": "graphs"
             },
             {
@@ -1795,11 +1986,12 @@
             },
             {
               "id": "q59b",
-              "type": "fillInBlank",
-              "question": "The number of edges connected to a vertex is called its _____.",
-              "correctAnswer": "degree",
-              "explanation": "The degree of a vertex is the number of edges incident to it.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What does the degree of a vertex represent in graph theory?",
+              "options": ["The depth of the vertex in the graph", "The number of edges connected to the vertex", "The importance of the vertex", "The distance from the root vertex"],
+              "correctAnswer": "The number of edges connected to the vertex",
+              "explanation": "The degree of a vertex is the count of edges that are incident to (connected to) that vertex.",
+              "difficulty": "medium",
               "topic": "graphs"
             }
           ]
@@ -1834,7 +2026,7 @@
               "id": "q59e",
               "type": "fillInBlank",
               "question": "BFS finds the _____ path between two vertices in an unweighted graph.",
-              "correctAnswer": "shortest",
+              "acceptedAnswers": ["shortest", "Shortest", "SHORTEST", "shortest-path", "Shortest-Path", "SHORTEST-PATH", "shortest-path-between-two-vertices", "Shortest-Path-Between-Two-Vertices", "SHORTEST-PATH-BETWEEN-TWO-VERTICES"],
               "explanation": "BFS naturally finds the shortest path in unweighted graphs by exploring vertices level by level.",
               "difficulty": "medium",
               "topic": "graphs"
@@ -1861,7 +2053,7 @@
               "id": "q59g",
               "type": "fillInBlank",
               "question": "The Bellman-Ford algorithm can detect _____ weight cycles in a graph.",
-              "correctAnswer": "negative",
+              "acceptedAnswers": ["negative", "Negative", "NEGATIVE", "negative-weight-cycles", "Negative-Weight-Cycles", "NEGATIVE-WEIGHT-CYCLES", "negative-weight-cycle", "Negative-Weight-Cycle", "NEGATIVE-WEIGHT-CYCLE"],
               "explanation": "Bellman-Ford algorithm can detect negative weight cycles while finding shortest paths.",
               "difficulty": "medium",
               "topic": "graphs"
@@ -1908,7 +2100,7 @@
               "id": "q59k",
               "type": "fillInBlank",
               "question": "Kruskal's algorithm uses a _____ data structure to detect cycles efficiently.",
-              "correctAnswer": "union-find",
+              "acceptedAnswers": ["union-find", "Union-Find", "UNION-FIND", "disjoint-set", "Disjoint-Set", "DISJOINT-SET", "union-find-data-structure", "Union-Find-Data-Structure", "UNION-FIND-DATA-STRUCTURE"],
               "explanation": "Union-find (disjoint set) data structure efficiently detects cycles when adding edges in Kruskal's algorithm.",
               "difficulty": "medium",
               "topic": "graphs"
@@ -1955,7 +2147,7 @@
               "id": "q59o",
               "type": "fillInBlank",
               "question": "In Kahn's algorithm for topological sorting, vertices with _____ in-degree are processed first.",
-              "correctAnswer": "zero",
+              "acceptedAnswers": ["zero", "Zero", "ZERO", "in-degree-zero", "In-Degree-Zero", "IN-DEGREE-ZERO", "vertices-with-zero-in-degree", "Vertices-With-Zero-In-Degree", "VERTICES-WITH-ZERO-IN-DEGREE"],
               "explanation": "Kahn's algorithm repeatedly removes vertices with zero in-degree to generate topological order.",
               "difficulty": "medium",
               "topic": "graphs"
@@ -2002,7 +2194,7 @@
               "id": "q59s",
               "type": "fillInBlank",
               "question": "Tarjan's algorithm finds strongly connected components using _____ traversal.",
-              "correctAnswer": "DFS",
+              "acceptedAnswers": ["DFS", "Dfs", "DFS", "Depth-First Search", "Depth-First-Search", "DEPTH-FIRST-SEARCH", "depth-first-search", "Depth-First-Search", "DEPTH-FIRST-SEARCH"],
               "explanation": "Tarjan's algorithm uses DFS traversal with low-link values to identify SCCs in a single pass.",
               "difficulty": "hard",
               "topic": "graphs"
@@ -2056,11 +2248,12 @@
             },
             {
               "id": "q60a",
-              "type": "fillInBlank",
-              "question": "Bubble sort repeatedly compares _____ elements and swaps them if needed.",
-              "correctAnswer": "adjacent",
-              "explanation": "Bubble sort compares each pair of adjacent elements and swaps them if they are in wrong order.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the key optimization that can improve bubble sort's performance on nearly sorted arrays?",
+              "options": ["Use binary search for comparisons", "Stop early if no swaps occur in a pass", "Sort smaller subarrays first", "Use a different comparison function"],
+              "correctAnswer": "Stop early if no swaps occur in a pass",
+              "explanation": "If no swaps occur during a complete pass through the array, it means the array is already sorted, allowing the algorithm to terminate early.",
+              "difficulty": "medium",
               "topic": "sorting"
             }
           ]
@@ -2113,7 +2306,7 @@
               "id": "q60e",
               "type": "fillInBlank",
               "question": "Insertion sort is efficient for _____ datasets.",
-              "correctAnswer": "small",
+              "acceptedAnswers": ["small", "Small", "SMALL", "small-datasets", "Small-Datasets", "SMALL-DATASETS", "small-data", "Small-Data", "SMALL-DATA"],
               "explanation": "Insertion sort performs well on small datasets due to its simple implementation and low overhead.",
               "difficulty": "easy",
               "topic": "sorting"
@@ -2140,7 +2333,7 @@
               "id": "q60g",
               "type": "fillInBlank",
               "question": "Selection sort makes exactly _____ swaps for an array of n elements.",
-              "correctAnswer": "n-1",
+              "acceptedAnswers": ["n-1", "N-1", "N-1", "n-1-swaps", "N-1-Swaps", "N-1-SWAPS", "n-1-swaps-for-an-array-of-n-elements", "N-1-Swaps-For-An-Array-Of-N-Elements", "N-1-SWAPS-FOR-AN-ARRAY-OF-N-ELEMENTS"],
               "explanation": "Selection sort performs exactly n-1 swaps, one for each position except the last.",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2187,7 +2380,7 @@
               "id": "q60k",
               "type": "fillInBlank",
               "question": "Tim sort is an adaptive sorting algorithm used in Python's built-in _____ function.",
-              "correctAnswer": "sort",
+              "acceptedAnswers": ["sort", "Sort", "SORT", "timsort", "Timsort", "TIMSORT", "timsort-algorithm", "Timsort-Algorithm", "TIMSORT-ALGORITHM"],
               "explanation": "Tim sort is the algorithm behind Python's built-in sort() and sorted() functions.",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2234,7 +2427,7 @@
               "id": "q60o",
               "type": "fillInBlank",
               "question": "Counting sort works best when the range of possible values (k) is _____ compared to the number of elements (n).",
-              "correctAnswer": "small",
+              "acceptedAnswers": ["small", "Small", "SMALL", "small-range", "Small-Range", "SMALL-RANGE", "small-k", "Small-K", "SMALL-K"],
               "explanation": "Counting sort is efficient when k (range) is not significantly larger than n (number of elements).",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2308,7 +2501,7 @@
               "id": "q62",
               "type": "fillInBlank",
               "question": "Quick sort uses a _____ element to partition the array.",
-              "correctAnswer": "pivot",
+              "acceptedAnswers": ["pivot", "Pivot", "PIVOT", "pivot-element", "Pivot-Element", "PIVOT-ELEMENT", "pivot-element-for-partitioning", "Pivot-Element-For-Partitioning", "PIVOT-ELEMENT-FOR-PARTITIONING"],
               "explanation": "Quick sort selects a pivot element and partitions the array around it.",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2373,7 +2566,7 @@
               "id": "q62e",
               "type": "fillInBlank",
               "question": "The Master Theorem can be used to solve recurrence relations of the form T(n) = aT(n/b) + _____.",
-              "correctAnswer": "f(n)",
+              "acceptedAnswers": ["f(n)", "F(n)", "F(n)", "f(n)-work-done-at-each-level", "F(n)-Work-Done-At-Each-Level", "F(N)-WORK-DONE-AT-EACH-LEVEL", "f(n)-work-done-at-each-level-function", "F(n)-Work-Done-At-Each-Level-Function", "F(N)-WORK-DONE-AT-EACH-LEVEL-FUNCTION"],
               "explanation": "Master Theorem solves recurrences T(n) = aT(n/b) + f(n) where f(n) is the work done at each level.",
               "difficulty": "hard",
               "topic": "sorting"
@@ -2420,7 +2613,7 @@
               "id": "q62i",
               "type": "fillInBlank",
               "question": "Timsort combines _____ sort and merge sort to achieve excellent performance on real-world data.",
-              "correctAnswer": "insertion",
+              "acceptedAnswers": ["insertion", "Insertion", "INSERTION", "insertion-sort", "Insertion-Sort", "INSERTION-SORT", "insertion-sort-and-merge-sort", "Insertion-Sort-And-Merge-Sort", "INSERTION-SORT-AND-MERGE-SORT"],
               "explanation": "Timsort uses insertion sort for small runs and merge sort for combining runs efficiently.",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2467,7 +2660,7 @@
               "id": "q62m",
               "type": "fillInBlank",
               "question": "External merge sort divides large files into smaller _____ that can fit in memory.",
-              "correctAnswer": "runs",
+              "acceptedAnswers": ["runs", "Runs", "RUNS", "sorted-runs", "Sorted-Runs", "RUNS", "sorted-run", "Sorted-Run", "RUNS"],
               "explanation": "External merge sort creates sorted runs that fit in memory, then merges them using k-way merging.",
               "difficulty": "medium",
               "topic": "sorting"
@@ -2521,11 +2714,12 @@
             },
             {
               "id": "q66",
-              "type": "fillInBlank",
-              "question": "Greedy algorithms don't always guarantee the _____ solution.",
-              "correctAnswer": "optimal",
-              "explanation": "Greedy algorithms may not always find the globally optimal solution, only locally optimal ones.",
-              "difficulty": "medium",
+              "type": "mcq",
+              "question": "Why don't greedy algorithms always produce optimal solutions?",
+              "options": ["They are too slow to find the best solution", "They make locally optimal choices that may not lead to global optimum", "They require too much memory to store all possibilities", "They are designed for approximation only"],
+              "correctAnswer": "They make locally optimal choices that may not lead to global optimum",
+              "explanation": "Greedy algorithms make the best choice at each step based on current information, but this locally optimal choice may prevent reaching the globally optimal solution.",
+              "difficulty": "hard",
               "topic": "greedy"
             },
             {
@@ -2558,11 +2752,12 @@
             },
             {
               "id": "q69",
-              "type": "fillInBlank",
-              "question": "Activity selection problem aims to select maximum number of _____ activities.",
-              "correctAnswer": "non-overlapping",
-              "explanation": "The goal is to select the maximum number of activities that don't overlap in time.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the constraint that defines the activity selection problem?",
+              "options": ["Activities must be scheduled in chronological order", "Selected activities cannot overlap in time", "Activities must have equal duration", "Activities must maximize total profit"],
+              "correctAnswer": "Selected activities cannot overlap in time",
+              "explanation": "The activity selection problem seeks to select the maximum number of activities such that no two selected activities have overlapping time intervals.",
+              "difficulty": "medium",
               "topic": "greedy"
             }
           ]
@@ -2585,11 +2780,12 @@
             },
             {
               "id": "q71",
-              "type": "fillInBlank",
-              "question": "Huffman coding uses a _____ tree to assign codes to characters.",
-              "correctAnswer": "binary",
-              "explanation": "Huffman coding builds a binary tree where paths from root to leaves represent character codes.",
-              "difficulty": "medium",
+              "type": "mcq",
+              "question": "How does Huffman coding achieve optimal prefix-free encoding?",
+              "options": ["By assigning equal-length codes to all characters", "By assigning shorter codes to more frequent characters", "By sorting characters alphabetically before encoding", "By using fixed-width codes for efficiency"],
+              "correctAnswer": "By assigning shorter codes to more frequent characters",
+              "explanation": "Huffman coding creates an optimal prefix-free code by building a binary tree where more frequent characters have shorter paths from root to leaf, resulting in shorter codes.",
+              "difficulty": "hard",
               "topic": "greedy"
             }
           ]
@@ -2614,7 +2810,7 @@
               "id": "q69b",
               "type": "fillInBlank",
               "question": "The interval scheduling algorithm sorts intervals by _____ time and greedily selects compatible intervals.",
-              "correctAnswer": "finish",
+              "acceptedAnswers": ["finish", "Finish", "FINISH", "finish-time", "Finish-Time", "FINISH-TIME", "finish-time-and-greedily-selects-compatible-intervals", "Finish-Time-And-Greedily-Selects-Compatible-Intervals", "FINISH-TIME-AND-GREEDILY-SELECTS-COMPATIBLE-INTERVALS"],
               "explanation": "Sorting by finish time allows the greedy algorithm to maximize the number of selected intervals.",
               "difficulty": "medium",
               "topic": "greedy"
@@ -2661,7 +2857,7 @@
               "id": "q70b",
               "type": "fillInBlank",
               "question": "Prim's algorithm builds a minimum spanning tree by starting with a vertex and greedily adding the _____ weight edge to the tree.",
-              "correctAnswer": "minimum",
+              "acceptedAnswers": ["minimum", "Minimum", "MINIMUM", "minimum-weight-edge", "Minimum-Weight-Edge", "MINIMUM-WEIGHT-EDGE", "minimum-weight-edge-to-tree", "Minimum-Weight-Edge-To-Tree", "MINIMUM-WEIGHT-EDGE-TO-TREE"],
               "explanation": "Prim's algorithm maintains a growing tree and adds the minimum weight edge connecting the tree to a new vertex.",
               "difficulty": "medium",
               "topic": "greedy"
@@ -2708,7 +2904,7 @@
               "id": "q71b",
               "type": "fillInBlank",
               "question": "An _____ argument is used to prove that a greedy algorithm produces an optimal solution by showing any optimal solution can be transformed into the greedy solution.",
-              "correctAnswer": "exchange",
+              "acceptedAnswers": ["exchange", "Exchange", "EXCHANGE", "exchange-argument", "Exchange-Argument", "EXCHANGE-ARGUMENT", "exchange-argument-for-optimality", "Exchange-Argument-For-Optimality", "EXCHANGE-ARGUMENT-FOR-OPTIMALITY"],
               "explanation": "Exchange arguments prove optimality by showing that swapping elements in any optimal solution with greedy choices maintains optimality.",
               "difficulty": "hard",
               "topic": "greedy"
@@ -2770,11 +2966,12 @@
           "questions": [
             {
               "id": "q64",
-              "type": "fillInBlank",
-              "question": "Memoized fibonacci reduces time complexity from O(2^n) to O(_____)",
-              "correctAnswer": "n",
-              "explanation": "Memoization eliminates redundant calculations, reducing time complexity to linear O(n).",
-              "difficulty": "medium",
+              "type": "mcq",
+              "question": "Why does memoization dramatically improve the fibonacci algorithm's performance?",
+              "options": ["It uses less memory per recursive call", "It eliminates redundant subproblem calculations", "It converts recursion to iteration automatically", "It uses a more efficient comparison operation"],
+              "correctAnswer": "It eliminates redundant subproblem calculations",
+              "explanation": "Memoization stores the results of previously computed fibonacci numbers, avoiding the exponential number of redundant calculations that occur in the naive recursive approach.",
+              "difficulty": "hard",
               "topic": "dp"
             }
           ]
@@ -2799,7 +2996,7 @@
               "id": "q74b",
               "type": "fillInBlank",
               "question": "The edit distance between two strings is the minimum number of _____, insertions, and deletions needed to transform one string into another.",
-              "correctAnswer": "substitutions",
+              "acceptedAnswers": ["substitutions", "Substitutions", "SUBSTITUTIONS", "edit-distance", "Edit-Distance", "EDIT-DISTANCE", "edit-distance-between-two-strings", "Edit-Distance-Between-Two-Strings", "EDIT-DISTANCE-BETWEEN-TWO-STRINGS"],
               "explanation": "Edit distance (Levenshtein distance) counts substitutions, insertions, and deletions as basic operations.",
               "difficulty": "medium",
               "topic": "dynamic_programming"
@@ -2846,7 +3043,7 @@
               "id": "q75b",
               "type": "fillInBlank",
               "question": "In the 0/1 knapsack problem, for each item we make a _____ choice: include it or exclude it.",
-              "correctAnswer": "binary",
+              "acceptedAnswers": ["binary", "Binary", "BINARY", "binary-choice", "Binary-Choice", "BINARY-CHOICE", "binary-decision", "Binary-Decision", "BINARY-DECISION"],
               "explanation": "The name '0/1 knapsack' comes from the binary choice of taking 0 or 1 copy of each item.",
               "difficulty": "easy",
               "topic": "dynamic_programming"
@@ -2893,7 +3090,7 @@
               "id": "q76b",
               "type": "fillInBlank",
               "question": "A _____ approach builds solutions from the smallest subproblems up to the original problem.",
-              "correctAnswer": "bottom-up",
+              "acceptedAnswers": ["bottom-up", "Bottom-Up", "BOTTOM-UP", "bottom-up-dp", "Bottom-Up-Dp", "BOTTOM-UP-DP", "bottom-up-dynamic-programming", "Bottom-Up-Dynamic-Programming", "BOTTOM-UP-DYNAMIC-PROGRAMMING"],
               "explanation": "Bottom-up DP starts with base cases and iteratively builds larger solutions, avoiding recursion overhead.",
               "difficulty": "easy",
               "topic": "dynamic_programming"
@@ -2947,11 +3144,12 @@
             },
             {
               "id": "q73",
-              "type": "fillInBlank",
-              "question": "The first node in a linked list is called the _____ node.",
-              "correctAnswer": "head",
-              "explanation": "The head node is the starting point of the linked list and is referenced by the head pointer.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the primary purpose of the head pointer in a linked list?",
+              "options": ["To store the largest element", "To provide a reference to the first node", "To count the total number of nodes", "To mark the end of the list"],
+              "correctAnswer": "To provide a reference to the first node",
+              "explanation": "The head pointer serves as the entry point to the linked list, providing a reference to the first node from which all other nodes can be accessed.",
+              "difficulty": "medium",
               "topic": "linked-lists"
             },
             {
@@ -2975,19 +3173,20 @@
             {
               "id": "q75",
               "type": "mcq",
-              "question": "What additional pointer does a doubly linked list node have?",
-              "options": ["Parent pointer", "Previous pointer", "Child pointer", "Root pointer"],
-              "correctAnswer": "Previous pointer",
-              "explanation": "Doubly linked lists have both next and previous pointers, allowing bidirectional traversal.",
+              "question": "What is the main advantage of a doubly linked list over a singly linked list?",
+              "options": ["Uses less memory", "Allows efficient bidirectional traversal", "Faster insertion at the beginning", "Simpler implementation"],
+              "correctAnswer": "Allows efficient bidirectional traversal",
+              "explanation": "Doubly linked lists have both next and previous pointers, allowing efficient traversal in both directions without restarting from the head.",
               "difficulty": "medium",
               "topic": "linked-lists"
             },
             {
               "id": "q76",
-              "type": "fillInBlank",
-              "question": "In a circular linked list, the last node's next pointer points to the _____ node.",
-              "correctAnswer": "head",
-              "explanation": "Circular linked lists form a loop where the last node points back to the first node.",
+              "type": "mcq",
+              "question": "What is the key characteristic of a circular linked list?",
+              "options": ["It has no beginning or end", "The last node points to the first node", "All nodes point to a central hub", "It can only be traversed in one direction"],
+              "correctAnswer": "The last node points to the first node",
+              "explanation": "In a circular linked list, the last node's next pointer points back to the first node, creating a closed loop structure.",
               "difficulty": "medium",
               "topic": "linked-lists"
             }
@@ -3002,18 +3201,18 @@
             {
               "id": "q78a",
               "type": "mcq",
-              "question": "What additional pointer does a doubly linked list node have compared to singly linked list?",
-              "options": ["Next pointer", "Previous pointer", "Head pointer", "Tail pointer"],
-              "correctAnswer": "Previous pointer",
-              "explanation": "Doubly linked list nodes have both next and previous pointers, allowing bidirectional traversal.",
-              "difficulty": "easy",
+              "question": "What is the trade-off when using doubly linked lists compared to singly linked lists?",
+              "options": ["Faster insertion but slower deletion", "Higher memory overhead but bidirectional traversal", "Simpler implementation but limited functionality", "Better cache performance but more complex algorithms"],
+              "correctAnswer": "Higher memory overhead but bidirectional traversal",
+              "explanation": "Doubly linked lists require extra memory for the previous pointer in each node, but this enables efficient traversal in both directions and O(1) deletion when you have a reference to the node.",
+              "difficulty": "hard",
               "topic": "linked_lists"
             },
             {
               "id": "q78b",
               "type": "fillInBlank",
               "question": "The main advantage of doubly linked lists is _____ traversal in both directions.",
-              "correctAnswer": "efficient",
+              "acceptedAnswers": ["efficient", "Efficient", "EFFICIENT", "efficient-traversal", "Efficient-Traversal", "EFFICIENT-TRAVERSAL", "efficient-traversal-in-both-directions", "Efficient-Traversal-In-Both-Directions", "EFFICIENT-TRAVERSAL-IN-BOTH-DIRECTIONS"],
               "explanation": "Doubly linked lists allow efficient traversal backward and forward without restarting from the head.",
               "difficulty": "easy",
               "topic": "linked_lists"
@@ -3060,7 +3259,7 @@
               "id": "q79b",
               "type": "fillInBlank",
               "question": "The main challenge in traversing circular linked lists is avoiding _____ loops.",
-              "correctAnswer": "infinite",
+              "acceptedAnswers": ["infinite", "Infinite", "INFINITE", "infinite-loops", "Infinite-Loops", "INFINITE-LOOPS", "infinite-loop", "Infinite-Loop", "INFINITE-LOOP"],
               "explanation": "Since there's no NULL terminator, traversal must track the starting point to avoid infinite loops.",
               "difficulty": "medium",
               "topic": "linked_lists"
@@ -3107,7 +3306,7 @@
               "id": "q80b",
               "type": "fillInBlank",
               "question": "Skip lists use _____ to determine how many levels a new node should appear in.",
-              "correctAnswer": "randomization",
+              "acceptedAnswers": ["randomization", "Randomization", "RANDOMIZATION", "random-coin-flips", "Random-Coin-Flips", "RANDOM-COIN-FLIPS", "random-coin-flip", "Random-Coin-Flip", "RANDOM-COIN-FLIP"],
               "explanation": "Skip lists use random coin flips to determine node height, creating a probabilistically balanced structure.",
               "difficulty": "medium",
               "topic": "linked_lists"
@@ -3154,7 +3353,7 @@
               "id": "q81b",
               "type": "fillInBlank",
               "question": "Memory _____ lists are used by operating systems to track free memory blocks.",
-              "correctAnswer": "free",
+              "acceptedAnswers": ["free", "Free", "FREE", "free-lists", "Free-Lists", "FREE-LISTS", "free-list", "Free-List", "FREE-LIST"],
               "explanation": "Operating systems maintain free lists to efficiently allocate and deallocate variable-sized memory blocks.",
               "difficulty": "medium",
               "topic": "linked_lists"
@@ -3208,11 +3407,12 @@
             },
             {
               "id": "q78",
-              "type": "fillInBlank",
-              "question": "The time complexity of inserting an element into a binary heap is O(_____)",
-              "correctAnswer": "log n",
-              "explanation": "Insertion requires bubbling up the element, which takes O(log n) time in the worst case.",
-              "difficulty": "medium",
+              "type": "mcq",
+              "question": "Why does insertion in a binary heap have O(log n) time complexity?",
+              "options": ["The heap must be completely rebuilt after each insertion", "Elements may need to bubble up through log n levels to maintain heap property", "All existing elements must be compared with the new element", "The heap array must be resized and elements copied"],
+              "correctAnswer": "Elements may need to bubble up through log n levels to maintain heap property",
+              "explanation": "In the worst case, a newly inserted element may need to bubble up from the bottom of the heap to the root, traversing at most log n levels in a complete binary tree.",
+              "difficulty": "hard",
               "topic": "heaps"
             },
             {
@@ -3245,11 +3445,12 @@
             },
             {
               "id": "q81",
-              "type": "fillInBlank",
-              "question": "In a priority queue, elements are served based on their _____, not insertion order.",
-              "correctAnswer": "priority",
-              "explanation": "Priority queues serve elements based on priority level rather than FIFO or LIFO order.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What distinguishes a priority queue from a regular queue in terms of element ordering?",
+              "options": ["Priority queues maintain FIFO order but process faster", "Priority queues serve elements based on priority rather than insertion order", "Priority queues reverse the order of elements like a stack", "Priority queues randomly select elements to serve next"],
+              "correctAnswer": "Priority queues serve elements based on priority rather than insertion order",
+              "explanation": "Unlike regular queues that follow FIFO (First In First Out), priority queues serve the element with the highest priority first, regardless of when it was inserted.",
+              "difficulty": "medium",
               "topic": "heaps"
             }
           ]
@@ -3274,7 +3475,7 @@
               "id": "q82b",
               "type": "fillInBlank",
               "question": "When building a heap using repeated insertions, the time complexity is _____ .",
-              "correctAnswer": "O(n log n)",
+              "acceptedAnswers": ["O(n log n)", "O(n log n)", "O(N LOG N)", "n-log-n-time-for-building-heap-using-repeated-insertions", "N-Log-N-Time-For-Building-Heap-Using-Repeated-Insertions", "N-LOG-N-TIME-FOR-BUILDING-HEAP-USING-REPEATED-INSERTIONS", "n-log-n-time-for-building-heap-using-repeated-insertions-in-binary-heap", "N-Log-N-Time-For-Building-Heap-Using-Repeated-Insertions-In-Binary-Heap", "N-LOG-N-TIME-FOR-BUILDING-HEAP-USING-REPEATED-INSERTIONS-IN-BINARY-HEAP"],
               "explanation": "Inserting n elements one by one into a heap takes O(log n) time per insertion, totaling O(n log n).",
               "difficulty": "medium",
               "topic": "heaps"
@@ -3321,7 +3522,7 @@
               "id": "q83b",
               "type": "fillInBlank",
               "question": "Heapsort is an _____ sorting algorithm, meaning it sorts without using extra space.",
-              "correctAnswer": "in-place",
+              "acceptedAnswers": ["in-place", "In-Place", "IN-PLACE", "in-place-sorting", "In-Place-Sorting", "IN-PLACE-SORTING", "in-place-sort", "In-Place-Sort", "IN-PLACE-SORT"],
               "explanation": "Heapsort rearranges elements within the original array without requiring additional memory proportional to input size.",
               "difficulty": "easy",
               "topic": "heaps"
@@ -3368,7 +3569,7 @@
               "id": "q84b",
               "type": "fillInBlank",
               "question": "A _____ heap is a set of heap-ordered trees where each tree is a perfect binary tree.",
-              "correctAnswer": "binomial",
+              "acceptedAnswers": ["binomial", "Binomial", "BINOMIAL", "binomial-heap", "Binomial-Heap", "BINOMIAL-HEAP", "binomial-heap-set", "Binomial-Heap-Set", "BINOMIAL-HEAP-SET"],
               "explanation": "Binomial heaps consist of binomial trees, which are heap-ordered and have specific structural properties.",
               "difficulty": "hard",
               "topic": "heaps"
@@ -3422,11 +3623,12 @@
             },
             {
               "id": "q83",
-              "type": "fillInBlank",
-              "question": "The _____ case prevents infinite recursion by providing a stopping condition.",
-              "correctAnswer": "base",
-              "explanation": "The base case defines when the recursion should stop and return a value without making further recursive calls.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the primary purpose of the base case in recursive functions?",
+              "options": ["To make the function run faster", "To provide the starting point for calculations", "To prevent infinite recursion by providing a stopping condition", "To handle error conditions"],
+              "correctAnswer": "To prevent infinite recursion by providing a stopping condition",
+              "explanation": "The base case defines the condition under which the recursive function stops calling itself, preventing infinite recursion and eventual stack overflow.",
+              "difficulty": "medium",
               "topic": "recursion"
             },
             {
@@ -3461,7 +3663,7 @@
               "id": "q86",
               "type": "fillInBlank",
               "question": "Tree traversal algorithms like preorder and inorder are naturally implemented using _____.",
-              "correctAnswer": "recursion",
+              "acceptedAnswers": ["recursion", "Recursion", "RECURSION", "recursion-based-tree-traversal", "Recursion-Based-Tree-Traversal", "RECURSION-BASED-TREE-TRAVERSAL", "recursion-for-tree-traversal", "Recursion-For-Tree-Traversal", "RECURSION-FOR-TREE-TRAVERSAL"],
               "explanation": "Tree traversals naturally use recursion to visit nodes in a systematic order.",
               "difficulty": "medium",
               "topic": "recursion"
@@ -3488,7 +3690,7 @@
               "id": "q86b",
               "type": "fillInBlank",
               "question": "Tail recursion can be optimized into _____ by compilers, eliminating stack overflow risk.",
-              "correctAnswer": "iteration",
+              "acceptedAnswers": ["iteration", "Iteration", "ITERATION", "tail-recursion-optimization", "Tail-Recursion-Optimization", "TAIL-RECURSION-OPTIMIZATION", "tail-call-optimization", "Tail-Call-Optimization", "TAIL-CALL-OPTIMIZATION"],
               "explanation": "Tail call optimization converts tail recursive functions into iterative loops, using constant stack space.",
               "difficulty": "medium",
               "topic": "recursion"
@@ -3535,7 +3737,7 @@
               "id": "q87b",
               "type": "fillInBlank",
               "question": "The naive Fibonacci implementation has _____ time complexity due to redundant calculations.",
-              "correctAnswer": "exponential",
+              "acceptedAnswers": ["exponential", "Exponential", "EXPONENTIAL", "naive-fibonacci-complexity", "Naive-Fibonacci-Complexity", "NAIVE-FIBONACCI-COMPLEXITY", "naive-fibonacci-recursion", "Naive-Fibonacci-Recursion", "NAIVE-FIBONACCI-RECURSION"],
               "explanation": "Naive Fibonacci has O(2^n) complexity because it recalculates the same values multiple times.",
               "difficulty": "medium",
               "topic": "recursion"
@@ -3582,7 +3784,7 @@
               "id": "q88b",
               "type": "fillInBlank",
               "question": "Recursion uses the _____ to store function call information, while iteration typically uses less memory.",
-              "correctAnswer": "stack",
+              "acceptedAnswers": ["stack", "Stack", "STACK", "call-stack", "Call-Stack", "CALL-STACK", "recursion-stack", "Recursion-Stack", "RECURSION-STACK"],
               "explanation": "Each recursive call adds a frame to the call stack, which can lead to stack overflow for deep recursion.",
               "difficulty": "easy",
               "topic": "recursion"
@@ -3629,7 +3831,7 @@
               "id": "q89b",
               "type": "fillInBlank",
               "question": "_____ passing style (CPS) is a functional programming technique where functions never return but pass results to continuation functions.",
-              "correctAnswer": "Continuation",
+              "acceptedAnswers": ["Continuation", "Continuation", "CONTINUATION", "continuation-passing-style", "Continuation-Passing-Style", "CONTINUATION-PASSING-STYLE", "continuation-passing-style-cps", "Continuation-Passing-Style-Cps", "CONTINUATION-PASSING-STYLE-CPS"],
               "explanation": "Continuation passing style transforms recursion by explicitly passing what to do next as a function parameter.",
               "difficulty": "hard",
               "topic": "recursion"
@@ -3683,11 +3885,12 @@
             },
             {
               "id": "q88",
-              "type": "fillInBlank",
-              "question": "Linear search works on both _____ and unsorted arrays.",
-              "correctAnswer": "sorted",
-              "explanation": "Linear search doesn't require any ordering and works on both sorted and unsorted data.",
-              "difficulty": "easy",
+              "type": "mcq",
+              "question": "What is the primary advantage of linear search over binary search?",
+              "options": ["Linear search is always faster", "Linear search works on both sorted and unsorted data", "Linear search uses less memory", "Linear search has better worst-case performance"],
+              "correctAnswer": "Linear search works on both sorted and unsorted data",
+              "explanation": "Unlike binary search which requires sorted data, linear search can work on any arrangement of data since it checks each element sequentially.",
+              "difficulty": "medium",
               "topic": "searching"
             }
           ]
@@ -3722,7 +3925,7 @@
               "id": "q91",
               "type": "fillInBlank",
               "question": "Binary search compares the target with the _____ element to decide which half to search.",
-              "correctAnswer": "middle",
+              "acceptedAnswers": ["middle", "Middle", "MIDDLE", "middle-element", "Middle-Element", "MIDDLE-ELEMENT", "middle-of-array", "Middle-Of-Array", "MIDDLE-OF-ARRAY"],
               "explanation": "Binary search finds the middle element and compares it with the target to eliminate half the array.",
               "difficulty": "easy",
               "topic": "searching"
@@ -3749,7 +3952,7 @@
               "id": "q91b",
               "type": "fillInBlank",
               "question": "Upper bound finds the first element _____ than the target value.",
-              "correctAnswer": "greater",
+              "acceptedAnswers": ["greater", "Greater", "GREATER", "greater-than-target", "Greater-Than-Target", "GREATER-THAN-TARGET", "greater-than-target-value", "Greater-Than-Target-Value", "GREATER-THAN-TARGET-VALUE"],
               "explanation": "Upper bound returns an iterator to the first element that is greater than the search value.",
               "difficulty": "medium",
               "topic": "searching"
@@ -3796,7 +3999,7 @@
               "id": "q92b",
               "type": "fillInBlank",
               "question": "When multiple keys hash to the same location, this is called a _____.",
-              "correctAnswer": "collision",
+              "acceptedAnswers": ["collision", "Collision", "COLLISION", "hash-collision", "Hash-Collision", "HASH-COLLISION", "hash-collisions", "Hash-Collisions", "HASH-COLLISIONS"],
               "explanation": "Hash collisions occur when different keys produce the same hash value, requiring resolution strategies.",
               "difficulty": "easy",
               "topic": "searching"
@@ -3843,7 +4046,7 @@
               "id": "q93b",
               "type": "fillInBlank",
               "question": "The KMP algorithm uses a _____ function to avoid redundant comparisons during pattern matching.",
-              "correctAnswer": "failure",
+              "acceptedAnswers": ["failure", "Failure", "FAILURE", "failure-function", "Failure-Function", "FAILURE-FUNCTION", "failure-function-for-pattern-matching", "Failure-Function-For-Pattern-Matching", "FAILURE-FUNCTION-FOR-PATTERN-MATCHING"],
               "explanation": "KMP preprocessing computes a failure function that determines how far to shift the pattern on mismatches.",
               "difficulty": "hard",
               "topic": "searching"
@@ -3890,7 +4093,7 @@
               "id": "q94b",
               "type": "fillInBlank",
               "question": "A _____ tree contains all suffixes of a string and enables linear-time substring search.",
-              "correctAnswer": "suffix",
+              "acceptedAnswers": ["suffix", "Suffix", "SUFFIX", "suffix-tree", "Suffix-Tree", "SUFFIX-TREE", "suffix-tree-for-substring-search", "Suffix-Tree-For-Substring-Search", "SUFFIX-TREE-FOR-SUBSTRING-SEARCH"],
               "explanation": "Suffix trees store all suffixes of a string in a compressed trie, enabling fast pattern matching queries.",
               "difficulty": "hard",
               "topic": "searching"
@@ -3944,11 +4147,12 @@
             },
             {
               "id": "q93",
-              "type": "fillInBlank",
-              "question": "An algorithm that accesses a single array element has _____ time complexity.",
+              "type": "mcq",
+              "question": "What is the time complexity of accessing an element in an array by index?",
+              "options": ["O(1)", "O(log n)", "O(n)", "O(n²)"],
               "correctAnswer": "O(1)",
-              "explanation": "Constant time O(1) means the operation takes the same time regardless of input size.",
-              "difficulty": "easy",
+              "explanation": "Array access by index is constant time O(1) because arrays store elements in contiguous memory locations with direct address calculation.",
+              "difficulty": "medium",
               "topic": "complexity"
             },
             {
@@ -3983,7 +4187,7 @@
               "id": "q96",
               "type": "fillInBlank",
               "question": "An algorithm that uses a fixed amount of extra memory has _____ space complexity.",
-              "correctAnswer": "O(1)",
+              "acceptedAnswers": ["O(1)", "O(1)", "O(1)", "constant-space", "Constant-Space", "CONSTANT-SPACE", "constant-space-complexity", "Constant-Space-Complexity", "CONSTANT-SPACE-COMPLEXITY"],
               "explanation": "Constant space O(1) means the algorithm uses the same amount of extra memory regardless of input size.",
               "difficulty": "medium",
               "topic": "complexity"
@@ -4010,7 +4214,7 @@
               "id": "q97b",
               "type": "fillInBlank",
               "question": "Bubble sort has _____ time complexity in the worst case.",
-              "correctAnswer": "O(n²)",
+              "acceptedAnswers": ["O(n²)", "O(n²)", "O(N²)", "n-squared-time-complexity-for-bubble-sort", "N-Squared-Time-Complexity-For-Bubble-Sort", "N-SQUARED-TIME-COMPLEXITY-FOR-BUBBLE-SORT", "n-squared-time-complexity-for-bubble-sort-in-worst-case", "N-Squared-Time-Complexity-For-Bubble-Sort-In-Worst-Case", "N-SQUARED-TIME-COMPLEXITY-FOR-BUBBLE-SORT-IN-WORST-CASE"],
               "explanation": "Bubble sort compares each element with every other element, resulting in quadratic time complexity.",
               "difficulty": "medium",
               "topic": "big_o"
@@ -4057,7 +4261,7 @@
               "id": "q98b",
               "type": "fillInBlank",
               "question": "Dynamic array resizing has _____ amortized time per insertion even though individual operations may be expensive.",
-              "correctAnswer": "O(1)",
+              "acceptedAnswers": ["O(1)", "O(1)", "O(1)", "amortized-time-per-insertion", "Amortized-Time-Per-Insertion", "AMORTIZED-TIME-PER-INSERTION", "amortized-time-for-insertion", "Amortized-Time-For-Insertion", "AMORTIZED-TIME-FOR-INSERTION"],
               "explanation": "Although resizing takes O(n) time, it happens infrequently enough that the amortized cost per insertion is O(1).",
               "difficulty": "hard",
               "topic": "big_o"
@@ -4104,7 +4308,7 @@
               "id": "q99b",
               "type": "fillInBlank",
               "question": "Matrix multiplication using the naive algorithm has _____ time complexity.",
-              "correctAnswer": "O(n³)",
+              "acceptedAnswers": ["O(n³)", "O(n³)", "O(N³)", "n-cubed-time-complexity-for-matrix-multiplication", "N-Cubed-Time-Complexity-For-Matrix-Multiplication", "N-CUBED-TIME-COMPLEXITY-FOR-MATRIX-MULTIPLICATION", "n-cubed-time-complexity-for-matrix-multiplication-using-naive-algorithm", "N-Cubed-Time-Complexity-For-Matrix-Multiplication-Using-Naive-Algorithm", "N-CUBED-TIME-COMPLEXITY-FOR-MATRIX-MULTIPLICATION-USING-NAIVE-ALGORITHM"],
               "explanation": "Naive matrix multiplication requires three nested loops, each running n times, resulting in cubic complexity.",
               "difficulty": "medium",
               "topic": "big_o"
@@ -4151,7 +4355,7 @@
               "id": "q100b",
               "type": "fillInBlank",
               "question": "Class _____ contains problems whose solutions can be verified in polynomial time.",
-              "correctAnswer": "NP",
+              "acceptedAnswers": ["NP", "NP", "NP", "np-problems", "NP-Problems", "NP-PROBLEMS", "np-complete", "NP-Complete", "NP-COMPLETE"],
               "explanation": "NP (Nondeterministic Polynomial time) problems have solutions that can be verified quickly, even if finding them is hard.",
               "difficulty": "hard",
               "topic": "big_o"
