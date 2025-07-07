@@ -6,6 +6,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useProgressStore } from '../state/progressStore';
 import { Question, Lesson } from '../types';
 import { checkAnswer } from '../utils/cn';
+import { CodeCompletionQuestion } from '../components/CodeCompletionQuestion';
+import questionsData from '../data/questions.json';
+
+import InteractiveVisualizationQuestion from '../components/InteractiveVisualizationQuestion';
+import { CodeOutputQuestion } from '../components/CodeOutputQuestion';
+import { AlgorithmTraceQuestion } from '../components/AlgorithmTraceQuestion';
+import { InteractiveDebuggingQuestion } from '../components/InteractiveDebuggingQuestion';
+import { PerformanceComparisonQuestion } from '../components/PerformanceComparisonQuestion';
+import { MemoryLayoutQuestion } from '../components/MemoryLayoutQuestion';
+import { BuildDataStructureQuestion } from '../components/BuildDataStructureQuestion';
+import { ComplexityAnalysisQuestion } from '../components/ComplexityAnalysisQuestion';
 
 interface LessonScreenProps {
   navigation: any;
@@ -18,7 +29,7 @@ interface LessonScreenProps {
 }
 
 export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route }) => {
-  const { lesson } = route.params;
+  const { lessonId, lesson } = route.params;
   const { completeLesson, completeQuestion } = useProgressStore();
   
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -28,9 +39,30 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalXpEarned, setTotalXpEarned] = useState(0);
   const [shakeAnimation] = useState(new Animated.Value(0));
   const [scaleAnimation] = useState(new Animated.Value(1));
+  
+  // New state for interactive components
+  const [interactiveCanSubmit, setInteractiveCanSubmit] = useState(false);
+  const [interactiveCheckFunction, setInteractiveCheckFunction] = useState<(() => void) | null>(null);
+
+  // Find the unit ID for this lesson
+  const findUnitId = () => {
+    const units = questionsData.units;
+    for (const unit of units) {
+      if (unit.lessons.some(l => l.id === lessonId)) {
+        return unit.id;
+      }
+    }
+    return null;
+  };
+
+  // Determine XP for lesson completion
+  const getLessonXp = () => {
+    // Check if this is a test lesson (has "-test" in the ID)
+    const isTestLesson = lessonId.includes('-test');
+    return isTestLesson ? 35 : 20;
+  };
 
   const currentQuestion = lesson.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === lesson.questions.length - 1;
@@ -52,30 +84,49 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
   };
 
   const handleAnswerSubmit = () => {
-    const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
-    
-    // Get the correct answer(s) based on question type
-    const correctAnswerData = currentQuestion.type === 'mcq' 
-      ? currentQuestion.correctAnswer 
-      : currentQuestion.acceptedAnswers || currentQuestion.correctAnswer;
-    
-    console.log('Submitting answer:', {
-      questionType: currentQuestion.type,
-      userAnswer,
-      correctAnswerData,
-      question: currentQuestion.question
-    });
-    
-    const correct = checkAnswer(userAnswer, correctAnswerData, currentQuestion.type);
-    
+    // Handle traditional question types
+    if (currentQuestion.type === 'mcq' || currentQuestion.type === 'fillInBlank') {
+      const userAnswer = currentQuestion.type === 'mcq' ? selectedAnswer : fillInAnswer;
+      
+      const correctAnswerData = currentQuestion.type === 'mcq' 
+        ? currentQuestion.correctAnswer 
+        : currentQuestion.acceptedAnswers || currentQuestion.correctAnswer;
+      
+      console.log('Submitting answer:', {
+        questionType: currentQuestion.type,
+        userAnswer,
+        correctAnswerData,
+        question: currentQuestion.question
+      });
+      
+      const correct = checkAnswer(userAnswer, correctAnswerData, currentQuestion.type);
+      
+      setIsCorrect(correct);
+      setShowExplanation(true);
+      
+      if (correct) {
+        completeQuestion(lesson.id, currentQuestion.id);
+        setCorrectAnswers(prev => prev + 1);
+        triggerSuccess();
+      } else {
+        triggerShake();
+      }
+      
+      setQuestionsAnswered(prev => prev + 1);
+    }
+    // Handle interactive question types using their check function
+    else if (interactiveCheckFunction) {
+      interactiveCheckFunction();
+    }
+  };
+
+  const handleInteractiveComplete = (correct: boolean, _additionalData?: any) => {
     setIsCorrect(correct);
     setShowExplanation(true);
     
     if (correct) {
       completeQuestion(lesson.id, currentQuestion.id);
       setCorrectAnswers(prev => prev + 1);
-      const xpForThisQuestion = getXpForDifficulty(currentQuestion.difficulty);
-      setTotalXpEarned(prev => prev + xpForThisQuestion);
       triggerSuccess();
     } else {
       triggerShake();
@@ -84,16 +135,25 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
     setQuestionsAnswered(prev => prev + 1);
   };
 
+  // Handler for interactive component answer changes
+  const handleInteractiveAnswerChange = (canSubmit: boolean, checkFunction: () => void) => {
+    setInteractiveCanSubmit(canSubmit);
+    setInteractiveCheckFunction(() => checkFunction);
+  };
+
   const handleNext = () => {
     if (isLastQuestion) {
       const passingScore = Math.ceil(lesson.questions.length * 0.6);
       if (correctAnswers >= passingScore) {
-        completeLesson(lesson.id, totalXpEarned);
+        const lessonXp = getLessonXp();
+        completeLesson(lesson.id, lessonXp);
         navigation.navigate('LessonComplete', {
           lessonTitle: lesson.title,
-          xpEarned: totalXpEarned,
+          xpEarned: lessonXp,
           correctAnswers,
-          totalQuestions: lesson.questions.length
+          totalQuestions: lesson.questions.length,
+          lessonId: lessonId,
+          unitId: findUnitId()
         });
       } else {
         Alert.alert(
@@ -108,12 +168,28 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
       setFillInAnswer('');
       setShowExplanation(false);
       setIsCorrect(null);
+      // Reset interactive component state
+      setInteractiveCanSubmit(false);
+      setInteractiveCheckFunction(null);
     }
   };
 
-  const canSubmit = currentQuestion.type === 'mcq' ? 
-    selectedAnswer !== '' : 
-    fillInAnswer.trim() !== '';
+  // Updated canSubmit logic to handle all question types
+  const canSubmit = () => {
+    if (currentQuestion.type === 'mcq') {
+      return selectedAnswer !== '';
+    } else if (currentQuestion.type === 'fillInBlank') {
+      return fillInAnswer.trim() !== '';
+    } else {
+      // For interactive components
+      return interactiveCanSubmit;
+    }
+  };
+
+  const shouldShowSubmitButton = () => {
+    // Show submit button for all question types when explanation is not shown
+    return !showExplanation;
+  };
 
   const getDifficultyColor = (difficulty: string): [string, string] => {
     switch (difficulty) {
@@ -123,17 +199,6 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
       default: return ['#6B7280', '#4B5563'];
     }
   };
-
-  const getXpForDifficulty = (difficulty: string): number => {
-    switch (difficulty) {
-      case 'easy': return 2;
-      case 'medium': return 3;
-      case 'hard': return 5;
-      default: return 2;
-    }
-  };
-
-
 
   return (
     <SafeAreaView className="flex-1 bg-gray-50" edges={['top', 'left', 'right']}>
@@ -164,7 +229,12 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
         </View>
       </View>
 
-      <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
+      {/* Scrollable Content */}
+      <ScrollView 
+        className="flex-1 px-6" 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }} // Add padding to prevent content being hidden behind fixed button
+      >
         {/* Question Card */}
         <Animated.View 
           className="mt-6"
@@ -281,6 +351,149 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
                 )}
               </View>
             )}
+
+            {/* Code Completion */}
+            {currentQuestion.type === 'codeCompletion' && currentQuestion.codeTemplate && currentQuestion.blanks && (
+              <CodeCompletionQuestion
+                question={currentQuestion.question}
+                codeTemplate={currentQuestion.codeTemplate}
+                blanks={currentQuestion.blanks}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+                onAnswerChange={handleInteractiveAnswerChange}
+              />
+            )}
+
+            {/* Interactive Visualization */}
+            {currentQuestion.type === 'interactiveVisualization' && 
+             currentQuestion.visualizationData && 
+             currentQuestion.visualizationData.array && 
+             currentQuestion.visualizationData.target !== undefined && 
+             currentQuestion.visualizationData.type && 
+             currentQuestion.correctSequence && (
+              <InteractiveVisualizationQuestion
+                question={currentQuestion.question}
+                visualizationData={{
+                  array: currentQuestion.visualizationData.array,
+                  target: currentQuestion.visualizationData.target,
+                  type: currentQuestion.visualizationData.type
+                }}
+                correctSequence={currentQuestion.correctSequence}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+              />
+            )}
+
+            {/* Code Output */}
+            {currentQuestion.type === 'codeOutput' && currentQuestion.code && currentQuestion.options && currentQuestion.correctAnswer && (
+              <CodeOutputQuestion
+                question={currentQuestion.question}
+                code={currentQuestion.code}
+                options={currentQuestion.options}
+                correctAnswer={currentQuestion.correctAnswer}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Algorithm Trace */}
+            {currentQuestion.type === 'algorithmTrace' && currentQuestion.initialArray && currentQuestion.steps && currentQuestion.userTask && (
+              <AlgorithmTraceQuestion
+                question={currentQuestion.question}
+                initialArray={currentQuestion.initialArray}
+                steps={currentQuestion.steps}
+                userTask={currentQuestion.userTask}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Interactive Debugging */}
+            {currentQuestion.type === 'interactiveDebugging' && currentQuestion.buggyCode && currentQuestion.bugs && (
+              <InteractiveDebuggingQuestion
+                question={currentQuestion.question}
+                buggyCode={currentQuestion.buggyCode}
+                bugs={currentQuestion.bugs}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Performance Comparison */}
+            {currentQuestion.type === 'performanceComparison' && currentQuestion.operations && currentQuestion.correctRanking && (
+              <PerformanceComparisonQuestion
+                question={currentQuestion.question}
+                operations={currentQuestion.operations}
+                correctRanking={currentQuestion.correctRanking}
+                userTask={currentQuestion.userTask || "Rank the operations from fastest to slowest"}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Memory Layout */}
+            {currentQuestion.type === 'memoryLayout' && 
+             currentQuestion.array && 
+             currentQuestion.visualizationData && 
+             currentQuestion.visualizationData.baseAddress !== undefined && 
+             currentQuestion.visualizationData.elementSize !== undefined && 
+             currentQuestion.visualizationData.type && 
+             currentQuestion.correctAddresses && (
+              <MemoryLayoutQuestion
+                question={currentQuestion.question}
+                array={currentQuestion.array}
+                visualizationData={{
+                  baseAddress: currentQuestion.visualizationData.baseAddress,
+                  elementSize: currentQuestion.visualizationData.elementSize,
+                  type: currentQuestion.visualizationData.type
+                }}
+                userTask={currentQuestion.userTask || "Click on the correct memory addresses"}
+                correctAddresses={currentQuestion.correctAddresses}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Build Data Structure */}
+            {currentQuestion.type === 'buildDataStructure' && currentQuestion.task && currentQuestion.constraints && currentQuestion.targetStructure && currentQuestion.tools && (
+              <BuildDataStructureQuestion
+                question={currentQuestion.question}
+                task={currentQuestion.task}
+                constraints={currentQuestion.constraints}
+                targetStructure={currentQuestion.targetStructure}
+                tools={currentQuestion.tools}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
+
+            {/* Complexity Analysis */}
+            {currentQuestion.type === 'complexityAnalysis' && currentQuestion.analysisSteps && (
+              <ComplexityAnalysisQuestion
+                question={currentQuestion.question}
+                code={currentQuestion.code}
+                analysisSteps={currentQuestion.analysisSteps}
+                userTask={currentQuestion.userTask || "Analyze the time complexity step by step"}
+                explanation={currentQuestion.explanation}
+                onComplete={handleInteractiveComplete}
+                showExplanation={showExplanation}
+                isCorrect={isCorrect}
+              />
+            )}
           </View>
         </Animated.View>
 
@@ -300,11 +513,6 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
                 }`}>
                   {isCorrect ? 'Excellent!' : 'Learn & Continue!'}
                 </Text>
-                {isCorrect && (
-                  <Text className="text-green-600 font-semibold">
-                    +{getXpForDifficulty(currentQuestion.difficulty)} XP earned
-                  </Text>
-                )}
               </View>
             </View>
             <Text className={`text-base leading-relaxed ${
@@ -314,14 +522,17 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
             </Text>
           </View>
         )}
+      </ScrollView>
 
-        {/* Action Button */}
-        <View className="mt-8">
+      {/* Fixed Bottom Action Button */}
+      {(shouldShowSubmitButton() || showExplanation) && (
+        <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4" 
+              style={{ paddingBottom: 34 }}>
           <Pressable
             onPress={showExplanation ? handleNext : handleAnswerSubmit}
-            disabled={!showExplanation && !canSubmit}
+            disabled={!showExplanation && !canSubmit()}
             className={`py-4 px-6 rounded-2xl ${
-              (!showExplanation && !canSubmit)
+              (!showExplanation && !canSubmit())
                 ? 'bg-gray-300'
                 : showExplanation
                 ? 'bg-blue-500'
@@ -343,7 +554,7 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
             </Text>
           </Pressable>
         </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

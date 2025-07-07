@@ -42,7 +42,7 @@ export const SimpleProfileScreen: React.FC = () => {
       label: 'Lessons',
       value: completedLessons.length,
       icon: 'school',
-      color: '#22c55e', // green-500
+      color: '#22c55e', // green-500 0 
     },
   ];
 
@@ -57,7 +57,22 @@ export const SimpleProfileScreen: React.FC = () => {
         },
         { 
           text: "Reset", 
-          onPress: () => resetProgress(),
+          onPress: async () => {
+            try {
+              await resetProgress();
+              Alert.alert(
+                "Success",
+                "Your progress has been reset successfully.",
+                [{ text: "OK" }]
+              );
+            } catch (error) {
+              Alert.alert(
+                "Error",
+                "There was an error resetting your progress. Please try again.",
+                [{ text: "OK" }]
+              );
+            }
+          },
           style: 'destructive' 
         }
       ]
@@ -77,9 +92,9 @@ export const SimpleProfileScreen: React.FC = () => {
             showsVerticalScrollIndicator={false}
           >
             {/* Profile Avatar & Info */}
-            <BlurView intensity={30} tint="dark" style={styles.profileCard}>
+            <BlurView intensity={60} tint="dark" style={styles.profileCard}>
               <LinearGradient
-                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
                 style={styles.profileContent}
               >
                 <View style={styles.avatarContainer}>
@@ -103,12 +118,12 @@ export const SimpleProfileScreen: React.FC = () => {
                     <Text style={styles.progressLabel}>Level {currentLevel}</Text>
                     <Text style={styles.progressLabel}>Level {currentLevel + 1}</Text>
                   </View>
-                  <View style={styles.progressBarBackground}>
+                  <BlurView intensity={30} tint="dark" style={styles.progressBarBackground}>
                     <LinearGradient
                       colors={['#3b82f6', '#2563eb']}
                       style={[styles.progressBar, { width: `${levelProgress * 100}%` }]}
                     />
-                  </View>
+                  </BlurView>
                   <Text style={styles.progressText}>
                     {xpInCurrentLevel}/{xpForNextLevel} XP to next level
                   </Text>
@@ -117,9 +132,9 @@ export const SimpleProfileScreen: React.FC = () => {
             </BlurView>
 
             {/* Stats Grid */}
-            <BlurView intensity={30} tint="dark" style={styles.statsCard}>
+            <BlurView intensity={60} tint="dark" style={styles.statsCard}>
               <LinearGradient
-                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
                 style={styles.cardContent}
               >
                 <Text style={styles.sectionTitle}>Statistics</Text>
@@ -127,11 +142,16 @@ export const SimpleProfileScreen: React.FC = () => {
                   {stats.map((stat, index) => (
                     <View key={index} style={styles.statItem}>
                       <BlurView intensity={50} tint="dark" style={styles.statCard}>
-                        <View style={styles.statTopRow}>
-                          <MaterialIcons name={stat.icon as any} size={22} color={stat.color} />
-                          <Text style={styles.statValue}>{stat.value}</Text>
-                        </View>
-                        <Text style={styles.statLabel}>{stat.label}</Text>
+                        <LinearGradient
+                          colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                          style={styles.statCardGradient}
+                        >
+                          <View style={styles.statTopRow}>
+                            <MaterialIcons name={stat.icon as any} size={22} color={stat.color} />
+                            <Text style={styles.statValue}>{stat.value}</Text>
+                          </View>
+                          <Text style={styles.statLabel}>{stat.label}</Text>
+                        </LinearGradient>
                       </BlurView>
                     </View>
                   ))}
@@ -140,9 +160,9 @@ export const SimpleProfileScreen: React.FC = () => {
             </BlurView>
 
             {/* Achievements */}
-            <BlurView intensity={30} tint="dark" style={styles.achievementsCard}>
+            <BlurView intensity={60} tint="dark" style={styles.achievementsCard}>
               <LinearGradient
-                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
                 style={styles.cardContent}
               >
                 <Text style={styles.sectionTitle}>Achievements</Text>
@@ -150,34 +170,42 @@ export const SimpleProfileScreen: React.FC = () => {
                   {visibleAchievements.map((achievement) => (
                     <BlurView
                       key={achievement.id}
-                      intensity={achievement.isUnlocked ? 40 : 20}
+                      intensity={achievement.isUnlocked ? 50 : 30}
                       tint="dark"
                       style={[
                         styles.achievementItem,
                         achievement.isUnlocked ? styles.achievementUnlocked : styles.achievementLocked,
                       ]}
                     >
-                      <View style={styles.achievementContent}>
-                        <View style={[
-                          styles.achievementIcon,
-                          achievement.isUnlocked ? styles.achievementIconUnlocked : styles.achievementIconLocked
-                        ]}>
-                          <MaterialIcons 
-                            name={achievement.isUnlocked ? achievement.icon as any : 'lock'} 
-                            size={24} 
-                            color={achievement.isUnlocked ? "#3b82f6" : "rgba(255,255,255,0.4)"} 
-                          />
-                        </View>
-                        <View style={styles.achievementText}>
-                          <Text style={styles.achievementTitle}>{achievement.title}</Text>
-                          <Text style={styles.achievementDescription}>{achievement.description}</Text>
-                        </View>
-                        {achievement.isUnlocked && (
-                          <View style={styles.achievementCheckmark}>
-                            <MaterialIcons name="check" size={16} color="white" />
+                      <LinearGradient
+                        colors={achievement.isUnlocked ? 
+                          ['rgba(59,130,246,0.15)', 'rgba(59,130,246,0.08)'] :
+                          ['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.04)']
+                        }
+                        style={styles.achievementGradient}
+                      >
+                        <View style={styles.achievementContent}>
+                          <View style={[
+                            styles.achievementIcon,
+                            achievement.isUnlocked ? styles.achievementIconUnlocked : styles.achievementIconLocked
+                          ]}>
+                            <MaterialIcons 
+                              name={achievement.isUnlocked ? achievement.icon as any : 'lock'} 
+                              size={24} 
+                              color={achievement.isUnlocked ? "#3b82f6" : "rgba(255,255,255,0.4)"} 
+                            />
                           </View>
-                        )}
-                      </View>
+                          <View style={styles.achievementText}>
+                            <Text style={styles.achievementTitle}>{achievement.title}</Text>
+                            <Text style={styles.achievementDescription}>{achievement.description}</Text>
+                          </View>
+                          {achievement.isUnlocked && (
+                            <View style={styles.achievementCheckmark}>
+                              <MaterialIcons name="check" size={16} color="white" />
+                            </View>
+                          )}
+                        </View>
+                      </LinearGradient>
                     </BlurView>
                   ))}
                 </View>
@@ -186,49 +214,66 @@ export const SimpleProfileScreen: React.FC = () => {
                     onPress={() => setShowAllAchievements(!showAllAchievements)}
                     style={styles.viewAllButton}
                   >
-                    <Text style={styles.viewAllText}>
-                      {showAllAchievements ? 'Show Less' : 'View All'}
-                    </Text>
-                    <MaterialIcons 
-                      name={showAllAchievements ? 'expand-less' : 'expand-more'} 
-                      size={20} 
-                      color="rgba(255,255,255,0.7)" 
-                    />
+                    <BlurView intensity={40} tint="dark" style={styles.viewAllBlur}>
+                      <LinearGradient
+                        colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                        style={styles.viewAllGradient}
+                      >
+                        <Text style={styles.viewAllText}>
+                          {showAllAchievements ? 'Show Less' : 'View All'}
+                        </Text>
+                        <MaterialIcons 
+                          name={showAllAchievements ? 'expand-less' : 'expand-more'} 
+                          size={20} 
+                          color="rgba(255,255,255,0.7)" 
+                        />
+                      </LinearGradient>
+                    </BlurView>
                   </Pressable>
                 )}
               </LinearGradient>
             </BlurView>
 
             {/* Settings */}
-            <BlurView intensity={30} tint="dark" style={styles.settingsCard}>
+            <BlurView intensity={60} tint="dark" style={styles.settingsCard}>
               <LinearGradient
-                colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
                 style={styles.cardContent}
               >
                 <Text style={styles.sectionTitle}>Settings</Text>
                 
                 <View style={styles.settingsList}>
                   <Pressable onPress={handleResetProgress}>
-                    <BlurView intensity={40} tint="dark" style={styles.settingItemReset}>
-                      <View style={styles.settingContent}>
-                        <View style={styles.settingIconReset}>
-                          <MaterialIcons name="refresh" size={20} color="#ef4444" />
+                    <BlurView intensity={50} tint="dark" style={styles.settingItemReset}>
+                      <LinearGradient
+                        colors={['rgba(239,68,68,0.15)', 'rgba(239,68,68,0.08)']}
+                        style={styles.settingGradient}
+                      >
+                        <View style={styles.settingContent}>
+                          <View style={styles.settingIconReset}>
+                            <MaterialIcons name="refresh" size={20} color="#ef4444" />
+                          </View>
+                          <Text style={styles.settingText}>Reset Progress</Text>
+                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
                         </View>
-                        <Text style={styles.settingText}>Reset Progress</Text>
-                        <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
-                      </View>
+                      </LinearGradient>
                     </BlurView>
                   </Pressable>
                   
                   <Pressable onPress={() => logout()}>
-                    <BlurView intensity={40} tint="dark" style={styles.settingItem}>
-                      <View style={styles.settingContent}>
-                        <View style={styles.settingIcon}>
-                          <MaterialIcons name="logout" size={20} color="rgba(255,255,255,0.7)" />
+                    <BlurView intensity={50} tint="dark" style={styles.settingItem}>
+                      <LinearGradient
+                        colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                        style={styles.settingGradient}
+                      >
+                        <View style={styles.settingContent}>
+                          <View style={styles.settingIcon}>
+                            <MaterialIcons name="logout" size={20} color="rgba(255,255,255,0.7)" />
+                          </View>
+                          <Text style={styles.settingText}>Sign Out</Text>
+                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
                         </View>
-                        <Text style={styles.settingText}>Sign Out</Text>
-                        <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
-                      </View>
+                      </LinearGradient>
                     </BlurView>
                   </Pressable>
                 </View>
@@ -263,6 +308,13 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     marginBottom: 24,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   profileContent: {
     padding: 32,
@@ -279,10 +331,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   levelBadge: {
     position: 'absolute',
@@ -296,6 +350,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#1a1a2e',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   levelText: {
     color: 'white',
@@ -327,9 +386,10 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     height: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: 4,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   progressBar: {
     height: '100%',
@@ -345,15 +405,36 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     marginBottom: 24,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   achievementsCard: {
     borderRadius: 24,
     marginBottom: 24,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   settingsCard: {
     borderRadius: 24,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   cardContent: {
     padding: 24,
@@ -376,10 +457,17 @@ const styles = StyleSheet.create({
   },
   statCard: {
     borderRadius: 16,
-    padding: 16,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: 'rgba(255,255,255,0.15)',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  statCardGradient: {
+    padding: 16,
   },
   statTopRow: {
     flexDirection: 'row',
@@ -404,12 +492,26 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   achievementUnlocked: {
-    borderColor: 'rgba(59,130,246,0.3)',
+    borderColor: 'rgba(59,130,246,0.4)',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   achievementLocked: {
     borderColor: 'rgba(255,255,255,0.1)',
+  },
+  achievementGradient: {
+    borderRadius: 16,
+    overflow: 'hidden',
   },
   achievementContent: {
     flexDirection: 'row',
@@ -423,9 +525,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   achievementIconUnlocked: {
     backgroundColor: 'rgba(59,130,246,0.2)',
+    borderColor: 'rgba(59,130,246,0.3)',
   },
   achievementIconLocked: {
     backgroundColor: 'rgba(255,255,255,0.05)',
@@ -449,6 +554,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   settingsList: {
     gap: 12,
@@ -457,13 +567,23 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   settingItemReset: {
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(239,68,68,0.3)',
+    borderColor: 'rgba(239,68,68,0.4)',
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   settingContent: {
     flexDirection: 'row',
@@ -478,6 +598,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   settingIconReset: {
     width: 40,
@@ -487,6 +609,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(239,68,68,0.3)',
   },
   settingText: {
     color: 'white',
@@ -495,20 +619,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   viewAllButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
-    paddingVertical: 12,
-    backgroundColor: 'rgba(255,255,255,0.05)',
+    marginTop: 8,
+  },
+  viewAllBlur: {
     borderRadius: 12,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
   },
+  viewAllGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
   viewAllText: {
     color: 'rgba(255,255,255,0.7)',
-    fontWeight: 'bold',
-    fontSize: 16,
+    fontWeight: '500',
     marginRight: 4,
+  },
+  settingGradient: {
+    padding: 8,
   },
 });

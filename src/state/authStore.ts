@@ -206,6 +206,12 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await supabase.auth.signOut();
+          
+          // Clear progress store data
+          const { useProgressStore } = await import('./progressStore');
+          const { clearUserProgress } = useProgressStore.getState();
+          clearUserProgress();
+          
           set({ 
             user: null, 
             isAuthenticated: false, 
@@ -213,6 +219,12 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           console.error('Logout error:', error);
+          
+          // Clear progress store data even on error
+          const { useProgressStore } = await import('./progressStore');
+          const { clearUserProgress } = useProgressStore.getState();
+          clearUserProgress();
+          
           set({ 
             user: null, 
             isAuthenticated: false, 
@@ -335,6 +347,11 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     
     setLoading(false);
   } else if (event === 'SIGNED_OUT') {
+    // Clear progress store data
+    const { useProgressStore } = await import('./progressStore');
+    const { clearUserProgress } = useProgressStore.getState();
+    clearUserProgress();
+    
     useAuthStore.setState({ 
       user: null, 
       isAuthenticated: false, 

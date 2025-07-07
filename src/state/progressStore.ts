@@ -20,6 +20,7 @@ interface ProgressState extends UserProgress {
   updateUserStats: (stats: Partial<UserStats>) => Promise<void>;
   checkAchievements: () => Promise<void>;
   setLoading: (loading: boolean) => void;
+  clearUserProgress: () => void;
 }
 
 const initialState: UserProgress = {
@@ -148,8 +149,20 @@ export const useProgressStore = create<ProgressState>()(
           };
 
           if (typeof unitIdOrXpGained === 'number') {
-            // Old signature: (lessonId, xpGained)
-            unitId = 'unknown-unit'; // Fallback for unit ID
+            // Lesson-based XP: (lessonId, xpGained)
+            // Find the unit ID for this lesson
+            const questionsData = require('../data/questions.json');
+            const units = questionsData.units;
+            let foundUnitId = 'unknown-unit';
+            
+            for (const unit of units) {
+              if (unit.lessons.some((l: any) => l.id === lessonId)) {
+                foundUnitId = unit.id;
+                break;
+              }
+            }
+            
+            unitId = foundUnitId;
             actualXpGained = unitIdOrXpGained;
             actualSession = {};
           } else {
@@ -301,19 +314,31 @@ export const useProgressStore = create<ProgressState>()(
       
       resetProgress: async () => {
         try {
-          const { user } = useAuthStore.getState();
+          const { user, updateProfile } = useAuthStore.getState();
           if (!user) return;
 
+          // Reset local state
           set({
             ...initialState,
             achievements: defaultAchievements,
             userStats: null,
           });
 
+          // Reset user profile in database (XP, streak, lastStudyDate)
+          await updateProfile({
+            totalXp: 0,
+            streak: 0,
+            lastStudyDate: new Date().toISOString().split('T')[0],
+          });
+
           // Reset in database
           await supabase.from('lesson_progress').delete().eq('user_id', user.id);
           await supabase.from('achievements').delete().eq('user_id', user.id);
           await supabase.from('user_stats').delete().eq('user_id', user.id);
+
+          // Clear the persisted storage to ensure clean state
+          await AsyncStorage.removeItem('dsa-progress');
+          
         } catch (error) {
           console.error('Error resetting progress:', error);
         }
@@ -322,6 +347,17 @@ export const useProgressStore = create<ProgressState>()(
       loadUserProgress: async (userId: string) => {
         try {
           set({ isLoading: true });
+
+          // Load user data directly from database to get most up-to-date XP
+          const { data: userData } = await supabase
+            .from('users')
+            .select('total_xp, streak, last_study_date')
+            .eq('id', userId)
+            .single();
+
+          const userTotalXp = userData?.total_xp || 0;
+          const userStreak = userData?.streak || 0;
+          const userLastStudyDate = userData?.last_study_date || new Date().toISOString().split('T')[0];
 
           // Load lesson progress
           const { data: progressData } = await supabase
@@ -365,6 +401,10 @@ export const useProgressStore = create<ProgressState>()(
           });
 
           set({
+            // Use the user's actual XP from the database
+            totalXp: userTotalXp,
+            streak: userStreak,
+            lastStudyDate: userLastStudyDate,
             completedLessons,
             unitProgress,
             lessonQuestionProgress,
@@ -544,6 +584,15 @@ export const useProgressStore = create<ProgressState>()(
 
       setLoading: (loading: boolean) => {
         set({ isLoading: loading });
+      },
+
+      clearUserProgress: () => {
+        set({
+          ...initialState,
+          achievements: defaultAchievements,
+          userStats: null,
+          isLoading: false,
+        });
       },
     }),
     {

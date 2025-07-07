@@ -1,10 +1,86 @@
 export interface Question {
   id: string;
-  type: 'mcq' | 'fillInBlank';
+  type: 'mcq' | 'fillInBlank' | 'codeCompletion' | 'interactiveVisualization' | 'interactiveAnimation' | 'codeOutput' | 'algorithmTrace' | 'interactiveDebugging' | 'performanceComparison' | 'memoryLayout' | 'buildDataStructure' | 'complexityAnalysis';
   question: string;
-  options?: string[]; // For MCQ
-  correctAnswer?: string; // For MCQ
-  acceptedAnswers?: string[]; // For fillInBlank
+  
+  // MCQ fields
+  options?: string[];
+  correctAnswer?: string;
+  
+  // Fill in blank fields
+  acceptedAnswers?: string[];
+  
+  // Code completion fields
+  codeTemplate?: string;
+  blanks?: Array<{
+    position: string;
+    acceptedAnswers: string[];
+    explanation: string;
+  }>;
+  
+  // Interactive visualization fields
+  visualizationData?: {
+    array?: number[];
+    target?: number;
+    type?: string;
+    baseAddress?: number;
+    elementSize?: number;
+    algorithm?: string;
+    controls?: string[];
+  };
+  correctSequence?: number[];
+  correctAddresses?: number[];
+  
+  // Interactive animation fields
+  animationData?: {
+    array: number[];
+    algorithm: string;
+    controls: string[];
+  };
+  challenges?: string[];
+  
+  // Code output fields
+  code?: string;
+  
+  // Algorithm trace fields
+  initialArray?: number[];
+  steps?: Array<{
+    step: number;
+    array: number[];
+    explanation: string;
+  }>;
+  userTask?: string;
+  
+  // Interactive debugging fields
+  buggyCode?: string;
+  bugs?: Array<{
+    line: number;
+    issue: string;
+    explanation: string;
+  }>;
+  
+  // Performance comparison fields
+  operations?: Array<{
+    name: string;
+    complexity: string;
+  }>;
+  correctRanking?: number[];
+  
+  // Memory layout fields
+  array?: number[];
+  
+  // Build data structure fields
+  task?: string;
+  constraints?: Record<string, any>;
+  targetStructure?: any;
+  tools?: string[];
+  
+  // Complexity analysis fields
+  analysisSteps?: Array<{
+    step: string;
+    complexity: string;
+  }>;
+  
   explanation: string;
   difficulty: 'easy' | 'medium' | 'hard';
   topic: string;

@@ -90,16 +90,16 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
       // Close dropdown
       Animated.timing(dropdownAnim, {
         toValue: 0,
-        duration: 200,
-        useNativeDriver: false,
+        duration: 150,
+        useNativeDriver: true,
       }).start(() => setIsDropdownOpen(false));
     } else {
       // Open dropdown
       setIsDropdownOpen(true);
       Animated.timing(dropdownAnim, {
         toValue: 1,
-        duration: 200,
-        useNativeDriver: false,
+        duration: 150,
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -267,6 +267,153 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
     return Math.max(dynamicPadding, minGuarantee);
   }, [currentUnit.lessons.length, height]);
 
+  const getLessonIcon = (lesson: any, nodeType: string): any => {
+    // Special node types take priority
+    if (nodeType === 'start') return 'play-arrow';
+    if (nodeType === 'boss') return 'emoji-events';
+    
+    // Get lesson title for matching
+    const title = lesson.title.toLowerCase();
+    
+    // Exact title matches first - using basic MaterialIcons only
+    const exactMatches: { [key: string]: string } = {
+      // Array lessons
+      'basics': 'school',
+      'operations': 'build',
+      'properties': 'info',
+      'advanced topics': 'trending-up',
+      'arrays challenge test': 'quiz',
+      
+      // Hash Map lessons
+      'collision resolution': 'storage',
+      'performance analysis': 'speed',
+      'hash maps challenge test': 'quiz',
+      
+      // Stack lessons
+      'stack operations': 'layers',
+      'stack problems': 'help',
+      'stack in parsing and evaluation': 'code',
+      'expression evaluation': 'calculate',
+      'advanced problems': 'extension',
+      'stacks challenge test': 'quiz',
+      
+      // Queue lessons
+      'queue operations': 'queue',
+      'circular queues': 'refresh',
+      'priority queues': 'star',
+      'queues challenge test': 'quiz',
+      
+      // Tree lessons
+      'tree traversal': 'route',
+      'binary search trees': 'search',
+      'balanced trees': 'tune',
+      'trees challenge test': 'quiz',
+      
+      // Graph lessons
+      'graph traversal': 'timeline',
+      'shortest path algorithms': 'directions',
+      'topological sorting': 'sort',
+      'graphs challenge test': 'quiz',
+      
+      // Sorting lessons
+      'bubble sort': 'sort',
+      'insertion sort': 'north',
+      'selection sort': 'select-all',
+      'merge sort': 'merge-type',
+      'quick sort': 'flash-on',
+      'heap sort': 'filter-list',
+      'counting sort': 'format-list-numbered',
+      'radix sort': 'view-list',
+      'hybrid sorting': 'tune',
+      'external sorting': 'storage',
+      'sorting challenge test': 'quiz',
+      
+      // Greedy lessons
+      'activity selection': 'event',
+      'huffman coding': 'data-usage',
+      'minimum spanning trees': 'account-tree',
+      'shortest path': 'directions',
+      'interval scheduling': 'schedule',
+      'advanced greedy techniques': 'trending-up',
+      'greedy algorithms challenge test': 'quiz',
+      
+      // Dynamic Programming lessons
+      'fibonacci dp': 'timeline',
+      'classic dp problems': 'library-books',
+      'knapsack problem variants': 'work',
+      'advanced dp techniques': 'memory',
+      'dynamic programming challenge test': 'quiz',
+      
+      // Linked List lessons
+      'singly linked lists': 'link',
+      'doubly linked lists': 'swap-horiz',
+      'circular linked lists': 'refresh',
+      'skip lists': 'skip-next',
+      'linked lists challenge test': 'quiz',
+      
+      // Heap lessons
+      'heap operations': 'vertical-align-top',
+      'heap applications': 'apps',
+      'heaps challenge test': 'quiz',
+      
+      // Recursion lessons
+      'tail recursion': 'redo',
+      'tree recursion': 'account-tree',
+      'backtracking': 'undo',
+      'advanced recursive techniques': 'settings',
+      'recursion challenge test': 'quiz',
+      
+      // Search lessons
+      'linear search': 'search',
+      'binary search': 'search',
+      'hash-based search': 'storage',
+      'advanced search techniques': 'search',
+      'searching challenge test': 'quiz',
+      
+      // Big O lessons
+      'time complexity': 'schedule',
+      'space complexity': 'memory',
+      'algorithm analysis': 'analytics',
+      'asymptotic notation': 'trending-up',
+      'big o challenge test': 'quiz',
+    };
+    
+    // Check for exact matches
+    if (exactMatches[title]) {
+      return exactMatches[title];
+    }
+    
+    // Pattern matching for common terms
+    if (title.includes('test') || title.includes('challenge')) return 'quiz';
+    if (title.includes('basic') || title.includes('fundamentals')) return 'school';
+    if (title.includes('operation') || title.includes('manipulation')) return 'build';
+    if (title.includes('advanced') || title.includes('complex')) return 'trending-up';
+    if (title.includes('analysis') || title.includes('performance')) return 'analytics';
+    if (title.includes('algorithm') || title.includes('technique')) return 'settings';
+    if (title.includes('problem') || title.includes('application')) return 'extension';
+    if (title.includes('sorting') || title.includes('sort')) return 'sort';
+    if (title.includes('search') || title.includes('find')) return 'search';
+    if (title.includes('tree') || title.includes('hierarchical')) return 'account-tree';
+    if (title.includes('graph') || title.includes('network')) return 'timeline';
+    if (title.includes('hash') || title.includes('map')) return 'storage';
+    if (title.includes('stack') || title.includes('lifo')) return 'layers';
+    if (title.includes('queue') || title.includes('fifo')) return 'queue';
+    if (title.includes('array') || title.includes('list')) return 'view-list';
+    if (title.includes('heap') || title.includes('priority')) return 'vertical-align-top';
+    if (title.includes('recursion') || title.includes('recursive')) return 'redo';
+    if (title.includes('dynamic') || title.includes('dp')) return 'memory';
+    if (title.includes('greedy') || title.includes('optimization')) return 'trending-up';
+    if (title.includes('link') || title.includes('pointer')) return 'link';
+    if (title.includes('traversal') || title.includes('walk')) return 'route';
+    if (title.includes('complexity') || title.includes('big o')) return 'schedule';
+    
+    // Checkpoint fallback
+    if (nodeType === 'checkpoint') return 'bookmark';
+    
+    // Default lesson icon
+    return 'lightbulb';
+  };
+
   const LessonNode = React.memo(({ item }: { item: any }) => {
     const getNodeColors = () => {
       if (item.isCompleted) return ['#58CC02', '#52B802'] as const;
@@ -280,10 +427,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
     };
 
     const getIcon = () => {
-      if (item.nodeType === 'start') return 'star';
-      if (item.nodeType === 'boss') return 'emoji-events';
-      if (item.nodeType === 'checkpoint') return 'bookmark';
-      return 'lightbulb';
+      return getLessonIcon(item.lesson, item.nodeType);
     };
 
     // Calculate progress (0-100) based on actual question completion
@@ -394,9 +538,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           </View>
         )}
         {/* Lesson Title Label */}
-        <BlurView
-          intensity={50}
-          tint="dark"
+        <View
           style={[styles.lessonLabel, { 
             top: nodeSize + ringSpacing / 2 + (progress > 0 ? 18 : 10),
             width: 100,
@@ -405,7 +547,7 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           }]}
         >
           <Text style={styles.lessonText}>{item.lesson.title}</Text>
-        </BlurView>
+        </View>
 
         {item.nodeType === 'start' && (
           <View style={[styles.startLabel, { top: -40 }]}>
@@ -427,9 +569,9 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
           <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
             {/* Unit Info at Top */}
             <View style={styles.topUnitInfo}>
-              <BlurView intensity={30} tint="dark" style={styles.topUnitCard}>
+              <BlurView intensity={60} tint="dark" style={styles.topUnitCard}>
                 <LinearGradient
-                  colors={['rgba(255,255,255,0.1)', 'rgba(255,255,255,0.05)']}
+                  colors={['rgba(255,255,255,0.12)', 'rgba(255,255,255,0.06)']}
                   style={styles.topUnitGradient}
                 >
                   <Pressable onPress={toggleDropdown} style={styles.topUnitHeader}>
@@ -451,14 +593,24 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                       </Text>
                     </View>
                     <View style={styles.topRightContent}>
-                      <View style={styles.streakContainer}>
-                        <MaterialIcons name="local-fire-department" size={dynamicFontSizes.secondary + 4} color="#FF9600" />
-                        <Text style={[styles.streakText, { fontSize: dynamicFontSizes.secondary }]}>0</Text>
-                      </View>
-                      <View style={styles.xpContainer}>
-                        <MaterialIcons name="star" size={dynamicFontSizes.secondary + 4} color="#FFD700" />
-                        <Text style={[styles.xpText, { fontSize: dynamicFontSizes.secondary }]}>{totalXp}</Text>
-                      </View>
+                      <BlurView intensity={40} tint="dark" style={styles.streakContainer}>
+                        <LinearGradient
+                          colors={['rgba(255,255,255,0.15)', 'rgba(255,255,255,0.08)']}
+                          style={styles.metricGradient}
+                        >
+                          <MaterialIcons name="local-fire-department" size={dynamicFontSizes.secondary + 4} color="#FF9600" />
+                          <Text style={[styles.streakText, { fontSize: dynamicFontSizes.secondary }]}>0</Text>
+                        </LinearGradient>
+                      </BlurView>
+                      <BlurView intensity={40} tint="dark" style={styles.xpContainer}>
+                        <LinearGradient
+                          colors={['rgba(255,255,255,0.15)', 'rgba(255,255,255,0.08)']}
+                          style={styles.metricGradient}
+                        >
+                          <MaterialIcons name="star" size={dynamicFontSizes.secondary + 4} color="#FFD700" />
+                          <Text style={[styles.xpText, { fontSize: dynamicFontSizes.secondary }]}>{totalXp}</Text>
+                        </LinearGradient>
+                      </BlurView>
                       <MaterialIcons 
                         name={isDropdownOpen ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
                         size={24} 
@@ -473,11 +625,15 @@ export const DuolingoHomeScreen: React.FC<DuolingoHomeScreenProps> = ({ navigati
                       style={[
                         styles.dropdownContainer,
                         {
-                          maxHeight: dropdownAnim.interpolate({
-                            inputRange: [0, 1],
-                            outputRange: [0, 100],
-                          }),
                           opacity: dropdownAnim,
+                          transform: [
+                            {
+                              scaleY: dropdownAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, 1],
+                              }),
+                            },
+                          ],
                         }
                       ]}
                     >
@@ -554,8 +710,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   topUnitCard: {
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 8,
   },
   topUnitGradient: {
     padding: 16,
@@ -567,7 +730,14 @@ const styles = StyleSheet.create({
     paddingBottom: 0
   },
   hamburgerMenu: {
-    padding: 4,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
   },
   unitTitleContainer: {
     flex: 1,
@@ -601,14 +771,32 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   streakContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    borderRadius: 18,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  xpContainer: {
+    borderRadius: 18,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  metricGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   streakText: {
     marginLeft: 4,
@@ -618,16 +806,6 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
-  },
-  xpContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
   },
   xpText: {
     marginLeft: 4,
@@ -660,8 +838,7 @@ const styles = StyleSheet.create({
   dropdownContent: {
     paddingTop: 8,
     paddingBottom: 4,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
+    paddingHorizontal: 8,
   },
   scrollView: {
     flex: 1,
@@ -696,12 +873,14 @@ const styles = StyleSheet.create({
   lessonNode: {
     borderRadius: 50,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 12,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.1)',
   },
   nodeInner: {
     width: '100%',
@@ -722,6 +901,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 3,
     borderColor: '#1a1a2e',
+    shadowColor: '#58CC02',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   startLabel: {
     position: 'absolute',
@@ -732,6 +916,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.3)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   startText: {
     fontSize: 12,
@@ -740,17 +929,10 @@ const styles = StyleSheet.create({
   },
   lessonLabel: {
     position: 'absolute',
-    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
-    overflow: 'hidden',
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
@@ -761,7 +943,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.5)',
     textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
+    textShadowRadius: 2,
   },
 
 });

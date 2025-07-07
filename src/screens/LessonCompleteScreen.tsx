@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import questionsData from '../data/questions.json';
+import { Unit, Lesson } from '../types';
 
 interface LessonCompleteScreenProps {
   navigation: any;
@@ -13,6 +15,8 @@ interface LessonCompleteScreenProps {
       xpEarned: number;
       correctAnswers: number;
       totalQuestions: number;
+      lessonId?: string;
+      unitId?: string;
     };
   };
 }
@@ -21,11 +25,42 @@ export const LessonCompleteScreen: React.FC<LessonCompleteScreenProps> = ({
   navigation, 
   route 
 }) => {
-  const { lessonTitle, xpEarned, correctAnswers, totalQuestions } = route.params;
+  const { lessonTitle, xpEarned, correctAnswers, totalQuestions, lessonId, unitId } = route.params;
   const [bounceAnimation] = useState(new Animated.Value(0));
   const [scaleAnimation] = useState(new Animated.Value(0));
   
   const accuracy = Math.round((correctAnswers / totalQuestions) * 100);
+
+  // Find the next lesson in the unit
+  const findNextLesson = () => {
+    if (!lessonId || !unitId) return null;
+    
+    const units = questionsData.units as Unit[];
+    const currentUnit = units.find(unit => unit.id === unitId);
+    
+    if (!currentUnit) return null;
+    
+    const currentLessonIndex = currentUnit.lessons.findIndex(lesson => lesson.id === lessonId);
+    
+    if (currentLessonIndex === -1 || currentLessonIndex === currentUnit.lessons.length - 1) {
+      return null; // No next lesson in this unit
+    }
+    
+    return currentUnit.lessons[currentLessonIndex + 1];
+  };
+
+  const nextLesson = findNextLesson();
+
+  const handleContinue = () => {
+    if (nextLesson) {
+      navigation.navigate('Lesson', {
+        lessonId: nextLesson.id,
+        lesson: nextLesson
+      });
+    } else {
+      navigation.navigate('Main');
+    }
+  };
 
   useEffect(() => {
     // Entrance animation
@@ -123,15 +158,22 @@ export const LessonCompleteScreen: React.FC<LessonCompleteScreenProps> = ({
             </Animated.View>
 
             <Pressable
-              onPress={() => navigation.navigate('Main')}
+              onPress={handleContinue}
               style={styles.continueButtonWrapper}
             >
               <LinearGradient
                 colors={["#10B981", "#059669"]}
                 style={styles.continueButton}
               >
-                <MaterialIcons name="arrow-forward" size={24} color="white" style={{ marginRight: 8 }} />
-                <Text style={styles.continueButtonText}>Continue Adventure</Text>
+                <MaterialIcons 
+                  name={nextLesson ? "arrow-forward" : "home"} 
+                  size={24} 
+                  color="white" 
+                  style={{ marginRight: 8 }} 
+                />
+                <Text style={styles.continueButtonText}>
+                  {nextLesson ? `Continue to ${nextLesson.title}` : 'Return Home'}
+                </Text>
               </LinearGradient>
             </Pressable>
           </View>
@@ -155,7 +197,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     paddingBottom: 40,
   },
   animatedTrophy: {
@@ -166,12 +208,13 @@ const styles = StyleSheet.create({
   trophyCard: {
     borderRadius: 32,
     overflow: 'hidden',
-    width: 180,
+    width: '90%',
+    maxWidth: 280,
     alignItems: 'center',
     marginBottom: 8,
   },
   trophyGradient: {
-    padding: 28,
+    padding: 32,
     alignItems: 'center',
   },
   trophyIconContainer: {
@@ -220,9 +263,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   rewardsGradient: {
-    padding: 24,
+    padding: 28,
   },
   rewardsTitle: {
     color: 'white',
@@ -266,6 +311,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     paddingVertical: 16,
     paddingHorizontal: 32,
+    width: '100%',
+    maxWidth: 380,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
@@ -275,7 +322,8 @@ const styles = StyleSheet.create({
   continueButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
+    flexShrink: 1,
   },
 });

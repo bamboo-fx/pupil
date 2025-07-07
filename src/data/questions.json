@@ -296,17 +296,16 @@
             },
             {
               "id": "q24f",
-              "type": "dragAndDrop",
-              "question": "Arrange these steps of bubble sort in the correct order:",
-              "items": [
-                "Start with the first element",
-                "Compare adjacent elements",
-                "Swap if they are in wrong order",
-                "Move to next pair",
-                "Repeat until no swaps needed"
+              "type": "mcq",
+              "question": "What is the first step in the bubble sort algorithm?",
+              "options": [
+                "Compare all elements at once",
+                "Start with the first element and compare adjacent pairs",
+                "Find the minimum element first",
+                "Sort the array in reverse order first"
               ],
-              "correctOrder": [0, 1, 2, 3, 4],
-              "explanation": "Bubble sort systematically compares adjacent elements and swaps them if needed, repeating until the array is sorted.",
+              "correctAnswer": "Start with the first element and compare adjacent pairs",
+              "explanation": "Bubble sort begins by comparing the first pair of adjacent elements and continues systematically through the array.",
               "difficulty": "medium",
               "topic": "arrays"
             },
@@ -402,24 +401,7 @@
               "difficulty": "medium",
               "topic": "arrays"
             },
-            {
-              "id": "q24m",
-              "type": "interactiveAnimation",
-              "question": "Control the animation to show how merge sort divides and conquers:",
-              "animationData": {
-                "array": [8, 3, 1, 6, 4, 7, 2, 5],
-                "algorithm": "mergeSort",
-                "controls": ["play", "pause", "step", "reset", "speed"]
-              },
-              "challenges": [
-                "Pause when the array is fully divided",
-                "Step through the merge process",
-                "Identify when the first merge happens"
-              ],
-              "explanation": "Merge sort recursively divides the array, then merges sorted subarrays.",
-              "difficulty": "medium",
-              "topic": "arrays"
-            },
+
             {
               "id": "q24n",
               "type": "buildDataStructure",
@@ -503,6 +485,69 @@
               "topic": "arrays"
             }
           ]
+        },
+        {
+          "id": "arrays-test",
+          "title": "Arrays Challenge Test",
+          "description": "LeetCode-style comprehensive test covering all array concepts",
+          "xpReward": 150,
+          "questions": [
+            {
+              "id": "arrays-test-q1",
+              "type": "mcq",
+              "question": "Given an array [3, 1, 4, 1, 5], what would be the result after one pass of bubble sort?",
+              "options": ["[1, 3, 1, 4, 5]", "[1, 1, 3, 4, 5]", "[3, 1, 1, 4, 5]", "[1, 3, 4, 1, 5]"],
+              "correctAnswer": "[1, 3, 1, 4, 5]",
+              "explanation": "After one pass of bubble sort, the largest element (5) bubbles to the end, with adjacent swaps made: [1,3,1,4,5].",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "arrays-test-q2",
+              "type": "fillInBlank",
+              "question": "To find two numbers in an array that sum to a target in O(n) time, you would use a _____ to store complements.",
+              "acceptedAnswers": ["hash map", "HashMap", "hash table", "HashTable", "dictionary", "Dictionary", "hash set", "HashSet"],
+              "explanation": "A hash map stores each number's complement, allowing O(1) lookups to find pairs that sum to the target.",
+              "difficulty": "medium",
+              "topic": "arrays"
+            },
+            {
+              "id": "arrays-test-q3",
+              "type": "mcq",
+              "question": "Which array operation has the worst time complexity?",
+              "options": [
+                "Access by index: arr[i]",
+                "Binary search on sorted array",
+                "Linear search",
+                "Insertion at beginning"
+              ],
+              "correctAnswer": "Insertion at beginning",
+              "explanation": "Insertion at beginning requires shifting all existing elements, making it O(n), while access by index is O(1), binary search is O(log n), and linear search is O(n).",
+              "difficulty": "hard",
+              "topic": "arrays"
+            },
+            {
+              "id": "arrays-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the two-pointer solution to find a pair that sums to target:",
+              "codeTemplate": "function twoSum(arr, target) {\n  let left = 0, right = arr.length - 1;\n  while (left < right) {\n    const sum = arr[left] + arr[right];\n    if (sum === target) return [left, right];\n    else if (sum < target) ______1;\n    else ______2;\n  }\n  return [-1, -1];\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["left++", "left = left + 1", "++left"],
+                  "explanation": "When sum is less than target, move left pointer right to increase sum."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["right--", "right = right - 1", "--right"],
+                  "explanation": "When sum is greater than target, move right pointer left to decrease sum."
+                }
+                            ],
+              "difficulty": "hard",
+              "topic": "arrays"
+            }
+ 
+            ]
         }
       ]
     },
@@ -840,6 +885,69 @@
               "topic": "hashmap"
             }
           ]
+        },
+        {
+          "id": "hashmap-test",
+          "title": "Hash Maps Challenge Test",
+          "description": "LeetCode-style comprehensive test covering all hash map concepts",
+          "xpReward": 200,
+          "questions": [
+            {
+              "id": "hashmap-test-q1",
+              "type": "mcq",
+              "question": "Given a hash map with separate chaining for collision resolution, what happens to the time complexity of search operations as the load factor approaches 1.0?",
+              "options": ["Time complexity remains O(1)", "Time complexity degrades toward O(n)", "Time complexity improves to O(log n)", "Hash map becomes unusable"],
+              "correctAnswer": "Time complexity degrades toward O(n)",
+              "explanation": "As load factor increases, more collisions occur, making chains longer and degrading search performance toward O(n) in the worst case.",
+              "difficulty": "medium",
+              "topic": "hashmap"
+            },
+            {
+              "id": "hashmap-test-q2",
+              "type": "fillInBlank",
+              "question": "In a hash table using open addressing with linear probing, the _____ phenomenon occurs when occupied slots cluster together, making future insertions slower.",
+              "acceptedAnswers": ["clustering", "Clustering", "CLUSTERING", "primary clustering", "Primary Clustering", "PRIMARY CLUSTERING"],
+              "explanation": "Primary clustering occurs in linear probing when consecutive slots become occupied, creating long probe sequences for new insertions.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            },
+            {
+              "id": "hashmap-test-q3",
+              "type": "mcq",
+              "question": "Which hash table collision resolution method provides the best worst-case search performance?",
+              "options": [
+                "Double hashing",
+                "Separate chaining with balanced trees",
+                "Linear probing",
+                "Separate chaining with linked lists"
+              ],
+              "correctAnswer": "Separate chaining with balanced trees",
+              "explanation": "Separate chaining with balanced trees provides O(log n) worst-case search time, while other methods can degrade to O(n) in worst case scenarios.",
+              "difficulty": "hard",
+              "topic": "hashmap"
+            },
+            {
+              "id": "hashmap-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the implementation of a hash map resize operation:",
+              "codeTemplate": "function resize(oldTable, newSize) {\n  const newTable = new Array(newSize);\n  for (let i = 0; i < oldTable.length; i++) {\n    if (oldTable[i] !== null) {\n      const newIndex = ______1;\n      // Handle collision resolution\n      ______2;\n    }\n  }\n  return newTable;\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["hash(oldTable[i].key) % newSize", "oldTable[i].key.hashCode() % newSize"],
+                  "explanation": "Recalculate hash index using the new table size to redistribute elements."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["newTable[newIndex] = oldTable[i]", "insert(newTable, oldTable[i], newIndex)"],
+                  "explanation": "Insert the element into the new table at the recalculated index."
+                }
+                            ],
+              "difficulty": "hard",
+              "topic": "hashmap"
+            }
+ 
+            ]
         }
       ]
     },
@@ -1432,6 +1540,79 @@
               "topic": "stack"
             }
           ]
+        },
+        {
+          "id": "stacks-test",
+          "title": "Stacks Challenge Test",
+          "description": "LeetCode-style comprehensive test covering all stack concepts and applications",
+          "xpReward": 180,
+          "questions": [
+            {
+              "id": "stacks-test-q1",
+              "type": "mcq",
+              "question": "In the classic 'Valid Parentheses' problem, what happens when you encounter a closing bracket?",
+              "options": ["Push it onto the stack", "Pop from stack and check if it matches", "Ignore it and continue", "Return false immediately"],
+              "correctAnswer": "Pop from stack and check if it matches",
+              "explanation": "When encountering a closing bracket, you pop the most recent opening bracket and verify they form a valid pair.",
+              "difficulty": "medium",
+              "topic": "stack"
+            },
+            {
+              "id": "stacks-test-q2",
+              "type": "fillInBlank",
+              "question": "In the 'Next Greater Element' problem, a _____ stack is used to efficiently find the next greater element for each array element.",
+              "acceptedAnswers": ["monotonic", "Monotonic", "MONOTONIC", "decreasing", "Decreasing", "DECREASING"],
+              "explanation": "A monotonic decreasing stack maintains elements in decreasing order, enabling efficient next greater element computation.",
+              "difficulty": "hard",
+              "topic": "stack"
+            },
+            {
+              "id": "stacks-test-q3",
+              "type": "mcq",
+              "question": "In the 'Largest Rectangle in Histogram' algorithm, what triggers an area calculation?",
+              "options": [
+                "When the stack becomes empty",
+                "When a bar is shorter than the top of stack",
+                "When we reach the end of the array",
+                "When the stack has more than 3 elements"
+              ],
+              "correctAnswer": "When a bar is shorter than the top of stack",
+              "explanation": "Area calculation is triggered when we encounter a bar shorter than the stack top, as this ends the rectangle for taller bars.",
+              "difficulty": "hard",
+              "topic": "stack"
+            },
+            {
+              "id": "stacks-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the stack-based solution for evaluating postfix expressions:",
+              "codeTemplate": "function evaluatePostfix(expression) {\n  const stack = [];\n  for (let token of expression.split(' ')) {\n    if (isOperator(token)) {\n      const b = ______1;\n      const a = ______2;\n      stack.push(operate(a, b, token));\n    } else {\n      ______3;\n    }\n  }\n  return ______4;\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["stack.pop()", "stack.pop()"],
+                  "explanation": "Pop the second operand from the stack."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["stack.pop()", "stack.pop()"],
+                  "explanation": "Pop the first operand from the stack."
+                },
+                {
+                  "position": "______3",
+                  "acceptedAnswers": ["stack.push(parseInt(token))", "stack.push(Number(token))"],
+                  "explanation": "Push the operand onto the stack."
+                },
+                {
+                  "position": "______4",
+                  "acceptedAnswers": ["stack[0]", "stack.pop()", "stack[stack.length - 1]"],
+                  "explanation": "Return the final result from the stack."
+                }
+                            ],
+              "difficulty": "medium",
+              "topic": "stack"
+            }
+ 
+            ]
         }
       ]
     },
@@ -1695,6 +1876,74 @@
               "topic": "queue"
             }
           ]
+        },
+        {
+          "id": "queues-test",
+          "title": "Queues Challenge Test",
+          "description": "LeetCode-style comprehensive test covering queue concepts and applications",
+          "xpReward": 170,
+          "questions": [
+            {
+              "id": "queues-test-q1",
+              "type": "mcq",
+              "question": "In a breadth-first search implementation, why is a queue preferred over a stack?",
+              "options": ["Queue is faster than stack", "Queue processes nodes level by level", "Queue uses less memory", "Queue handles cycles better"],
+              "correctAnswer": "Queue processes nodes level by level",
+              "explanation": "BFS explores all nodes at the current depth before moving to the next level, which naturally maps to FIFO queue behavior.",
+              "difficulty": "medium",
+              "topic": "queue"
+            },
+            {
+              "id": "queues-test-q2",
+              "type": "fillInBlank",
+              "question": "In the 'Sliding Window Maximum' problem, a _____ is often used to efficiently track the maximum element in each window.",
+              "acceptedAnswers": ["deque", "Deque", "DEQUE", "double-ended queue", "Double-Ended Queue", "DOUBLE-ENDED QUEUE"],
+              "explanation": "A deque allows efficient insertion and deletion at both ends, perfect for maintaining window maximums.",
+              "difficulty": "hard",
+              "topic": "queue"
+            },
+            {
+              "id": "queues-test-q3",
+              "type": "mcq",
+              "question": "When implementing a queue using two stacks, when should elements be transferred between stacks?",
+              "options": [
+                "After every enqueue operation",
+                "After every dequeue operation",
+                "Only when the dequeue stack is empty and dequeue is needed",
+                "When both stacks have equal numbers of elements"
+              ],
+              "correctAnswer": "Only when the dequeue stack is empty and dequeue is needed",
+              "explanation": "Elements are transferred from the enqueue stack to the dequeue stack only when necessary, achieving amortized O(1) performance.",
+              "difficulty": "hard",
+              "topic": "queue"
+            },
+            {
+              "id": "queues-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the circular queue implementation to handle the full/empty distinction:",
+              "codeTemplate": "class CircularQueue {\n  constructor(size) {\n    this.buffer = new Array(size);\n    this.front = 0;\n    this.rear = 0;\n    this.______1;\n  }\n  \n  isEmpty() {\n    return ______2;\n  }\n  \n  isFull() {\n    return ______3;\n  }\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["count = 0", "size = 0", "length = 0"],
+                  "explanation": "Track the number of elements to distinguish between full and empty states."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["this.count === 0", "this.size === 0", "this.length === 0"],
+                  "explanation": "Queue is empty when count reaches zero."
+                },
+                {
+                  "position": "______3",
+                  "acceptedAnswers": ["this.count === this.buffer.length", "this.size === this.buffer.length"],
+                  "explanation": "Queue is full when count equals the buffer capacity."
+                }
+                            ],
+              "difficulty": "medium",
+              "topic": "queue"
+            }
+ 
+            ]
         }
       ]
     },
@@ -1948,6 +2197,74 @@
               "topic": "trees"
             }
           ]
+        },
+        {
+          "id": "trees-test",
+          "title": "Trees Challenge Test",
+          "description": "LeetCode-style comprehensive test covering tree algorithms and traversals",
+          "xpReward": 200,
+          "questions": [
+            {
+              "id": "trees-test-q1",
+              "type": "mcq",
+              "question": "In the 'Lowest Common Ancestor' problem for a binary search tree, what property allows for an optimized solution?",
+              "options": ["Tree is balanced", "Nodes have parent pointers", "Left < Root < Right ordering", "Tree is complete"],
+              "correctAnswer": "Left < Root < Right ordering",
+              "explanation": "BST property allows determining if LCA is in left or right subtree by comparing node values with target values.",
+              "difficulty": "hard",
+              "topic": "trees"
+            },
+            {
+              "id": "trees-test-q2",
+              "type": "fillInBlank",
+              "question": "To serialize a binary tree uniquely, preorder traversal with _____ markers for missing children is commonly used.",
+              "acceptedAnswers": ["null", "Null", "NULL", "nil", "Nil", "NIL", "#"],
+              "explanation": "Null markers indicate missing children, allowing unique reconstruction of the tree structure from preorder traversal.",
+              "difficulty": "medium",
+              "topic": "trees"
+            },
+            {
+              "id": "trees-test-q3",
+              "type": "mcq",
+              "question": "In the 'Validate Binary Search Tree' algorithm using bounds, what bounds do you pass to the left subtree?",
+              "options": [
+                "Same bounds as parent",
+                "Lower bound unchanged, upper bound set to parent's value",
+                "Lower bound set to parent's value, upper bound unchanged",
+                "Both bounds set to parent's value"
+              ],
+              "correctAnswer": "Lower bound unchanged, upper bound set to parent's value",
+              "explanation": "For the left subtree, all values must be less than the parent, so we keep the lower bound and set upper bound to parent's value.",
+              "difficulty": "hard",
+              "topic": "trees"
+            },
+            {
+              "id": "trees-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the iterative inorder traversal using a stack:",
+              "codeTemplate": "function inorderTraversal(root) {\n  const result = [];\n  const stack = [];\n  let current = root;\n  \n  while (current || stack.length > 0) {\n    while (current) {\n      ______1;\n      current = current.left;\n    }\n    current = ______2;\n    ______3;\n    current = current.right;\n  }\n  return result;\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["stack.push(current)", "stack.push(current)"],
+                  "explanation": "Push current node onto stack before moving to left child."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["stack.pop()", "stack.pop()"],
+                  "explanation": "Pop a node from stack when no more left children exist."
+                },
+                {
+                  "position": "______3",
+                  "acceptedAnswers": ["result.push(current.val)", "result.push(current.value)"],
+                  "explanation": "Process the current node by adding its value to result."
+                }
+                            ],
+              "difficulty": "medium",
+              "topic": "trees"
+            }
+ 
+            ]
         }
       ]
     },
@@ -2220,6 +2537,79 @@
               "topic": "graphs"
             }
           ]
+        },
+        {
+          "id": "graphs-test",
+          "title": "Graphs Challenge Test", 
+          "description": "LeetCode-style comprehensive test covering graph algorithms and traversals",
+          "xpReward": 220,
+          "questions": [
+            {
+              "id": "graphs-test-q1",
+              "type": "mcq",
+              "question": "In the 'Number of Islands' problem, which algorithm is most naturally suited for finding connected components?",
+              "options": ["Dijkstra's algorithm", "Depth-First Search (DFS)", "Bellman-Ford", "Floyd-Warshall"],
+              "correctAnswer": "Depth-First Search (DFS)",
+              "explanation": "DFS naturally explores all connected nodes, making it perfect for finding connected components like islands.",
+              "difficulty": "medium",
+              "topic": "graphs"
+            },
+            {
+              "id": "graphs-test-q2",
+              "type": "fillInBlank",
+              "question": "Dijkstra's algorithm fails with negative edge weights because it makes a _____ assumption that once a node is visited, its shortest distance is final.",
+              "acceptedAnswers": ["greedy", "Greedy", "GREEDY", "optimal substructure", "Optimal Substructure"],
+              "explanation": "Dijkstra greedily assumes the shortest unvisited distance is optimal, which breaks with negative edges that could provide shorter paths.",
+              "difficulty": "hard",
+              "topic": "graphs"
+            },
+            {
+              "id": "graphs-test-q3",
+              "type": "mcq",
+              "question": "In cycle detection using DFS with three colors, what does encountering a 'gray' neighbor indicate?",
+              "options": [
+                "The neighbor has been fully processed",
+                "The neighbor has not been visited yet",
+                "A back edge exists, indicating a cycle",
+                "The search should terminate"
+              ],
+              "correctAnswer": "A back edge exists, indicating a cycle",
+              "explanation": "Gray nodes are currently being processed, so reaching a gray neighbor means we've found a back edge, which indicates a cycle in directed graphs.",
+              "difficulty": "hard",
+              "topic": "graphs"
+            },
+            {
+              "id": "graphs-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the topological sort implementation using Kahn's algorithm:",
+              "codeTemplate": "function topologicalSort(graph) {\n  const inDegree = new Array(graph.length).fill(0);\n  const queue = [];\n  const result = [];\n  \n  // Calculate in-degrees\n  for (let i = 0; i < graph.length; i++) {\n    for (let neighbor of graph[i]) {\n      ______1;\n    }\n  }\n  \n  // Find nodes with zero in-degree\n  for (let i = 0; i < inDegree.length; i++) {\n    if (______2) {\n      queue.push(i);\n    }\n  }\n  \n  while (queue.length > 0) {\n    const node = queue.shift();\n    ______3;\n    \n    for (let neighbor of graph[node]) {\n      inDegree[neighbor]--;\n      if (inDegree[neighbor] === 0) {\n        ______4;\n      }\n    }\n  }\n  \n  return result;\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["inDegree[neighbor]++", "inDegree[neighbor] += 1"],
+                  "explanation": "Increment in-degree for each incoming edge."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["inDegree[i] === 0", "inDegree[i] == 0"],
+                  "explanation": "Nodes with zero in-degree have no dependencies."
+                },
+                {
+                  "position": "______3",
+                  "acceptedAnswers": ["result.push(node)", "result.push(node)"],
+                  "explanation": "Add the processed node to topological order."
+                },
+                {
+                  "position": "______4",
+                  "acceptedAnswers": ["queue.push(neighbor)", "queue.push(neighbor)"],
+                  "explanation": "Add neighbor to queue when its in-degree becomes zero."
+                }
+                            ],
+              "difficulty": "hard",
+              "topic": "graphs"
+            }
+ 
+            ]
         }
       ]
     },
@@ -2930,6 +3320,69 @@
               "topic": "greedy"
             }
           ]
+        },
+        {
+          "id": "greedy-test",
+          "title": "Greedy Algorithms Challenge Test",
+          "description": "LeetCode-style comprehensive test covering greedy problem patterns",
+          "xpReward": 190,
+          "questions": [
+            {
+              "id": "greedy-test-q1",
+              "type": "mcq",
+              "question": "In the 'Gas Station' problem, what greedy insight determines if a solution exists?",
+              "options": ["Start from the station with most gas", "Total gas must be >= total cost", "Choose shortest distances first", "Always fill tank completely"],
+              "correctAnswer": "Total gas must be >= total cost",
+              "explanation": "If total gas available is at least total cost required, there must exist a starting point that completes the circle.",
+              "difficulty": "hard",
+              "topic": "greedy"
+            },
+            {
+              "id": "greedy-test-q2",
+              "type": "fillInBlank",
+              "question": "In the 'Jump Game' problem, the greedy approach tracks the _____ reachable position at each step.",
+              "acceptedAnswers": ["farthest", "Farthest", "FARTHEST", "maximum", "Maximum", "MAXIMUM"],
+              "explanation": "By maintaining the farthest reachable position, we can determine if the end is reachable without exploring all possibilities.",
+              "difficulty": "medium",
+              "topic": "greedy"
+            },
+            {
+              "id": "greedy-test-q3",
+              "type": "mcq",
+              "question": "In the 'Meeting Rooms II' problem, why do we use a min-heap to track end times?",
+              "options": [
+                "To sort meetings by duration",
+                "To find the earliest ending meeting for room reuse",
+                "To count total number of meetings",
+                "To find the longest meeting"
+              ],
+              "correctAnswer": "To find the earliest ending meeting for room reuse",
+              "explanation": "The min-heap keeps track of when rooms become available, allowing us to efficiently reuse the room that frees up earliest.",
+              "difficulty": "hard",
+              "topic": "greedy"
+            },
+            {
+              "id": "greedy-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the greedy solution for 'Candy' distribution problem:",
+              "codeTemplate": "function candy(ratings) {\n  const n = ratings.length;\n  const candies = new Array(n).fill(1);\n  \n  // Left to right pass\n  for (let i = 1; i < n; i++) {\n    if (ratings[i] > ratings[i - 1]) {\n      candies[i] = ______1;\n    }\n  }\n  \n  // Right to left pass\n  for (let i = n - 2; i >= 0; i--) {\n    if (ratings[i] > ratings[i + 1]) {\n      candies[i] = Math.max(candies[i], ______2);\n    }\n  }\n  \n  return candies.reduce((sum, c) => sum + c, 0);\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["candies[i - 1] + 1", "candies[i-1] + 1"],
+                  "explanation": "Give one more candy than the previous child if current rating is higher."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["candies[i + 1] + 1", "candies[i+1] + 1"],
+                  "explanation": "Ensure current child has more candies than right neighbor if rating is higher."
+                }
+                            ],
+              "difficulty": "hard",
+              "topic": "greedy"
+            }
+ 
+            ]
         }
       ]
     },
@@ -3116,6 +3569,69 @@
               "topic": "dynamic_programming"
             }
           ]
+        },
+        {
+          "id": "dp-test",
+          "title": "Dynamic Programming Challenge Test",
+          "description": "LeetCode-style comprehensive test covering DP patterns and optimization",
+          "xpReward": 250,
+          "questions": [
+            {
+              "id": "dp-test-q1",
+              "type": "mcq", 
+              "question": "In the 'Longest Increasing Subsequence' problem, what is the optimal time complexity achievable?",
+              "options": ["O(n²) using DP", "O(n log n) using binary search", "O(n) using greedy", "O(n³) using recursion"],
+              "correctAnswer": "O(n log n) using binary search",
+              "explanation": "While basic DP is O(n²), using binary search with a patience sorting approach achieves O(n log n) time complexity.",
+              "difficulty": "hard",
+              "topic": "dp"
+            },
+            {
+              "id": "dp-test-q2",
+              "type": "fillInBlank",
+              "question": "The _____ technique reduces space complexity in DP problems where only the previous row/state is needed for computation.",
+              "acceptedAnswers": ["rolling array", "Rolling Array", "ROLLING ARRAY", "space optimization", "Space Optimization"],
+              "explanation": "Rolling array technique uses O(k) space instead of O(n*k) by only keeping the previous row needed for transitions.",
+              "difficulty": "medium",
+              "topic": "dp"
+            },
+            {
+              "id": "dp-test-q3",
+              "type": "mcq",
+              "question": "In the 'Coin Change' DP solution, why do we initialize dp[0] = 0?",
+              "options": [
+                "Because we have 0 coins initially",
+                "Because it takes 0 coins to make amount 0",
+                "Because the first coin has value 0",
+                "Because we start counting from 0"
+              ],
+              "correctAnswer": "Because it takes 0 coins to make amount 0",
+              "explanation": "dp[0] = 0 represents the base case: it takes zero coins to make the amount zero, which is the foundation for building up larger amounts.",
+              "difficulty": "medium",
+              "topic": "dp"
+            },
+            {
+              "id": "dp-test-q4",
+              "type": "codeCompletion",
+              "question": "Complete the space-optimized 0/1 knapsack solution:",
+              "codeTemplate": "function knapsack(weights, values, capacity) {\n  const dp = new Array(capacity + 1).fill(0);\n  \n  for (let i = 0; i < weights.length; i++) {\n    for (let w = ______1; w >= weights[i]; w--) {\n      dp[w] = Math.max(dp[w], ______2);\n    }\n  }\n  \n  return dp[capacity];\n}",
+              "blanks": [
+                {
+                  "position": "______1",
+                  "acceptedAnswers": ["capacity", "capacity"],
+                  "explanation": "Iterate backwards from capacity to avoid using updated values in same iteration."
+                },
+                {
+                  "position": "______2",
+                  "acceptedAnswers": ["dp[w - weights[i]] + values[i]", "values[i] + dp[w - weights[i]]"],
+                  "explanation": "Add current item's value to the best solution for remaining capacity."
+                }
+                            ],
+              "difficulty": "hard",
+              "topic": "dp"
+            }
+ 
+            ]
         }
       ]
     },
