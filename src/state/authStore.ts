@@ -333,24 +333,155 @@ export const useAuthStore = create<AuthState>()(
 );
 
 // Initialize auth state on app start
+const initializeAuth = async () => {
+  console.log('[AuthStore] Initializing auth...');
+  const startTime = Date.now();
+  
+  try {
+    // Add timeout protection
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Auth initialization timeout')), 10000);
+    });
+
+    const authPromise = (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user) {
+        console.log('[AuthStore] Session found, refreshing user data...');
+        // User is already signed in
+        const { refreshUser } = useAuthStore.getState();
+        
+        // Add timeout to user refresh as well
+        const refreshPromise = Promise.race([
+          refreshUser(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('User refresh timeout')), 5000))
+        ]);
+        
+        await refreshPromise;
+        
+        // Load user progress data with timeout
+        try {
+          const { useProgressStore } = await import('./progressStore');
+          const { loadUserProgress } = useProgressStore.getState();
+          
+          const progressPromise = Promise.race([
+            loadUserProgress(session.user.id),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Progress load timeout')), 5000))
+          ]);
+          
+          await progressPromise;
+        } catch (progressError) {
+          console.warn('[AuthStore] Progress loading failed, continuing without progress data:', progressError);
+        }
+        
+        useAuthStore.setState({ 
+          isAuthenticated: true, 
+          isLoading: false 
+        });
+      } else {
+        console.log('[AuthStore] No session found');
+        // No active session
+        useAuthStore.setState({ 
+          user: null, 
+          isAuthenticated: false, 
+          isLoading: false 
+        });
+      }
+    })();
+
+    await Promise.race([authPromise, timeoutPromise]);
+    
+    const duration = Date.now() - startTime;
+    console.log(`[AuthStore] Auth initialization completed in ${duration}ms`);
+  } catch (error) {
+    const duration = Date.now() - startTime;
+    console.error(`[AuthStore] Auth initialization failed after ${duration}ms:`, error);
+    
+    // Set auth state to allow app to continue
+    useAuthStore.setState({ 
+      user: null, 
+      isAuthenticated: false, 
+      isLoading: false 
+    });
+  }
+};
+
+// Initialize on app start with protection
+const initWithRetry = async () => {
+  let attempts = 0;
+  const maxAttempts = 2;
+  
+  while (attempts < maxAttempts) {
+    try {
+      await initializeAuth();
+      break;
+    } catch (error) {
+      attempts++;
+      console.warn(`[AuthStore] Init attempt ${attempts} failed:`, error);
+      
+      if (attempts >= maxAttempts) {
+        console.error('[AuthStore] Max init attempts reached, setting default state');
+        useAuthStore.setState({ 
+          user: null, 
+          isAuthenticated: false, 
+          isLoading: false 
+        });
+      } else {
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  }
+};
+
+// Start initialization but don't block app startup
+initWithRetry();
+
+// Listen for auth state changes
 supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log('[AuthStore] Auth state change:', event);
   const { refreshUser, setLoading } = useAuthStore.getState();
   
   if (event === 'SIGNED_IN' && session?.user) {
     setLoading(true);
-    await refreshUser();
     
-    // Load user progress data
-    const { useProgressStore } = await import('./progressStore');
-    const { loadUserProgress } = useProgressStore.getState();
-    await loadUserProgress(session.user.id);
-    
-    setLoading(false);
+    try {
+      // Add timeout protection to auth state change handlers too
+      const refreshPromise = Promise.race([
+        refreshUser(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('User refresh timeout')), 5000))
+      ]);
+      
+      await refreshPromise;
+      
+      // Load user progress data with timeout
+      try {
+        const { useProgressStore } = await import('./progressStore');
+        const { loadUserProgress } = useProgressStore.getState();
+        
+        const progressPromise = Promise.race([
+          loadUserProgress(session.user.id),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Progress load timeout')), 5000))
+        ]);
+        
+        await progressPromise;
+      } catch (progressError) {
+        console.warn('[AuthStore] Progress loading failed during sign in:', progressError);
+      }
+    } catch (error) {
+      console.error('[AuthStore] Error during sign in processing:', error);
+    } finally {
+      setLoading(false);
+    }
   } else if (event === 'SIGNED_OUT') {
-    // Clear progress store data
-    const { useProgressStore } = await import('./progressStore');
-    const { clearUserProgress } = useProgressStore.getState();
-    clearUserProgress();
+    try {
+      // Clear progress store data
+      const { useProgressStore } = await import('./progressStore');
+      const { clearUserProgress } = useProgressStore.getState();
+      clearUserProgress();
+    } catch (error) {
+      console.warn('[AuthStore] Error clearing progress on sign out:', error);
+    }
     
     useAuthStore.setState({ 
       user: null, 

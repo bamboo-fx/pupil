@@ -5,13 +5,36 @@
     "scheme": "vibecode",
     "version": "1.0.0",
     "orientation": "portrait",
+    "icon": "./logo.png",
     "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6366f1"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#6366f1",
+          "image": "./logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain"
+        }
+      ],
+      "expo-sqlite",
+      "expo-video",
+      "expo-web-browser"
+    ],
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dwang88.vibecode",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCalendarsUsageDescription": "This app may use calendar access through third-party libraries for enhanced functionality.",
+        "NSContactsUsageDescription": "This app may access contacts through third-party libraries for improved user experience.",
+        "NSCameraUsageDescription": "This app may use camera access through third-party libraries for enhanced features."
       }
     },
     "android": {

@@ -224,9 +224,11 @@ export const LeaderboardScreen: React.FC = () => {
                     <View style={styles.podium}>
                       {/* 2nd Place */}
                       <View style={[styles.podiumItem, styles.secondPlace]}>
-                        <LinearGradient colors={['#C0C0C0', '#A0A0A0']} style={styles.podiumAvatar}>
-                          <MaterialIcons name="emoji-events" size={20} color="white" />
-                        </LinearGradient>
+                        <View style={styles.podiumAvatarContainer}>
+                          <LinearGradient colors={['#C0C0C0', '#A0A0A0']} style={styles.podiumAvatar}>
+                            <MaterialIcons name="emoji-events" size={20} color="white" />
+                          </LinearGradient>
+                        </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[1]?.full_name || 'User'}
                         </Text>
@@ -238,10 +240,12 @@ export const LeaderboardScreen: React.FC = () => {
 
                       {/* 1st Place */}
                       <View style={[styles.podiumItem, styles.firstPlace]}>
-                        <LinearGradient colors={['#FFD700', '#FFA500']} style={styles.podiumAvatar}>
-                          <MaterialIcons name="emoji-events" size={24} color="white" />
-                        </LinearGradient>
-                        <MaterialIcons name="stars" size={20} color="#FFD700" style={styles.crown} />
+                        <View style={styles.podiumAvatarContainer}>
+                          <MaterialIcons name="stars" size={20} color="#FFD700" style={styles.crown} />
+                          <LinearGradient colors={['#FFD700', '#FFA500']} style={styles.podiumAvatar}>
+                            <MaterialIcons name="emoji-events" size={24} color="white" />
+                          </LinearGradient>
+                        </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[0]?.full_name || 'User'}
                         </Text>
@@ -253,9 +257,11 @@ export const LeaderboardScreen: React.FC = () => {
 
                       {/* 3rd Place */}
                       <View style={[styles.podiumItem, styles.thirdPlace]}>
-                        <LinearGradient colors={['#CD7F32', '#B8860B']} style={styles.podiumAvatar}>
-                          <MaterialIcons name="emoji-events" size={20} color="white" />
-                        </LinearGradient>
+                        <View style={styles.podiumAvatarContainer}>
+                          <LinearGradient colors={['#CD7F32', '#B8860B']} style={styles.podiumAvatar}>
+                            <MaterialIcons name="emoji-events" size={20} color="white" />
+                          </LinearGradient>
+                        </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[2]?.full_name || 'User'}
                         </Text>
@@ -342,7 +348,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 180,
   },
   section: {
     marginBottom: 32,
@@ -368,21 +374,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    height: 140,
+    height: 160,
+    paddingHorizontal: 16,
   },
   podiumItem: {
     alignItems: 'center',
     marginHorizontal: 8,
     flex: 1,
+    minHeight: 80,
   },
   firstPlace: {
-    paddingBottom: 20,
+    marginBottom: 0,
+    transform: [{ translateY: -20 }],
   },
   secondPlace: {
-    paddingBottom: 40,
+    marginBottom: 0,
+    transform: [{ translateY: 10 }],
   },
   thirdPlace: {
-    paddingBottom: 60,
+    marginBottom: 0,
+    transform: [{ translateY: 20 }],
+  },
+  podiumAvatarContainer: {
+    position: 'relative',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   podiumAvatar: {
     width: 48,
@@ -390,7 +406,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -399,8 +414,8 @@ const styles = StyleSheet.create({
   },
   crown: {
     position: 'absolute',
-    top: -10,
-    right: 12,
+    top: -8,
+    zIndex: 1,
   },
   podiumName: {
     fontSize: 12,

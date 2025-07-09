@@ -273,9 +273,14 @@ const QuestionBankScreen = () => {
                 colors={['rgba(255,255,255,0.08)', 'rgba(255,255,255,0.04)']}
                 style={styles.pathGradient}
               >
-                <MaterialIcons name="route" size={12} color="#6b7280" style={{ marginRight: 4 }} />
+                <MaterialIcons name="school" size={12} color="#6b7280" style={{ marginRight: 4 }} />
                 <Text style={styles.pathText}>
-                  {item.unitTitle} → {item.lessonTitle}
+                  {item.unitTitle}
+                </Text>
+                <MaterialIcons name="arrow-forward" size={10} color="#6b7280" style={{ marginHorizontal: 6 }} />
+                <MaterialIcons name="book" size={12} color="#6b7280" style={{ marginRight: 4 }} />
+                <Text style={styles.pathText}>
+                  {item.lessonTitle}
                 </Text>
               </LinearGradient>
             </BlurView>
@@ -757,6 +762,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.1)',
   },
   pathGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
