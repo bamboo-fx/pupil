@@ -4,8 +4,8 @@
   "main": "index.ts",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -43,7 +43,6 @@
     "expo-blur": "~14.1.4",
     "expo-brightness": "~13.1.4",
     "expo-build-properties": "~0.14.6",
-    "expo-calendar": "~14.1.4",
     "expo-camera": "~16.1.6",
     "expo-cellular": "~7.1.4",
     "expo-checkbox": "~4.1.4",
@@ -77,7 +76,6 @@
     "expo-sharing": "~13.1.5",
     "expo-sms": "~13.1.4",
     "expo-speech": "~13.1.6",
-    "expo-splash-screen": "~0.30.10",
     "expo-sqlite": "~15.2.14",
     "expo-status-bar": "~2.2.3",
     "expo-symbols": "~0.4.4",
@@ -88,9 +86,9 @@
     "nativewind": "^4.1.23",
     "openai": "^4.89.0",
     "patch-package": "^8.0.0",
-    "react": "19.0.0",
+    "react": "^19.0.0",
     "react-dom": "19.0.0",
-    "react-native": "0.79.5",
+    "react-native": "^0.79.5",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-get-random-values": "~1.11.0",
     "react-native-ios-context-menu": "3.1.0",
@@ -117,6 +115,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "@types/react-native": "^0.72.8",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
     "babel-plugin-module-resolver": "^5.0.2",

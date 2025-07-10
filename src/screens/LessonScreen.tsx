@@ -92,12 +92,14 @@ export const LessonScreen: React.FC<LessonScreenProps> = ({ navigation, route })
         ? currentQuestion.correctAnswer 
         : currentQuestion.acceptedAnswers || currentQuestion.correctAnswer;
       
-      console.log('Submitting answer:', {
-        questionType: currentQuestion.type,
-        userAnswer,
-        correctAnswerData,
-        question: currentQuestion.question
-      });
+      if (__DEV__) {
+        console.log('Submitting answer:', {
+          questionType: currentQuestion.type,
+          userAnswer,
+          correctAnswerData,
+          question: currentQuestion.question
+        });
+      }
       
       const correct = checkAnswer(userAnswer, correctAnswerData, currentQuestion.type);
       

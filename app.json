@@ -7,21 +7,7 @@
     "orientation": "portrait",
     "icon": "./logo.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#6366f1"
-    },
     "plugins": [
-      [
-        "expo-splash-screen",
-        {
-          "backgroundColor": "#6366f1",
-          "image": "./logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain"
-        }
-      ],
       "expo-sqlite",
       "expo-video",
       "expo-web-browser"
@@ -38,7 +24,8 @@
       }
     },
     "android": {
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.dwang88.vibecode"
     },
     "extra": {
       "eas": {

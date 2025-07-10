@@ -2,26 +2,66 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
-import { UserProgress, Achievement, LessonSession, UserStats, DetailedProgress } from '../types';
-import { useAuthStore } from './authStore';
+import { UserProgress, Achievement, LessonSession, UserStats, DetailedProgress, User } from '../types';
+
+// CRITICAL FIX: Import questions data statically instead of require()
+import questionsData from '../data/questions.json';
+
+// CRITICAL FIX: Remove circular dependency with authStore
+// Instead of importing useAuthStore, we'll pass auth functions as parameters
 
 interface ProgressState extends UserProgress {
   achievements: Achievement[];
   userStats: UserStats | null;
   isLoading: boolean;
-  completeLesson: (lessonId: string, unitIdOrXpGained: string | number, xpGained?: number, session?: Partial<LessonSession>) => Promise<void>;
+  completeLesson: (
+    lessonId: string, 
+    unitIdOrXpGained: string | number, 
+    xpGained?: number, 
+    session?: Partial<LessonSession>,
+    user?: User,
+    updateProfile?: (updates: Partial<User>) => Promise<boolean>
+  ) => Promise<void>;
   completeQuestion: (lessonId: string, questionId: string) => Promise<void>;
   getLessonProgress: (lessonId: string) => number;
-  updateStreak: () => Promise<void>;
-  resetProgress: () => Promise<void>;
+  updateStreak: (
+    user?: User,
+    updateProfile?: (updates: Partial<User>) => Promise<boolean>
+  ) => Promise<void>;
+  resetProgress: (
+    user?: User,
+    updateProfile?: (updates: Partial<User>) => Promise<boolean>
+  ) => Promise<void>;
   loadUserProgress: (userId: string) => Promise<void>;
-  syncProgress: () => Promise<void>;
-  unlockAchievement: (achievementId: string) => Promise<void>;
-  updateUserStats: (stats: Partial<UserStats>) => Promise<void>;
-  checkAchievements: () => Promise<void>;
+  syncProgress: (user?: User) => Promise<void>;
+  unlockAchievement: (
+    achievementId: string,
+    user?: User,
+    updateProfile?: (updates: Partial<User>) => Promise<boolean>
+  ) => Promise<void>;
+  updateUserStats: (
+    stats: Partial<UserStats>,
+    user?: User
+  ) => Promise<void>;
+  checkAchievements: (
+    user?: User,
+    updateProfile?: (updates: Partial<User>) => Promise<boolean>
+  ) => Promise<void>;
   setLoading: (loading: boolean) => void;
   clearUserProgress: () => void;
 }
+
+// Helper function to get auth store when needed (safer approach)
+const getAuthStore = () => {
+  try {
+    // Dynamic import only as fallback for backward compatibility
+    const { useAuthStore } = require('./authStore');
+    return useAuthStore.getState();
+  } catch (error) {
+    console.warn('[ProgressStore] Could not access authStore:', error);
+    return { user: null, updateProfile: null };
+  }
+};
 
 const initialState: UserProgress = {
   totalXp: 0,
@@ -131,10 +171,23 @@ export const useProgressStore = create<ProgressState>()(
       userStats: null,
       isLoading: false,
       
-      completeLesson: async (lessonId: string, unitIdOrXpGained: string | number, xpGained?: number, session?: Partial<LessonSession>) => {
+      completeLesson: async (
+        lessonId: string, 
+        unitIdOrXpGained: string | number, 
+        xpGained?: number, 
+        session?: Partial<LessonSession>,
+        user?: User,
+        updateProfile?: (updates: Partial<User>) => Promise<boolean>
+      ) => {
         try {
           const state = get();
-          const { user, updateProfile } = useAuthStore.getState();
+          
+          // Get auth store if not provided (for backward compatibility)
+          if (!user || !updateProfile) {
+            const authState = getAuthStore();
+            user = user || authState.user || undefined;
+            updateProfile = updateProfile || authState.updateProfile;
+          }
           
           if (!user) return;
 
@@ -150,8 +203,7 @@ export const useProgressStore = create<ProgressState>()(
 
           if (typeof unitIdOrXpGained === 'number') {
             // Lesson-based XP: (lessonId, xpGained)
-            // Find the unit ID for this lesson
-            const questionsData = require('../data/questions.json');
+            // Find the unit ID for this lesson using static import
             const units = questionsData.units;
             let foundUnitId = 'unknown-unit';
             
@@ -197,11 +249,13 @@ export const useProgressStore = create<ProgressState>()(
           });
 
           // Update user profile in database
-          await updateProfile({
-            totalXp: newTotalXp,
-            streak: newStreak,
-            lastStudyDate: today,
-          });
+          if (updateProfile) {
+            await updateProfile({
+              totalXp: newTotalXp,
+              streak: newStreak,
+              lastStudyDate: today,
+            });
+          }
 
           // Record lesson completion in database
           await supabase.from('lesson_progress').insert([
@@ -242,13 +296,15 @@ export const useProgressStore = create<ProgressState>()(
             lastActivityDate: today,
           };
 
-          await get().updateUserStats(updatedStats);
+          await get().updateUserStats(updatedStats, user);
 
           // Check for achievements
-          await get().checkAchievements();
+          await get().checkAchievements(user, updateProfile);
           
         } catch (error) {
-          console.error('Error completing lesson:', error);
+          if (__DEV__) {
+            console.error('Error completing lesson:', error);
+          }
         }
       },
 
@@ -273,7 +329,9 @@ export const useProgressStore = create<ProgressState>()(
           // Sync with database if needed
           await get().syncProgress();
         } catch (error) {
-          console.error('Error completing question:', error);
+          if (__DEV__) {
+            console.error('Error completing question:', error);
+          }
         }
       },
 
@@ -283,10 +341,19 @@ export const useProgressStore = create<ProgressState>()(
         return completedQuestions.length;
       },
       
-      updateStreak: async () => {
+      updateStreak: async (
+        user?: User,
+        updateProfile?: (updates: Partial<User>) => Promise<boolean>
+      ) => {
         try {
           const state = get();
-          const { user, updateProfile } = useAuthStore.getState();
+          
+          // Get auth store if not provided (for backward compatibility)
+          if (!user || !updateProfile) {
+            const authState = getAuthStore();
+            user = user || authState.user || undefined;
+            updateProfile = updateProfile || authState.updateProfile;
+          }
           
           if (!user) return;
 
@@ -303,18 +370,31 @@ export const useProgressStore = create<ProgressState>()(
           
           set({ streak: newStreak, lastStudyDate: today });
           
-          await updateProfile({
-            streak: newStreak,
-            lastStudyDate: today,
-          });
+          if (updateProfile) {
+            await updateProfile({
+              streak: newStreak,
+              lastStudyDate: today,
+            });
+          }
         } catch (error) {
-          console.error('Error updating streak:', error);
+          if (__DEV__) {
+            console.error('Error updating streak:', error);
+          }
         }
       },
       
-      resetProgress: async () => {
+      resetProgress: async (
+        user?: User,
+        updateProfile?: (updates: Partial<User>) => Promise<boolean>
+      ) => {
         try {
-          const { user, updateProfile } = useAuthStore.getState();
+          // Get auth store if not provided (for backward compatibility)
+          if (!user || !updateProfile) {
+            const authState = getAuthStore();
+            user = user || authState.user || undefined;
+            updateProfile = updateProfile || authState.updateProfile;
+          }
+          
           if (!user) return;
 
           // Reset local state
@@ -325,11 +405,13 @@ export const useProgressStore = create<ProgressState>()(
           });
 
           // Reset user profile in database (XP, streak, lastStudyDate)
-          await updateProfile({
-            totalXp: 0,
-            streak: 0,
-            lastStudyDate: new Date().toISOString().split('T')[0],
-          });
+          if (updateProfile) {
+            await updateProfile({
+              totalXp: 0,
+              streak: 0,
+              lastStudyDate: new Date().toISOString().split('T')[0],
+            });
+          }
 
           // Reset in database
           await supabase.from('lesson_progress').delete().eq('user_id', user.id);
@@ -340,7 +422,9 @@ export const useProgressStore = create<ProgressState>()(
           await AsyncStorage.removeItem('dsa-progress');
           
         } catch (error) {
-          console.error('Error resetting progress:', error);
+          if (__DEV__) {
+            console.error('Error resetting progress:', error);
+          }
         }
       },
 
@@ -425,27 +509,46 @@ export const useProgressStore = create<ProgressState>()(
             isLoading: false,
           });
         } catch (error) {
-          console.error('Error loading user progress:', error);
+          if (__DEV__) {
+            console.error('Error loading user progress:', error);
+          }
           set({ isLoading: false });
         }
       },
 
-      syncProgress: async () => {
+      syncProgress: async (user?: User) => {
         try {
-          const { user } = useAuthStore.getState();
+          // Get auth store if not provided (for backward compatibility)
+          if (!user) {
+            const authState = getAuthStore();
+            user = authState.user || undefined;
+          }
+          
           if (!user) return;
 
           // This is a placeholder for syncing local progress with database
           // In a real app, you'd implement conflict resolution logic here
         } catch (error) {
-          console.error('Error syncing progress:', error);
+          if (__DEV__) {
+            console.error('Error syncing progress:', error);
+          }
         }
       },
 
-      unlockAchievement: async (achievementId: string) => {
+      unlockAchievement: async (
+        achievementId: string,
+        user?: User,
+        updateProfile?: (updates: Partial<User>) => Promise<boolean>
+      ) => {
         try {
           const state = get();
-          const { user } = useAuthStore.getState();
+          
+          // Get auth store if not provided (for backward compatibility)
+          if (!user || !updateProfile) {
+            const authState = getAuthStore();
+            user = user || authState.user || undefined;
+            updateProfile = updateProfile || authState.updateProfile;
+          }
           
           if (!user) return;
 
@@ -478,36 +581,47 @@ export const useProgressStore = create<ProgressState>()(
             const newTotalXp = state.totalXp + achievement.rewardXp;
             set({ totalXp: newTotalXp });
             
-            const { updateProfile } = useAuthStore.getState();
-            await updateProfile({ totalXp: newTotalXp });
+            if (updateProfile) {
+              await updateProfile({ totalXp: newTotalXp });
+            }
           }
         } catch (error) {
-          console.error('Error unlocking achievement:', error);
+          if (__DEV__) {
+            console.error('Error unlocking achievement:', error);
+          }
         }
       },
 
-             updateUserStats: async (stats: Partial<UserStats>) => {
-         try {
-           const state = get();
-           const { user } = useAuthStore.getState();
-           
-           if (!user) return;
+      updateUserStats: async (
+        stats: Partial<UserStats>,
+        user?: User
+      ) => {
+        try {
+          const state = get();
+          
+          // Get auth store if not provided (for backward compatibility)
+          if (!user) {
+            const authState = getAuthStore();
+            user = authState.user || undefined;
+          }
+          
+          if (!user) return;
 
-           const currentStats = state.userStats || {
-             totalLessonsCompleted: 0,
-             totalQuestionsAnswered: 0,
-             totalTimeSpentSeconds: 0,
-             averageAccuracy: 0,
-             longestStreak: 0,
-             currentStreak: 0,
-             unitsCompleted: 0,
-             lastActivityDate: new Date().toISOString(),
-             weeklyXpGoal: 500,
-             weeklyXpEarned: 0,
-           };
+          const currentStats = state.userStats || {
+            totalLessonsCompleted: 0,
+            totalQuestionsAnswered: 0,
+            totalTimeSpentSeconds: 0,
+            averageAccuracy: 0,
+            longestStreak: 0,
+            currentStreak: 0,
+            unitsCompleted: 0,
+            lastActivityDate: new Date().toISOString(),
+            weeklyXpGoal: 500,
+            weeklyXpEarned: 0,
+          };
 
-           const updatedStats: UserStats = { ...currentStats, ...stats };
-           set({ userStats: updatedStats });
+          const updatedStats: UserStats = { ...currentStats, ...stats };
+          set({ userStats: updatedStats });
 
           // Update database
           await supabase.from('user_stats').upsert([
@@ -527,13 +641,24 @@ export const useProgressStore = create<ProgressState>()(
             }
           ]);
         } catch (error) {
-          console.error('Error updating user stats:', error);
+          if (__DEV__) {
+            console.error('Error updating user stats:', error);
+          }
         }
       },
 
-      checkAchievements: async () => {
+      checkAchievements: async (
+        user?: User,
+        updateProfile?: (updates: Partial<User>) => Promise<boolean>
+      ) => {
         const state = get();
-        const { user } = useAuthStore.getState();
+        
+        // Get auth store if not provided (for backward compatibility)
+        if (!user || !updateProfile) {
+          const authState = getAuthStore();
+          user = user || authState.user || undefined;
+          updateProfile = updateProfile || authState.updateProfile;
+        }
         
         if (!user) return;
 
@@ -577,7 +702,7 @@ export const useProgressStore = create<ProgressState>()(
 
           // Unlock if conditions are met
           if (shouldUnlock) {
-            await get().unlockAchievement(achievement.id);
+            await get().unlockAchievement(achievement.id, user, updateProfile);
           }
         }
       },

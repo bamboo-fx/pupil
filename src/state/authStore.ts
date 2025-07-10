@@ -4,6 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
 
+// CRITICAL FIX: Use static import instead of dynamic import
+// This prevents production build failures in TestFlight
+import { useProgressStore } from './progressStore';
+
 interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -207,8 +211,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           await supabase.auth.signOut();
           
-          // Clear progress store data
-          const { useProgressStore } = await import('./progressStore');
+          // Clear progress store data - FIXED: Use static import
           const { clearUserProgress } = useProgressStore.getState();
           clearUserProgress();
           
@@ -220,8 +223,7 @@ export const useAuthStore = create<AuthState>()(
         } catch (error) {
           console.error('Logout error:', error);
           
-          // Clear progress store data even on error
-          const { useProgressStore } = await import('./progressStore');
+          // Clear progress store data even on error - FIXED: Use static import
           const { clearUserProgress } = useProgressStore.getState();
           clearUserProgress();
           
@@ -359,9 +361,8 @@ const initializeAuth = async () => {
         
         await refreshPromise;
         
-        // Load user progress data with timeout
+        // Load user progress data with timeout - FIXED: Use static import
         try {
-          const { useProgressStore } = await import('./progressStore');
           const { loadUserProgress } = useProgressStore.getState();
           
           const progressPromise = Promise.race([
@@ -454,9 +455,8 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       
       await refreshPromise;
       
-      // Load user progress data with timeout
+      // Load user progress data with timeout - FIXED: Use static import
       try {
-        const { useProgressStore } = await import('./progressStore');
         const { loadUserProgress } = useProgressStore.getState();
         
         const progressPromise = Promise.race([
@@ -475,8 +475,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   } else if (event === 'SIGNED_OUT') {
     try {
-      // Clear progress store data
-      const { useProgressStore } = await import('./progressStore');
+      // Clear progress store data - FIXED: Use static import
       const { clearUserProgress } = useProgressStore.getState();
       clearUserProgress();
     } catch (error) {

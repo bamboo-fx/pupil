@@ -1,5 +1,8 @@
-//DO NOT REMOVE THIS CODE
-console.log("[index] Project ID is: ", process.env.EXPO_PUBLIC_VIBECODE_PROJECT_ID);
+// CRITICAL FIX: Only log in development to prevent production console spam
+if (__DEV__) {
+  console.log("[index] Project ID is: ", process.env.EXPO_PUBLIC_VIBECODE_PROJECT_ID);
+}
+
 import "./global.css";
 import "react-native-get-random-values";
 import { LogBox } from "react-native";

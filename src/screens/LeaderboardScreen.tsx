@@ -225,9 +225,9 @@ export const LeaderboardScreen: React.FC = () => {
                       {/* 2nd Place */}
                       <View style={[styles.podiumItem, styles.secondPlace]}>
                         <View style={styles.podiumAvatarContainer}>
-                          <LinearGradient colors={['#C0C0C0', '#A0A0A0']} style={styles.podiumAvatar}>
-                            <MaterialIcons name="emoji-events" size={20} color="white" />
-                          </LinearGradient>
+                        <LinearGradient colors={['#C0C0C0', '#A0A0A0']} style={styles.podiumAvatar}>
+                          <MaterialIcons name="emoji-events" size={20} color="white" />
+                        </LinearGradient>
                         </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[1]?.full_name || 'User'}
@@ -242,9 +242,9 @@ export const LeaderboardScreen: React.FC = () => {
                       <View style={[styles.podiumItem, styles.firstPlace]}>
                         <View style={styles.podiumAvatarContainer}>
                           <MaterialIcons name="stars" size={20} color="#FFD700" style={styles.crown} />
-                          <LinearGradient colors={['#FFD700', '#FFA500']} style={styles.podiumAvatar}>
-                            <MaterialIcons name="emoji-events" size={24} color="white" />
-                          </LinearGradient>
+                        <LinearGradient colors={['#FFD700', '#FFA500']} style={styles.podiumAvatar}>
+                          <MaterialIcons name="emoji-events" size={24} color="white" />
+                        </LinearGradient>
                         </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[0]?.full_name || 'User'}
@@ -258,9 +258,9 @@ export const LeaderboardScreen: React.FC = () => {
                       {/* 3rd Place */}
                       <View style={[styles.podiumItem, styles.thirdPlace]}>
                         <View style={styles.podiumAvatarContainer}>
-                          <LinearGradient colors={['#CD7F32', '#B8860B']} style={styles.podiumAvatar}>
-                            <MaterialIcons name="emoji-events" size={20} color="white" />
-                          </LinearGradient>
+                        <LinearGradient colors={['#CD7F32', '#B8860B']} style={styles.podiumAvatar}>
+                          <MaterialIcons name="emoji-events" size={20} color="white" />
+                        </LinearGradient>
                         </View>
                         <Text style={styles.podiumName} numberOfLines={1}>
                           {leaderboardData[2]?.full_name || 'User'}

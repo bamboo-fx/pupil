@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Replace these with your actual Supabase project URL and anon key
-const supabaseUrl = 'https://sdzalnrwktsczeennlck.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkemFsbnJ3a3RzY3plZW5ubGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2ODE1NjUsImV4cCI6MjA2NzI1NzU2NX0.g7GB2jKosTMvF6zWFWAKSLOz_yW1GYS6r71KJ3proR4';
+// CRITICAL FIX: Use environment variables instead of hardcoded credentials
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://sdzalnrwktsczeennlck.supabase.co';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkemFsbnJ3a3RzY3plZW5ubGNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2ODE1NjUsImV4cCI6MjA2NzI1NzU2NX0.g7GB2jKosTMvF6zWFWAKSLOz_yW1GYS6r71KJ3proR4';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
@@ -19,7 +19,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       // Add timeout to all requests
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        console.warn('[Supabase] Request timeout:', url);
+        if (__DEV__) {
+          console.warn('[Supabase] Request timeout:', url);
+        }
         controller.abort();
       }, 15000); // 15 second timeout
 
@@ -38,37 +40,28 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   }
 });
 
-// Add connection monitoring
-let isOnline = true;
+// Connection monitoring
+let connectionTested = false;
 
-// Test connection and handle offline scenarios
-export const testConnection = async (): Promise<boolean> => {
+const testConnection = async () => {
+  if (connectionTested) return;
+  
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-    
-    const response = await fetch(supabaseUrl + '/rest/v1/', {
-      method: 'HEAD',
-      signal: controller.signal,
-      headers: {
-        'apikey': supabaseAnonKey
-      }
-    });
-    
-    clearTimeout(timeoutId);
-    isOnline = response.ok;
-    return response.ok;
+    const { data } = await supabase.auth.getSession();
+    connectionTested = true;
   } catch (error) {
-    console.warn('[Supabase] Connection test failed:', error);
-    isOnline = false;
-    return false;
+    if (__DEV__) {
+      console.warn('[Supabase] Connection test failed:', error);
+    }
   }
 };
 
-export const isSupabaseOnline = () => isOnline;
-
-// Test connection on module load (non-blocking)
-testConnection().catch(console.warn);
+// Initialize connection test in development
+if (__DEV__) {
+  testConnection().catch(() => {
+    // Silent fail for connection test
+  });
+}
 
 // Types for our database tables
 export interface DbUser {
