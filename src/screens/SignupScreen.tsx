@@ -17,8 +17,6 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { signup } = useAuthStore();
 
   const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -41,25 +39,12 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
       return;
     }
 
-    setIsLoading(true);
-    
-    try {
-      // Split the full name into first and last names
-      const nameParts = name.trim().split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-      
-      const success = await signup(firstName, lastName, email, password);
-      if (success) {
-        // Navigation will be handled by the auth state change
-      } else {
-        Alert.alert('Error', 'Failed to create account');
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Navigate to paywall screen with user data
+    navigation.navigate('Paywall', { 
+      name,
+      email,
+      password 
+    });
   };
 
   return (
@@ -172,8 +157,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
                     {/* Signup Button */}
                     <Pressable
                       onPress={handleSignup}
-                      disabled={isLoading}
-                      style={[styles.signupButton, isLoading && styles.signupButtonDisabled]}
+                      style={styles.signupButton}
                     >
                       <BlurView intensity={50} tint="dark" style={styles.buttonBlur}>
                         <LinearGradient
@@ -181,7 +165,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
                           style={styles.buttonGradient}
                         >
                           <Text style={styles.buttonText}>
-                            {isLoading ? 'Creating Account...' : 'Create Account'}
+                            Signup
                           </Text>
                         </LinearGradient>
                       </BlurView>
