@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PaywallView } from 'react-native-purchases-ui';
+import RevenueCatUI from 'react-native-purchases-ui';
 import { useAuthStore } from '../state/authStore';
 import { getSpecificOffering, OFFERING_ID } from '../config/revenuecat';
 
@@ -133,8 +133,8 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({ navigation, route 
 
   return (
     <SafeAreaView style={styles.container}>
-      <PaywallView
-        offering={offering}
+      <RevenueCatUI.Paywall
+        options={{ offering }}
         onPurchaseStarted={handlePurchaseStart}
         onPurchaseCompleted={handlePurchaseComplete}
         onPurchaseError={handlePurchaseError}

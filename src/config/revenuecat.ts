@@ -21,12 +21,12 @@ const API_KEYS = {
   ios: 'appl_JSZfUEpzwgbXUoaLuvBlsutWjsr', // ✅ REAL API KEY ADDED
 };
 
-const OFFERING_ID = 'ofrngfbae86abd1'; // Your RevenueCat Offering ID
+export const OFFERING_ID = 'pro'; // Your RevenueCat Offering ID
 
 // Product IDs for your subscription offerings
 export const PRODUCT_IDS = {
-  MONTHLY: '$rc_monthly',
-  ANNUAL: '$rc_annual',
+  MONTHLY: 'com.dwang88.vibecode.Monthly',
+  ANNUAL: 'com.dwang88.vibecode.yearly',
 };
 
 export const initializePurchases = async () => {
