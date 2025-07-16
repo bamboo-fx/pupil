@@ -237,18 +237,9 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
                       </Pressable>
 
                       {/* Terms */}
-                      <View style={styles.termsContainer}>
-                        <Text style={styles.termsText}>By creating an account, you agree to our</Text>
-                        <View style={styles.termsLinksRow}>
-                          <Pressable onPress={() => navigation.navigate('TermsOfUse')}>
-                            <Text style={styles.termsLink}>Terms of Service</Text>
-                          </Pressable>
-                          <Text style={styles.termsText}> and </Text>
-                          <Pressable onPress={() => navigation.navigate('PrivacyPolicy')}>
-                            <Text style={styles.termsLink}>Privacy Policy</Text>
-                          </Pressable>
-                        </View>
-                      </View>
+                      <Text style={styles.termsText}>
+                        By creating an account, you agree to our{'\n'}Terms of Service and Privacy Policy
+                      </Text>
                     </LinearGradient>
                   </BlurView>
                 </View>
@@ -389,22 +380,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
     marginTop: 16,
-  },
-  termsContainer: {
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  termsLinksRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  termsLink: {
-    fontSize: 12,
-    color: '#60a5fa',
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-    fontWeight: '600',
   },
   loginContainer: {
     marginTop: 20,

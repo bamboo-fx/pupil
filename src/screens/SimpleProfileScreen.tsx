@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -9,7 +8,6 @@ import { useProgressStore } from '../state/progressStore';
 import { useAuthStore } from '../state/authStore';
 
 export const SimpleProfileScreen: React.FC = () => {
-  const navigation = useNavigation();
   const { totalXp, completedLessons, resetProgress, streak, achievements } = useProgressStore();
   const { user, logout } = useAuthStore();
   const [showAllAchievements, setShowAllAchievements] = useState(false);
@@ -47,10 +45,6 @@ export const SimpleProfileScreen: React.FC = () => {
       color: '#22c55e', // green-500 0 
     },
   ];
-
-  const handleSubscriptionInfo = () => {
-    navigation.navigate('SubscriptionInfo' as never);
-  };
 
   const handleResetProgress = () => {
     Alert.alert(
@@ -249,24 +243,6 @@ export const SimpleProfileScreen: React.FC = () => {
                 <Text style={styles.sectionTitle}>Settings</Text>
                 
                 <View style={styles.settingsList}>
-                  {/* Subscription Info */}
-                  <Pressable onPress={handleSubscriptionInfo}>
-                    <BlurView intensity={50} tint="dark" style={styles.settingItem}>
-                      <LinearGradient
-                        colors={['rgba(99,102,241,0.15)', 'rgba(99,102,241,0.08)']}
-                        style={styles.settingGradient}
-                      >
-                        <View style={styles.settingContent}>
-                          <View style={styles.settingIconSubscription}>
-                            <MaterialIcons name="star" size={20} color="#6366f1" />
-                          </View>
-                          <Text style={styles.settingText}>Subscription Info</Text>
-                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
-                        </View>
-                      </LinearGradient>
-                    </BlurView>
-                  </Pressable>
-
                   <Pressable onPress={handleResetProgress}>
                     <BlurView intensity={50} tint="dark" style={styles.settingItemReset}>
                       <LinearGradient
@@ -635,17 +611,6 @@ const styles = StyleSheet.create({
     marginRight: 16,
     borderWidth: 1,
     borderColor: 'rgba(239,68,68,0.3)',
-  },
-  settingIconSubscription: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'rgba(99,102,241,0.2)',
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 16,
-    borderWidth: 1,
-    borderColor: 'rgba(99,102,241,0.3)',
   },
   settingText: {
     color: 'white',
