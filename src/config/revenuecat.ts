@@ -113,6 +113,38 @@ export const purchaseProduct = async (productIdentifier: string) => {
   }
 };
 
+export const identifyRevenueCatUser = async (userId: string): Promise<boolean> => {
+  try {
+    if (!Purchases) {
+      console.error('❌ RevenueCat not available');
+      return false;
+    }
+    
+    await Purchases.logIn(userId);
+    console.log('✅ RevenueCat user identified:', userId);
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to identify RevenueCat user:', error);
+    return false;
+  }
+};
+
+export const logOutRevenueCatUser = async (): Promise<boolean> => {
+  try {
+    if (!Purchases) {
+      console.error('❌ RevenueCat not available');
+      return false;
+    }
+    
+    await Purchases.logOut();
+    console.log('✅ RevenueCat user logged out');
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to log out RevenueCat user:', error);
+    return false;
+  }
+};
+
 export const checkSubscriptionStatus = async (): Promise<boolean> => {
   try {
     if (!Purchases) {
@@ -121,8 +153,32 @@ export const checkSubscriptionStatus = async (): Promise<boolean> => {
     }
     
     const customerInfo = await Purchases.getCustomerInfo();
-    // Check if user has active premium entitlement
-    const isSubscribed = customerInfo.entitlements.active['premium'] !== undefined;
+    console.log('🔍 Customer info:', {
+      originalAppUserId: customerInfo.originalAppUserId,
+      activeSubscriptions: Object.keys(customerInfo.activeSubscriptions),
+      entitlements: Object.keys(customerInfo.entitlements.active),
+      allEntitlements: customerInfo.entitlements,
+    });
+    
+    // Check for common entitlement names that might indicate premium access
+    const premiumEntitlementNames = ['premium', 'pro', 'premium_access', 'ad_free', 'subscription', 'pupil'];
+    
+    let isSubscribed = false;
+    for (const entitlementName of premiumEntitlementNames) {
+      if (customerInfo.entitlements.active[entitlementName] !== undefined) {
+        console.log(`✅ Found active entitlement: ${entitlementName}`);
+        isSubscribed = true;
+        break;
+      }
+    }
+    
+    // If no specific entitlements found, check if user has any active subscriptions
+    if (!isSubscribed && Object.keys(customerInfo.activeSubscriptions).length > 0) {
+      console.log('✅ User has active subscriptions:', Object.keys(customerInfo.activeSubscriptions));
+      isSubscribed = true;
+    }
+    
+    console.log(`🎯 Final subscription status: ${isSubscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED'}`);
     return isSubscribed;
   } catch (error) {
     console.error('❌ Failed to check subscription:', error);

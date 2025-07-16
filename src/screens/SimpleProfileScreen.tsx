@@ -276,6 +276,23 @@ export const SimpleProfileScreen: React.FC = () => {
                       </LinearGradient>
                     </BlurView>
                   </Pressable>
+
+                  <Pressable onPress={() => logout()}>
+                    <BlurView intensity={50} tint="dark" style={styles.settingItemDelete}>
+                      <LinearGradient
+                        colors={['rgba(239,68,68,0.15)', 'rgba(239,68,68,0.08)']}
+                        style={styles.settingGradient}
+                      >
+                        <View style={styles.settingContent}>
+                          <View style={styles.settingIconDelete}>
+                            <MaterialIcons name="delete-forever" size={20} color="#ef4444" />
+                          </View>
+                          <Text style={styles.settingTextDelete}>Delete Account</Text>
+                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
+                        </View>
+                      </LinearGradient>
+                    </BlurView>
+                  </Pressable>
                 </View>
               </LinearGradient>
             </BlurView>
@@ -585,6 +602,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 4,
   },
+  settingItemDelete: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(239,68,68,0.4)',
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
+  },
   settingContent: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -612,8 +640,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(239,68,68,0.3)',
   },
+  settingIconDelete: {
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(239,68,68,0.2)',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(239,68,68,0.3)',
+  },
   settingText: {
     color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
+    flex: 1,
+  },
+  settingTextDelete: {
+    color: '#ef4444',
     fontWeight: 'bold',
     fontSize: 18,
     flex: 1,

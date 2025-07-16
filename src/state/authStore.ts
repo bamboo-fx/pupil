@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
+import { identifyRevenueCatUser, logOutRevenueCatUser } from '../config/revenuecat';
 
 // CRITICAL FIX: Use static import instead of dynamic import
 // This prevents production build failures in TestFlight
@@ -77,6 +78,15 @@ export const useAuthStore = create<AuthState>()(
               languagePreference: userData.language_preference,
               notificationSettings: userData.notification_settings,
             };
+
+            // ✅ CRITICAL FIX: Identify user with RevenueCat BEFORE setting auth state
+            // This prevents race condition where subscription check happens on anonymous user
+            try {
+              await identifyRevenueCatUser(data.user.id);
+              console.log('✅ RevenueCat user identified before setting auth state');
+            } catch (error) {
+              console.warn('⚠️ Failed to identify RevenueCat user during login:', error);
+            }
 
             set({ 
               user, 
@@ -189,6 +199,15 @@ export const useAuthStore = create<AuthState>()(
               },
             };
 
+            // ✅ CRITICAL FIX: Identify user with RevenueCat BEFORE setting auth state
+            // This prevents race condition where subscription check happens on anonymous user
+            try {
+              await identifyRevenueCatUser(data.user.id);
+              console.log('✅ RevenueCat user identified before setting auth state');
+            } catch (error) {
+              console.warn('⚠️ Failed to identify RevenueCat user during signup:', error);
+            }
+
             set({ 
               user, 
               isAuthenticated: true, 
@@ -209,6 +228,13 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
+          // ✅ Log out from RevenueCat first
+          try {
+            await logOutRevenueCatUser();
+          } catch (error) {
+            console.warn('⚠️ Failed to logout from RevenueCat:', error);
+          }
+
           await supabase.auth.signOut();
           
           // Clear progress store data - FIXED: Use static import
@@ -361,6 +387,13 @@ const initializeAuth = async () => {
         
         await refreshPromise;
         
+        // ✅ Identify user with RevenueCat during app initialization
+        try {
+          await identifyRevenueCatUser(session.user.id);
+        } catch (error) {
+          console.warn('⚠️ Failed to identify RevenueCat user during initialization:', error);
+        }
+        
         // Load user progress data with timeout - FIXED: Use static import
         try {
           const { loadUserProgress } = useProgressStore.getState();
@@ -455,6 +488,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
       
       await refreshPromise;
       
+      // ✅ Identify user with RevenueCat after session sign in
+      try {
+        await identifyRevenueCatUser(session.user.id);
+      } catch (error) {
+        console.warn('⚠️ Failed to identify RevenueCat user during session sign in:', error);
+      }
+      
       // Load user progress data with timeout - FIXED: Use static import
       try {
         const { loadUserProgress } = useProgressStore.getState();
@@ -475,6 +515,13 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   } else if (event === 'SIGNED_OUT') {
     try {
+      // ✅ Log out from RevenueCat when auth session ends
+      try {
+        await logOutRevenueCatUser();
+      } catch (error) {
+        console.warn('⚠️ Failed to logout from RevenueCat during session sign out:', error);
+      }
+
       // Clear progress store data - FIXED: Use static import
       const { clearUserProgress } = useProgressStore.getState();
       clearUserProgress();

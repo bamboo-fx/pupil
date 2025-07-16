@@ -3,7 +3,7 @@
     "name": "vibecode",
     "slug": "vibecode",
     "scheme": "vibecode",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./logo.png",
     "userInterfaceStyle": "light",
@@ -15,15 +15,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
+      "buildNumber": "2",
       "bundleIdentifier": "com.dwang88.vibecode",
-      "requireFullScreen": true,
-      "deviceFamily": [1],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UISupportedInterfaceOrientations": [
-          "UIInterfaceOrientationPortrait"
-        ],
-        "UISupportedInterfaceOrientations~ipad": [],
         "NSCalendarsUsageDescription": "This app may use calendar access through third-party libraries for enhanced functionality.",
         "NSContactsUsageDescription": "This app may access contacts through third-party libraries for improved user experience.",
         "NSCameraUsageDescription": "This app may use camera access through third-party libraries for enhanced features."

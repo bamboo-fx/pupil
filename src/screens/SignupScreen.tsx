@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -17,6 +17,8 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { signup } = useAuthStore();
 
   const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
@@ -39,12 +41,39 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
       return;
     }
 
-    // Navigate to paywall screen with user data
-    navigation.navigate('Paywall', { 
-      name,
-      email,
-      password 
-    });
+    setIsLoading(true);
+    
+    try {
+      // Split the full name into first and last names
+      const nameParts = name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      
+      // Create the account first
+      const success = await signup(firstName, lastName, email, password);
+      
+      if (success) {
+        // Account created successfully, now show the paywall
+        Alert.alert(
+          'Account Created! 🎉', 
+          'Welcome to Pupil! Your account has been created successfully.',
+          [{ 
+            text: 'Continue', 
+            onPress: () => {
+              // Navigation will be handled by the root navigator
+              // which will check subscription status and show paywall if needed
+            }
+          }]
+        );
+      } else {
+        Alert.alert('Error', 'Failed to create account. Please try again.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error('Account creation error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -158,17 +187,22 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
                     <Pressable
                       onPress={handleSignup}
                       style={styles.signupButton}
+                      disabled={isLoading}
                     >
-                      <BlurView intensity={50} tint="dark" style={styles.buttonBlur}>
-                        <LinearGradient
-                          colors={['#60a5fa', '#3b82f6', '#2563eb']}
-                          style={styles.buttonGradient}
-                        >
-                          <Text style={styles.buttonText}>
-                            Signup
-                          </Text>
-                        </LinearGradient>
-                      </BlurView>
+                      {isLoading ? (
+                        <ActivityIndicator color="white" />
+                      ) : (
+                        <BlurView intensity={50} tint="dark" style={styles.buttonBlur}>
+                          <LinearGradient
+                            colors={['#60a5fa', '#3b82f6', '#2563eb']}
+                            style={styles.buttonGradient}
+                          >
+                            <Text style={styles.buttonText}>
+                              Signup
+                            </Text>
+                          </LinearGradient>
+                        </BlurView>
+                      )}
                     </Pressable>
 
                     {/* Terms */}
