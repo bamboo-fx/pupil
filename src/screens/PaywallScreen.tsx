@@ -1,9 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { View, Alert, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Alert, ActivityIndicator, StyleSheet, Text, Dimensions, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialIcons } from '@expo/vector-icons';
 import RevenueCatUI from 'react-native-purchases-ui';
 import { useAuthStore } from '../state/authStore';
 import { getSpecificOffering, OFFERING_ID } from '../config/revenuecat';
+
+const { width } = Dimensions.get('window');
+
+// Modern Premium Color Palette
+const colors = {
+  primary: '#6366f1',      // Indigo-500
+  secondary: '#8b5cf6',    // Violet-500  
+  background: '#0f0f23',   // Deep navy
+  surface: '#1e1b4b',      // Dark indigo
+  accent: '#fbbf24',       // Amber-400
+  text: '#f8fafc',         // Slate-50
+  textSecondary: '#cbd5e1', // Slate-300
+  success: '#10b981',      // Emerald-500
+  gradient1: '#6366f1',    // Indigo
+  gradient2: '#8b5cf6',    // Violet
+  gradient3: '#ec4899',    // Pink
+};
 
 interface PaywallScreenProps {
   navigation: any;
@@ -111,53 +130,304 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({ navigation, route 
     navigation.goBack();
   };
 
+  const handleSubscriptionInfo = () => {
+    navigation.navigate('SubscriptionInfo');
+  };
+
+  const handleTermsPress = () => {
+    navigation.navigate('TermsOfUse');
+  };
+
+  const handlePrivacyPress = () => {
+    navigation.navigate('PrivacyPolicy');
+  };
+
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#8b5cf6" />
-        </View>
-      </SafeAreaView>
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        style={styles.container}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.loadingContainer}>
+            <View style={styles.loadingCard}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={styles.loadingText}>Loading Premium Plans...</Text>
+              <Text style={styles.loadingSubtext}>Preparing your upgrade experience</Text>
+            </View>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
     );
   }
 
   if (!offering) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.errorContainer}>
-          {/* Error already handled in loadOffering */}
-        </View>
-      </SafeAreaView>
+      <LinearGradient
+        colors={[colors.background, colors.surface]}
+        style={styles.container}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={styles.errorContainer}>
+            {/* Error already handled in loadOffering */}
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <RevenueCatUI.Paywall
-        options={{ offering }}
-        onPurchaseStarted={handlePurchaseStart}
-        onPurchaseCompleted={handlePurchaseComplete}
-        onPurchaseError={handlePurchaseError}
-        onRestoreCompleted={handleRestoreComplete}
-        onRestoreError={(error) => {
-          console.error('❌ Restore failed:', error);
-          Alert.alert('Error', 'Failed to restore purchases. Please try again.');
-        }}
-        onDismiss={handleClose}
-      />
-    </SafeAreaView>
+    <LinearGradient
+      colors={[colors.background, colors.surface, colors.background]}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.container}>
+        {/* Premium Header */}
+        <View style={styles.header}>
+          <LinearGradient
+            colors={[colors.gradient1, colors.gradient2, colors.gradient3]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.headerGradient}
+          >
+            <Text style={styles.headerTitle}>✨ Upgrade to Premium</Text>
+            <Text style={styles.headerSubtitle}>Unlock unlimited potential</Text>
+          </LinearGradient>
+        </View>
+
+        {/* Subscription Details - REQUIRED BY APPLE */}
+        <View style={styles.subscriptionDetails}>
+          <Text style={styles.subscriptionTitle}>VibeCode Premium</Text>
+          
+          <View style={styles.planDetails}>
+            <View style={styles.planRow}>
+              <MaterialIcons name="schedule" size={20} color={colors.accent} />
+              <View style={styles.planInfo}>
+                <Text style={styles.planName}>Monthly Plan</Text>
+                <Text style={styles.planPrice}>$8.99/month</Text>
+                <Text style={styles.planPeriod}>Monthly – billed every 30 days</Text>
+              </View>
+            </View>
+            
+            <View style={styles.planRow}>
+              <MaterialIcons name="calendar-today" size={20} color={colors.success} />
+              <View style={styles.planInfo}>
+                <Text style={styles.planName}>Annual Plan</Text>
+                <Text style={styles.planPrice}>$59.99/year</Text>
+                <Text style={styles.planPeriod}>Annual – billed every 365 days</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Subscription Info Button */}
+          <Pressable onPress={handleSubscriptionInfo} style={styles.infoButton}>
+            <MaterialIcons name="info" size={20} color={colors.primary} />
+            <Text style={styles.infoButtonText}>View Full Subscription Details</Text>
+            <MaterialIcons name="chevron-right" size={20} color={colors.textSecondary} />
+          </Pressable>
+        </View>
+
+        {/* RevenueCat Paywall */}
+        <View style={styles.paywallContainer}>
+          <RevenueCatUI.Paywall
+            options={{ 
+              offering,
+              // Custom styling for RevenueCat UI
+              displayCloseButton: true,
+            }}
+            onPurchaseStarted={handlePurchaseStart}
+            onPurchaseCompleted={handlePurchaseComplete}
+            onPurchaseError={handlePurchaseError}
+            onRestoreCompleted={handleRestoreComplete}
+            onRestoreError={(error) => {
+              console.error('❌ Restore failed:', error);
+              Alert.alert('Error', 'Failed to restore purchases. Please try again.');
+            }}
+            onDismiss={handleClose}
+          />
+        </View>
+
+        {/* Legal Links - REQUIRED BY APPLE */}
+        <View style={styles.legalSection}>
+          <View style={styles.legalLinks}>
+            <Pressable onPress={handleTermsPress} style={styles.legalLink}>
+              <Text style={styles.legalLinkText}>Terms of Use</Text>
+            </Pressable>
+            <Text style={styles.legalSeparator}>•</Text>
+            <Pressable onPress={handlePrivacyPress} style={styles.legalLink}>
+              <Text style={styles.legalLinkText}>Privacy Policy</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.trustText}>🔒 Secure payment • Cancel anytime • 30-day guarantee</Text>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+  },
+  header: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 20,
+  },
+  headerGradient: {
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 8,
+    letterSpacing: 0.5,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+    opacity: 0.9,
+  },
+  subscriptionDetails: {
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    marginHorizontal: 10,
+    borderRadius: 16,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  subscriptionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  planDetails: {
+    gap: 12,
+  },
+  planRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  planInfo: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  planName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text,
+    marginBottom: 2,
+  },
+  planPrice: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.accent,
+    marginBottom: 2,
+  },
+  planPeriod: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  infoButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+    borderRadius: 12,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(99, 102, 241, 0.3)',
+  },
+  infoButtonText: {
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: '600',
+    marginHorizontal: 8,
+  },
+  paywallContainer: {
+    flex: 1,
+    marginHorizontal: 10,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
+  legalSection: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  legalLink: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  legalLinkText: {
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+  legalSeparator: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginHorizontal: 8,
+  },
+  trustText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+    opacity: 0.8,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  loadingCard: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    padding: 40,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  loadingText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: 20,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  loadingSubtext: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+    opacity: 0.8,
   },
   errorContainer: {
     flex: 1,

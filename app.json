@@ -14,10 +14,16 @@
     ],
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true,
+      "supportsTablet": false,
       "bundleIdentifier": "com.dwang88.vibecode",
+      "requireFullScreen": true,
+      "deviceFamily": [1],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait"
+        ],
+        "UISupportedInterfaceOrientations~ipad": [],
         "NSCalendarsUsageDescription": "This app may use calendar access through third-party libraries for enhanced functionality.",
         "NSContactsUsageDescription": "This app may access contacts through third-party libraries for improved user experience.",
         "NSCameraUsageDescription": "This app may use camera access through third-party libraries for enhanced features."

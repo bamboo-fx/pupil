@@ -7,6 +7,9 @@ import { CreateAccountScreen } from '../screens/CreateAccountScreen';
 import { PaywallScreen } from '../screens/PaywallScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
+import { TermsOfUseScreen } from '../screens/TermsOfUseScreen';
+import { PrivacyPolicyScreen } from '../screens/PrivacyPolicyScreen';
+import { SubscriptionInfoScreen } from '../screens/SubscriptionInfoScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +28,9 @@ export const AuthNavigator: React.FC = () => {
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Screen name="CreateAccount" component={CreateAccountScreen} />
       <Stack.Screen name="Paywall" component={PaywallScreen} />
+      <Stack.Screen name="SubscriptionInfo" component={SubscriptionInfoScreen} />
+      <Stack.Screen name="TermsOfUse" component={TermsOfUseScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
     </Stack.Navigator>
   );
 };
