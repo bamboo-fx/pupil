@@ -3,7 +3,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
-import { identifyRevenueCatUser, logOutRevenueCatUser } from '../config/revenuecat';
+import { identifyRevenueCatUser, logOutRevenueCatUser, syncSubscriptionToDatabase } from '../config/revenuecat';
+import Purchases from 'react-native-purchases';
 
 // CRITICAL FIX: Use static import instead of dynamic import
 // This prevents production build failures in TestFlight
@@ -19,6 +20,7 @@ interface AuthState {
   updateProfile: (updates: Partial<User>) => Promise<boolean>;
   setLoading: (loading: boolean) => void;
   refreshUser: () => Promise<void>;
+  syncSubscriptionWithSupabase: () => Promise<boolean>;
 }
 
 const calculateLevel = (xp: number): number => {
@@ -30,7 +32,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      isLoading: true,
+      isLoading: false,
 
       login: async (email: string, password: string) => {
         try {
@@ -77,6 +79,11 @@ export const useAuthStore = create<AuthState>()(
               timezone: userData.timezone,
               languagePreference: userData.language_preference,
               notificationSettings: userData.notification_settings,
+              subscriptionStatus: userData.subscription_status,
+              subscriptionType: userData.subscription_type,
+              subscriptionStartDate: userData.subscription_start_date,
+              subscriptionEndDate: userData.subscription_end_date,
+              revenuecatUserId: userData.revenuecat_user_id,
             };
 
             // ✅ CRITICAL FIX: Identify user with RevenueCat BEFORE setting auth state
@@ -341,6 +348,11 @@ export const useAuthStore = create<AuthState>()(
             timezone: data.timezone,
             languagePreference: data.language_preference,
             notificationSettings: data.notification_settings,
+            subscriptionStatus: data.subscription_status,
+            subscriptionType: data.subscription_type,
+            subscriptionStartDate: data.subscription_start_date,
+            subscriptionEndDate: data.subscription_end_date,
+            revenuecatUserId: data.revenuecat_user_id,
           };
 
           set({ user });
@@ -351,6 +363,35 @@ export const useAuthStore = create<AuthState>()(
 
       setLoading: (loading: boolean) => {
         set({ isLoading: loading });
+      },
+
+      syncSubscriptionWithSupabase: async () => {
+        try {
+          const { user } = useAuthStore.getState();
+          if (!user) {
+            console.error('❌ No user found for subscription sync');
+            return false;
+          }
+
+          // Get customer info from RevenueCat
+          const customerInfo = await Purchases.getCustomerInfo();
+          
+          // Sync subscription data to database
+          const success = await syncSubscriptionToDatabase(user.id, customerInfo);
+          
+          if (success) {
+            // Refresh user data to get updated subscription info
+            await useAuthStore.getState().refreshUser();
+            console.log('✅ Subscription synced successfully');
+            return true;
+          } else {
+            console.error('❌ Failed to sync subscription to database');
+            return false;
+          }
+        } catch (error) {
+          console.error('❌ Error syncing subscription with Supabase:', error);
+          return false;
+        }
       },
     }),
     {

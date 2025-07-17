@@ -129,6 +129,11 @@ export interface User {
   timezone?: string;
   languagePreference?: string;
   notificationSettings?: Record<string, boolean>;
+  subscriptionStatus?: 'active' | 'expired' | 'cancelled';
+  subscriptionType?: 'monthly' | 'annual';
+  subscriptionStartDate?: string;
+  subscriptionEndDate?: string;
+  revenuecatUserId?: string;
 }
 
 // Achievement system types

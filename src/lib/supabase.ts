@@ -80,6 +80,11 @@ export interface DbUser {
   timezone?: string;
   language_preference?: string;
   notification_settings?: Record<string, boolean>;
+  subscription_status?: 'active' | 'expired' | 'cancelled';
+  subscription_type?: 'monthly' | 'annual';
+  subscription_start_date?: string;
+  subscription_end_date?: string;
+  revenuecat_user_id?: string;
 }
 
 export interface DbProgress {

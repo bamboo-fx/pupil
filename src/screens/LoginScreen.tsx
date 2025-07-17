@@ -56,9 +56,6 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             style={styles.keyboardView}
           >
             {/* Header */}
-            <View style={styles.header}>
-              <Text style={styles.welcomeTitle}>Pupil</Text>
-            </View>
 
             {/* Login Form */}
             <View style={styles.formContainer}>

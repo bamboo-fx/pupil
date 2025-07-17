@@ -243,23 +243,6 @@ export const SimpleProfileScreen: React.FC = () => {
                 <Text style={styles.sectionTitle}>Settings</Text>
                 
                 <View style={styles.settingsList}>
-                  <Pressable onPress={handleResetProgress}>
-                    <BlurView intensity={50} tint="dark" style={styles.settingItemReset}>
-                      <LinearGradient
-                        colors={['rgba(239,68,68,0.15)', 'rgba(239,68,68,0.08)']}
-                        style={styles.settingGradient}
-                      >
-                        <View style={styles.settingContent}>
-                          <View style={styles.settingIconReset}>
-                            <MaterialIcons name="refresh" size={20} color="#ef4444" />
-                          </View>
-                          <Text style={styles.settingText}>Reset Progress</Text>
-                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
-                        </View>
-                      </LinearGradient>
-                    </BlurView>
-                  </Pressable>
-                  
                   <Pressable onPress={() => logout()}>
                     <BlurView intensity={50} tint="dark" style={styles.settingItem}>
                       <LinearGradient
@@ -271,6 +254,23 @@ export const SimpleProfileScreen: React.FC = () => {
                             <MaterialIcons name="logout" size={20} color="rgba(255,255,255,0.7)" />
                           </View>
                           <Text style={styles.settingText}>Sign Out</Text>
+                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
+                        </View>
+                      </LinearGradient>
+                    </BlurView>
+                  </Pressable>
+                  
+                  <Pressable onPress={handleResetProgress}>
+                    <BlurView intensity={50} tint="dark" style={styles.settingItemReset}>
+                      <LinearGradient
+                        colors={['rgba(239,68,68,0.15)', 'rgba(239,68,68,0.08)']}
+                        style={styles.settingGradient}
+                      >
+                        <View style={styles.settingContent}>
+                          <View style={styles.settingIconReset}>
+                            <MaterialIcons name="refresh" size={20} color="#ef4444" />
+                          </View>
+                          <Text style={styles.settingText}>Reset Progress</Text>
                           <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
                         </View>
                       </LinearGradient>

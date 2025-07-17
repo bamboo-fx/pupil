@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, Alert, ScrollView, StyleSheet, Animated, Dimensions, Platform, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Pressable, Alert, ScrollView, StyleSheet, Animated, Dimensions, Platform, TextInput, KeyboardAvoidingView, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -18,9 +18,7 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -43,7 +41,7 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
   }, []);
 
   const handleCreateAccount = async () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -55,11 +53,6 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
 
     if (password.length < 6) {
       Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
@@ -191,29 +184,7 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
                         </BlurView>
                       </View>
 
-                      {/* Confirm Password Input */}
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputLabel}>Confirm Password</Text>
-                        <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
-                          <MaterialIcons name="lock" size={20} color="rgba(255,255,255,0.7)" />
-                          <TextInput
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                            placeholder="Confirm your password"
-                            placeholderTextColor="rgba(255,255,255,0.5)"
-                            style={styles.textInput}
-                            secureTextEntry={!showConfirmPassword}
-                            autoCapitalize="none"
-                          />
-                          <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                            <MaterialIcons 
-                              name={showConfirmPassword ? "visibility" : "visibility-off"} 
-                              size={20} 
-                              color="rgba(255,255,255,0.6)" 
-                            />
-                          </Pressable>
-                        </BlurView>
-                      </View>
+
 
                       {/* Create Account Button */}
                       <Pressable
@@ -237,9 +208,16 @@ export const CreateAccountScreen: React.FC<CreateAccountScreenProps> = ({ naviga
                       </Pressable>
 
                       {/* Terms */}
-                      <Text style={styles.termsText}>
-                        By creating an account, you agree to our{'\n'}Terms of Service and Privacy Policy
-                      </Text>
+                      <View style={styles.termsLinksContainer}>
+                        <Text style={styles.termsText}>By creating an account, you agree to our </Text>
+                        <Pressable onPress={() => Linking.openURL('https://www.trypupil.com/terms')}>
+                          <Text style={styles.termsLink}>Terms of Service</Text>
+                        </Pressable>
+                        <Text style={styles.termsText}> and </Text>
+                        <Pressable onPress={() => Linking.openURL('https://www.trypupil.com/privacy')}>
+                          <Text style={styles.termsLink}>Privacy Policy</Text>
+                        </Pressable>
+                      </View>
                     </LinearGradient>
                   </BlurView>
                 </View>
@@ -289,6 +267,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
     paddingHorizontal: 24,
     paddingBottom: 20,
   },
@@ -380,6 +360,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 16,
     marginTop: 16,
+  },
+  termsLinksContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    marginTop: 16,
+  },
+  termsLink: {
+    fontSize: 12,
+    color: 'rgba(96,165,250,0.8)',
+    textDecorationLine: 'underline',
+    lineHeight: 16,
   },
   loginContainer: {
     marginTop: 20,

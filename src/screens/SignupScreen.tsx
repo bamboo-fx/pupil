@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, ActivityIndicator, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -14,14 +14,12 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuthStore();
 
   const handleSignup = async () => {
-    if (!name || !email || !password || !confirmPassword) {
+    if (!name || !email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -33,11 +31,6 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
 
     if (password.length < 6) {
       Alert.alert('Error', 'Password must be at least 6 characters');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
@@ -53,18 +46,8 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
       const success = await signup(firstName, lastName, email, password);
       
       if (success) {
-        // Account created successfully, now show the paywall
-        Alert.alert(
-          'Account Created! 🎉', 
-          'Welcome to Pupil! Your account has been created successfully.',
-          [{ 
-            text: 'Continue', 
-            onPress: () => {
-              // Navigation will be handled by the root navigator
-              // which will check subscription status and show paywall if needed
-            }
-          }]
-        );
+        // Account created successfully, navigation will be handled by the root navigator
+        // which will check subscription status and show paywall if needed
       } else {
         Alert.alert('Error', 'Failed to create account. Please try again.');
       }
@@ -159,29 +142,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
                       </BlurView>
                     </View>
 
-                    {/* Confirm Password Input */}
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.inputLabel}>Confirm Password</Text>
-                      <BlurView intensity={40} tint="dark" style={styles.inputContainer}>
-                        <MaterialIcons name="lock" size={20} color="rgba(255,255,255,0.7)" />
-                        <TextInput
-                          value={confirmPassword}
-                          onChangeText={setConfirmPassword}
-                          placeholder="Confirm your password"
-                          placeholderTextColor="rgba(255,255,255,0.5)"
-                          style={styles.textInput}
-                          secureTextEntry={!showConfirmPassword}
-                          autoCapitalize="none"
-                        />
-                        <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-                          <MaterialIcons 
-                            name={showConfirmPassword ? "visibility" : "visibility-off"} 
-                            size={20} 
-                            color="rgba(255,255,255,0.6)" 
-                          />
-                        </Pressable>
-                      </BlurView>
-                    </View>
+
 
                     {/* Signup Button */}
                     <Pressable
@@ -206,9 +167,16 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
                     </Pressable>
 
                     {/* Terms */}
-                    <Text style={styles.termsText}>
-                      By creating an account, you agree to our{'\n'}Terms of Service and Privacy Policy
-                    </Text>
+                    <View style={styles.termsLinksContainer}>
+                      <Text style={styles.termsText}>By creating an account, you agree to our </Text>
+                      <Pressable onPress={() => Linking.openURL('https://www.trypupil.com/terms')}>
+                        <Text style={styles.termsLink}>Terms of Service</Text>
+                      </Pressable>
+                      <Text style={styles.termsText}> and </Text>
+                      <Pressable onPress={() => Linking.openURL('https://www.trypupil.com/privacy')}>
+                        <Text style={styles.termsLink}>Privacy Policy</Text>
+                      </Pressable>
+                    </View>
                   </LinearGradient>
                 </BlurView>
               </View>
@@ -253,6 +221,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
     paddingBottom: 40,
   },
   header: {
@@ -345,6 +315,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'rgba(255,255,255,0.5)',
     textAlign: 'center',
+    lineHeight: 16,
+  },
+  termsLinksContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+  },
+  termsLink: {
+    fontSize: 12,
+    color: 'rgba(96,165,250,0.8)',
+    textDecorationLine: 'underline',
     lineHeight: 16,
   },
   loginContainer: {

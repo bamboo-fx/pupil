@@ -60,7 +60,7 @@ export const SkillLevelScreen: React.FC<SkillLevelScreenProps> = ({ navigation, 
 
   const handleContinue = () => {
     if (selectedSkill) {
-      navigation.navigate('Login', { 
+      navigation.navigate('SubscriptionInfo', { 
         ageRange,
         skillLevel: selectedSkill 
       });

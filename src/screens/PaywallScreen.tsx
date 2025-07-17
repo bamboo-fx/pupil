@@ -3,6 +3,7 @@ import { View, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RevenueCatUI from 'react-native-purchases-ui';
 import { getSpecificOffering, OFFERING_ID, checkSubscriptionStatus } from '../config/revenuecat';
+import { useAuthStore } from '../state/authStore';
 
 interface PaywallScreenProps {
   navigation?: any;
@@ -62,6 +63,15 @@ export const PaywallScreen: React.FC<PaywallScreenProps> = ({ navigation, onSubs
 
   const handlePurchaseComplete = async (transaction: any) => {
     console.log('✅ Purchase completed:', transaction);
+    
+    // Sync subscription with Supabase after successful purchase
+    try {
+      const { syncSubscriptionWithSupabase } = useAuthStore.getState();
+      await syncSubscriptionWithSupabase();
+      console.log('✅ Subscription synced to Supabase');
+    } catch (error) {
+      console.error('❌ Error syncing subscription to Supabase:', error);
+    }
     
     // Check subscription status to trigger navigation update
     try {
