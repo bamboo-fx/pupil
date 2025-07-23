@@ -84,7 +84,7 @@ export interface DbUser {
   subscription_type?: 'monthly' | 'annual';
   subscription_start_date?: string;
   subscription_end_date?: string;
-  revenuecat_user_id?: string;
+  stripe_customer_id?: string;
 }
 
 export interface DbProgress {

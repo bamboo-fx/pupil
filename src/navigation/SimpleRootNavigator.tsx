@@ -3,12 +3,12 @@ import { AuthNavigator } from "./AuthNavigator";
 import { AppNavigator } from "./AppNavigator";
 import { PaywallScreen } from "../screens/PaywallScreen";
 import { useAuthStore } from "../state/authStore";
-import { checkSubscriptionStatus } from "../config/revenuecat";
+import { checkSubscriptionStatus } from "../config/stripe";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const SimpleRootNavigator: React.FC = () => {
-  const { isAuthenticated, isLoading: authLoading } = useAuthStore();
+  const { isAuthenticated, isLoading: authLoading, user } = useAuthStore();
   const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
@@ -25,7 +25,11 @@ export const SimpleRootNavigator: React.FC = () => {
   const checkUserSubscription = async () => {
     setSubscriptionLoading(true);
     try {
-      const subscribed = await checkSubscriptionStatus();
+      if (!user) {
+        setIsSubscribed(false);
+        return;
+      }
+      const subscribed = await checkSubscriptionStatus(user.id);
       setIsSubscribed(subscribed);
       console.log('🔍 Subscription status:', subscribed ? 'SUBSCRIBED' : 'NOT SUBSCRIBED');
     } catch (error) {

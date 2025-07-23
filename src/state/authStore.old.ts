@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../lib/supabase';
 import { User } from '../types';
-import { identifyStripeUser, logOutStripeUser, syncSubscriptionToDatabase, getUserSubscription } from '../config/stripe';
+import { identifyStripeUser, logOutStripeUser, syncSubscriptionToDatabase } from '../config/stripe';
 
 // CRITICAL FIX: Use static import instead of dynamic import
 // This prevents production build failures in TestFlight
@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           if (data.user) {
-            // Get user data from our custom users table
+            // Fetch user profile data
             const { data: userData, error: userError } = await supabase
               .from('users')
               .select('*')
@@ -57,7 +57,7 @@ export const useAuthStore = create<AuthState>()(
               .single();
 
             if (userError) {
-              console.error('User data fetch error:', userError.message);
+              console.error('User fetch error:', userError.message);
               set({ isLoading: false });
               return false;
             }
@@ -234,23 +234,19 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          // ✅ Log out from Stripe first
-          try {
-            await logOutStripeUser();
-          } catch (error) {
-            console.warn('⚠️ Failed to logout from Stripe:', error);
-          }
+                  // ✅ Log out from Stripe first
+        try {
+          await logOutStripeUser();
+        } catch (error) {
+          console.warn('⚠️ Failed to logout from Stripe:', error);
+        }
 
-          // Sign out from Supabase
-          const { error } = await supabase.auth.signOut();
-          if (error) {
-            console.error('Logout error:', error.message);
-          }
-
-          // Clear progress store
+          await supabase.auth.signOut();
+          
+          // Clear progress store data - FIXED: Use static import
           const { clearUserProgress } = useProgressStore.getState();
           clearUserProgress();
-
+          
           set({ 
             user: null, 
             isAuthenticated: false, 
@@ -258,6 +254,16 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           console.error('Logout error:', error);
+          
+          // Clear progress store data even on error - FIXED: Use static import
+          const { clearUserProgress } = useProgressStore.getState();
+          clearUserProgress();
+          
+          set({ 
+            user: null, 
+            isAuthenticated: false, 
+            isLoading: false 
+          });
         }
       },
 
@@ -266,20 +272,23 @@ export const useAuthStore = create<AuthState>()(
           const currentUser = get().user;
           if (!currentUser) return false;
 
-          // Convert frontend field names to database field names
           const dbUpdates: any = {};
           
+          // Map client fields to database fields
           if (updates.firstName !== undefined) dbUpdates.first_name = updates.firstName;
           if (updates.lastName !== undefined) dbUpdates.last_name = updates.lastName;
-          if (updates.totalXp !== undefined) dbUpdates.total_xp = updates.totalXp;
+          if (updates.fullName !== undefined) dbUpdates.full_name = updates.fullName;
+          if (updates.totalXp !== undefined) {
+            dbUpdates.total_xp = updates.totalXp;
+            dbUpdates.level = calculateLevel(updates.totalXp);
+          }
           if (updates.streak !== undefined) dbUpdates.streak = updates.streak;
-          if (updates.level !== undefined) dbUpdates.level = updates.level;
           if (updates.lastStudyDate !== undefined) dbUpdates.last_study_date = updates.lastStudyDate;
           if (updates.avatarUrl !== undefined) dbUpdates.avatar_url = updates.avatarUrl;
           if (updates.timezone !== undefined) dbUpdates.timezone = updates.timezone;
           if (updates.languagePreference !== undefined) dbUpdates.language_preference = updates.languagePreference;
           if (updates.notificationSettings !== undefined) dbUpdates.notification_settings = updates.notificationSettings;
-          
+
           dbUpdates.updated_at = new Date().toISOString();
 
           const { error } = await supabase
@@ -342,7 +351,7 @@ export const useAuthStore = create<AuthState>()(
             subscriptionType: data.subscription_type,
             subscriptionStartDate: data.subscription_start_date,
             subscriptionEndDate: data.subscription_end_date,
-            stripeCustomerId: data.stripe_customer_id,
+            revenuecatUserId: data.revenuecat_user_id,
           };
 
           set({ user });
@@ -363,10 +372,13 @@ export const useAuthStore = create<AuthState>()(
             return false;
           }
 
-          // Get subscription info from database
-          const subscriptionData = await getUserSubscription(user.id);
+          // Get customer info from RevenueCat
+          const customerInfo = await Purchases.getCustomerInfo();
           
-          if (subscriptionData) {
+          // Sync subscription data to database
+          const success = await syncSubscriptionToDatabase(user.id, customerInfo);
+          
+          if (success) {
             // Refresh user data to get updated subscription info
             await useAuthStore.getState().refreshUser();
             console.log('✅ Subscription synced successfully');
@@ -415,11 +427,11 @@ const initializeAuth = async () => {
         
         await refreshPromise;
         
-        // ✅ Identify user with Stripe during app initialization
+        // ✅ Identify user with RevenueCat during app initialization
         try {
-          await identifyStripeUser(session.user.id);
+          await identifyRevenueCatUser(session.user.id);
         } catch (error) {
-          console.warn('⚠️ Failed to identify Stripe user during initialization:', error);
+          console.warn('⚠️ Failed to identify RevenueCat user during initialization:', error);
         }
         
         // Load user progress data with timeout - FIXED: Use static import
@@ -459,7 +471,7 @@ const initializeAuth = async () => {
     const duration = Date.now() - startTime;
     console.error(`[AuthStore] Auth initialization failed after ${duration}ms:`, error);
     
-    // Fallback to unauthenticated state
+    // Set auth state to allow app to continue
     useAuthStore.setState({ 
       user: null, 
       isAuthenticated: false, 
@@ -468,49 +480,94 @@ const initializeAuth = async () => {
   }
 };
 
+// Initialize on app start with protection
+const initWithRetry = async () => {
+  let attempts = 0;
+  const maxAttempts = 2;
+  
+  while (attempts < maxAttempts) {
+    try {
+      await initializeAuth();
+      break;
+    } catch (error) {
+      attempts++;
+      console.warn(`[AuthStore] Init attempt ${attempts} failed:`, error);
+      
+      if (attempts >= maxAttempts) {
+        console.error('[AuthStore] Max init attempts reached, setting default state');
+        useAuthStore.setState({ 
+          user: null, 
+          isAuthenticated: false, 
+          isLoading: false 
+        });
+      } else {
+        // Wait before retry
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  }
+};
+
+// Start initialization but don't block app startup
+initWithRetry();
+
 // Listen for auth state changes
 supabase.auth.onAuthStateChange(async (event, session) => {
-  console.log(`[AuthStore] Auth state changed: ${event}`);
+  console.log('[AuthStore] Auth state change:', event);
+  const { refreshUser, setLoading } = useAuthStore.getState();
   
   if (event === 'SIGNED_IN' && session?.user) {
-    console.log('[AuthStore] User signed in, refreshing data...');
+    setLoading(true);
     
-    // Refresh user data
-    const { refreshUser } = useAuthStore.getState();
-    await refreshUser();
-    
-    // ✅ Identify user with Stripe after session sign in
     try {
-      await identifyStripeUser(session.user.id);
+      // Add timeout protection to auth state change handlers too
+      const refreshPromise = Promise.race([
+        refreshUser(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('User refresh timeout')), 5000))
+      ]);
+      
+      await refreshPromise;
+      
+      // ✅ Identify user with RevenueCat after session sign in
+      try {
+        await identifyRevenueCatUser(session.user.id);
+      } catch (error) {
+        console.warn('⚠️ Failed to identify RevenueCat user during session sign in:', error);
+      }
+      
+      // Load user progress data with timeout - FIXED: Use static import
+      try {
+        const { loadUserProgress } = useProgressStore.getState();
+        
+        const progressPromise = Promise.race([
+          loadUserProgress(session.user.id),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Progress load timeout')), 5000))
+        ]);
+        
+        await progressPromise;
+      } catch (progressError) {
+        console.warn('[AuthStore] Progress loading failed during sign in:', progressError);
+      }
     } catch (error) {
-      console.warn('⚠️ Failed to identify Stripe user during session sign in:', error);
+      console.error('[AuthStore] Error during sign in processing:', error);
+    } finally {
+      setLoading(false);
     }
-    
-    // Load user progress
-    try {
-      const { loadUserProgress } = useProgressStore.getState();
-      await loadUserProgress(session.user.id);
-    } catch (error) {
-      console.warn('[AuthStore] Failed to load progress after sign in:', error);
-    }
-    
-    useAuthStore.setState({ 
-      isAuthenticated: true, 
-      isLoading: false 
-    });
   } else if (event === 'SIGNED_OUT') {
-    console.log('[AuthStore] User signed out');
-    
-    // ✅ Log out from Stripe when auth session ends
     try {
-      await logOutStripeUser();
+      // ✅ Log out from RevenueCat when auth session ends
+      try {
+        await logOutRevenueCatUser();
+      } catch (error) {
+        console.warn('⚠️ Failed to logout from RevenueCat during session sign out:', error);
+      }
+
+      // Clear progress store data - FIXED: Use static import
+      const { clearUserProgress } = useProgressStore.getState();
+      clearUserProgress();
     } catch (error) {
-      console.warn('⚠️ Failed to logout from Stripe during session sign out:', error);
+      console.warn('[AuthStore] Error clearing progress on sign out:', error);
     }
-    
-    // Clear progress store
-    const { clearUserProgress } = useProgressStore.getState();
-    clearUserProgress();
     
     useAuthStore.setState({ 
       user: null, 
@@ -519,9 +576,3 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     });
   }
 });
-
-// Initialize auth on app start
-initializeAuth();
-
-// Export for external use
-export { initializeAuth }; 

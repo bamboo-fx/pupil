@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useProgressStore } from '../state/progressStore';
 import { useAuthStore } from '../state/authStore';
+import { restorePurchases } from '../config/revenuecat';
 
 export const SimpleProfileScreen: React.FC = () => {
   const { totalXp, completedLessons, resetProgress, streak, achievements } = useProgressStore();
@@ -77,6 +78,23 @@ export const SimpleProfileScreen: React.FC = () => {
         }
       ]
     );
+  };
+
+  const handleRestorePurchases = async () => {
+    try {
+      const result = await restorePurchases();
+      if (result.success) {
+        if (result.isSubscribed) {
+          Alert.alert('Success!', 'Your purchases have been restored!');
+        } else {
+          Alert.alert('No Purchases Found', 'No previous purchases were found for this account.');
+        }
+      } else {
+        Alert.alert('Restore Failed', result.error || 'Unable to restore purchases. Please try again.');
+      }
+    } catch (error) {
+      Alert.alert('Restore Failed', 'Unable to restore purchases. Please try again.');
+    }
   };
 
   return (
@@ -288,6 +306,24 @@ export const SimpleProfileScreen: React.FC = () => {
                             <MaterialIcons name="delete-forever" size={20} color="#ef4444" />
                           </View>
                           <Text style={styles.settingTextDelete}>Delete Account</Text>
+                          <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
+                        </View>
+                      </LinearGradient>
+                    </BlurView>
+                  </Pressable>
+
+                  {/* Restore Purchases Button */}
+                  <Pressable onPress={handleRestorePurchases}>
+                    <BlurView intensity={50} tint="dark" style={styles.settingItem}>
+                      <LinearGradient
+                        colors={['#4ade80', '#22c55e', '#16a34a']}
+                        style={styles.settingGradient}
+                      >
+                        <View style={styles.settingContent}>
+                          <View style={styles.settingIcon}>
+                            <MaterialIcons name="restore" size={20} color="#22c55e" />
+                          </View>
+                          <Text style={styles.settingText}>Restore Purchases</Text>
                           <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.4)" />
                         </View>
                       </LinearGradient>

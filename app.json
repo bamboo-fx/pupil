@@ -7,11 +7,19 @@
     "orientation": "portrait",
     "icon": "./logo.png",
     "userInterfaceStyle": "light",
-    "description": "Pupil is a premium coding education app offering interactive programming lessons, tutorials, and personalized learning analytics. Terms of Use: https://www.trypupil.com/terms | Privacy Policy: https://www.trypupil.com/privacy",
+    "description": "Pupil is a premium coding education app offering interactive programming lessons, tutorials, and personalized learning analytics. Premium content available via subscription. Terms of Use: https://www.trypupil.com/terms | Privacy Policy: https://www.trypupil.com/privacy",
     "plugins": [
       "expo-sqlite",
       "expo-video",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.dwang88.vibecode",
+          "enableGooglePay": true,
+          "enableApplePay": true
+        }
+      ]
     ],
     "newArchEnabled": true,
     "ios": {

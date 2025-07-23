@@ -4,7 +4,8 @@ import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import { SimpleRootNavigator } from "./src/navigation/SimpleRootNavigator";
-import { initializePurchases } from './src/config/revenuecat';
+import { initializeStripe } from './src/config/stripe';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -16,24 +17,26 @@ const MyTheme = {
 
 export default function App() {
   useEffect(() => {
-    // Initialize RevenueCat when app starts
-    initializePurchases().then((success) => {
+    // Initialize Stripe when app starts
+    initializeStripe().then((success: boolean) => {
       if (success) {
-        console.log('🎉 RevenueCat initialized successfully');
+        console.log('🎉 Stripe initialized successfully');
       } else {
-        console.error('❌ RevenueCat initialization failed');
+        console.error('❌ Stripe initialization failed');
       }
     });
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <NavigationContainer theme={MyTheme}>
-          <SimpleRootNavigator />
-          <StatusBar style="light" />
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <StripeProvider publishableKey="pk_test_your_publishable_key_here">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <NavigationContainer theme={MyTheme}>
+            <SimpleRootNavigator />
+            <StatusBar style="light" />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </StripeProvider>
   );
 }

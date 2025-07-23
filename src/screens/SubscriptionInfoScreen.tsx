@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getSpecificOffering, OFFERING_ID, purchaseProduct } from '../config/revenuecat';
+import { getSpecificOffering, OFFERING_ID, purchaseProduct } from '../config/stripe';
 import { useAuthStore } from '../state/authStore';
 
 interface SubscriptionInfoScreenProps {
@@ -26,7 +26,7 @@ export const SubscriptionInfoScreen: React.FC<SubscriptionInfoScreenProps> = ({ 
   const loadOffering = async () => {
     try {
       setIsLoading(true);
-      const offeringData = await getSpecificOffering(OFFERING_ID);
+      const offeringData = await getSpecificOffering();
       
       if (offeringData) {
         setOffering(offeringData);
@@ -72,7 +72,7 @@ export const SubscriptionInfoScreen: React.FC<SubscriptionInfoScreenProps> = ({ 
       }
 
       // Proceed with purchase
-      const result = await purchaseProduct(productIdentifier);
+      const result = await purchaseProduct(productIdentifier, ''); // User ID will be handled inside the function
       
       if (result.success) {
         // Sync subscription with Supabase after successful purchase

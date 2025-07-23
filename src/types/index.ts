@@ -133,7 +133,7 @@ export interface User {
   subscriptionType?: 'monthly' | 'annual';
   subscriptionStartDate?: string;
   subscriptionEndDate?: string;
-  revenuecatUserId?: string;
+  stripeCustomerId?: string;
 }
 
 // Achievement system types
